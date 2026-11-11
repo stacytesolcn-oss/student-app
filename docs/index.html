@@ -119,7 +119,10 @@ var DATA = null, OPEN = null;
 
 function load(){
   if (!AUTH){ $("#app").innerHTML = '<div class="center"><h1>Hi! 👋</h1><p class="muted">Please open this page from the personal link Stacy sent you.</p></div>'; return; }
-  api("/me").then(function(d){ DATA = d; OPEN ? renderHw(OPEN) : renderHome(); })
+  api("/me").then(function(d){
+    // A student with a personal page goes straight there (homework stays reachable with ?hw).
+    if (d.page && !/[?&]hw/.test(location.search)){ location.replace(new URL(d.page, location.href.split("#")[0]).href + location.search + location.hash); return; }
+    DATA = d; OPEN ? renderHw(OPEN) : renderHome(); })
   .catch(function(e){
     $("#app").innerHTML = e.message === "auth"
       ? '<div class="center"><h1>Hi! 👋</h1><p class="muted">I don\'t recognise this link. Please ask Stacy for your personal link.</p></div>'

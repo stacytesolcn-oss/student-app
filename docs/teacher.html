@@ -26,6 +26,7 @@ td{padding:6px 4px;border-top:1px solid var(--sandl);vertical-align:top}
 td.m{width:28px;text-align:center}
 .ok{color:var(--ok);font-weight:600} .no{color:var(--sceptre);font-weight:600}
 .resp{white-space:pre-wrap}
+input[type=date]{font:400 14px Karla;border:1px solid var(--sandl);border-radius:8px;padding:5px 6px;margin-left:6px}
 button{font:600 14px Karla;border:0;border-radius:10px;padding:7px 11px;background:var(--sandl);color:var(--java);cursor:pointer}
 .links{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 </style>
@@ -60,6 +61,37 @@ function showResp(t, it, r){
   return Array.isArray(r) ? r.join(" / ") : r;
 }
 
+
+function studentPanel(s, sm){
+  sm = sm || {}; var c = sm.cards || {}, dy = sm.diary || {}, P = s.profile || {}, K = P.pack || {};
+  var h = '<div class="card">';
+  h += '<div class="head"><h3>Cards</h3><span class="pill">' + (c.learned || 0) + ' / ' + (c.total || 0) + ' practised</span></div>';
+  h += '<div class="muted">Today: ' + (c.doneToday || 0) + ' done · ' + (c.dueToday || 0) + ' waiting · last practice: ' + esc(c.lastPractice || "—") + '</div>';
+  if (c.struggling && c.struggling.length) h += '<div style="margin-top:6px"><b>Struggling:</b> ' + c.struggling.map(esc).join(", ") + '</div>';
+  h += '</div><div class="card"><div class="head"><h3>Diary</h3><span class="pill">' + (dy.entries || 0) + ' entries</span></div>';
+  h += dy.last ? '<div class="muted">' + esc(dy.last.date) + (dy.wroteToday ? ' · wrote today ✓' : '') + '</div><div class="resp" style="margin-top:6px">' + esc(dy.last.text) + '</div>' : '<div class="muted">No entries yet.</div>';
+  h += '</div><div class="card"><div class="head"><h3>Package & payment</h3>' +
+    (s.pay_check_at ? '<span class="pill late">Says she paid — to check</span>' : '') + '</div>';
+  h += '<div class="muted">Package: ' + (K.size || "—") + ' lessons from ' + esc(K.start || "—") + (K.paid ? ' · paid ' + esc(K.paid) : '') + '</div>';
+  h += '<div class="links" style="align-items:center"><label class="muted">Next payment <input type="date" data-np="' + s.id + '" value="' + esc(P.nextPayment || "") + '"></label>' +
+       '<button data-save-np="' + s.id + '">Save</button>' + (s.pay_check_at ? '<button data-confirm="' + s.id + '">Payment received ✓</button>' : '') + '</div>';
+  h += '<div class="links"><button data-test="' + s.id + '">Send me test reminders</button>' + (P.remindersOff ? '<span class="pill late">Reminders off</span>' : '') + '</div>';
+  return h + '</div>';
+}
+function post(body){ return fetch(API + "/teacher", {method: "POST", headers: {"x-auth": AUTH, "content-type": "application/json"}, body: JSON.stringify(body)}).then(function(r){ if (!r.ok) throw r.status; }); }
+function wireActions(){
+  document.querySelectorAll("[data-save-np]").forEach(function(b){ b.onclick = function(){
+    var id = b.dataset.saveNp, v = document.querySelector('[data-np="' + id + '"]').value || null;
+    post({student_id: id, action: "profile", patch: {nextPayment: v}}).then(function(){ b.textContent = "Saved ✓"; }).catch(function(){ b.textContent = "Error"; }); }; });
+  document.querySelectorAll("[data-confirm]").forEach(function(b){ b.onclick = function(){
+    post({student_id: b.dataset.confirm, action: "confirm-paid"}).then(function(){ b.textContent = "Confirmed ✓"; b.disabled = true; }); }; });
+  document.querySelectorAll("[data-test]").forEach(function(b){ b.onclick = function(){
+    b.textContent = "Sending…";
+    fetch(API + "/test-reminders?student=" + b.dataset.test, {headers: {"x-auth": AUTH}}).then(function(r){ return r.json(); })
+      .then(function(j){ b.textContent = j.sent ? "Sent " + j.sent.length + " to your Telegram ✓" : "Error: " + (j.error || ""); })
+      .catch(function(){ b.textContent = "Error"; }); }; });
+}
+
 function render(d){
   var today = new Date().toISOString().slice(0, 10);
   var html = '<h1>Students</h1>';
@@ -69,6 +101,7 @@ function render(d){
       '<div class="links">' + (s.telegramLink ? '<button data-copy="' + esc(s.telegramLink) + '">Copy Telegram link</button>' : '') +
       '<button data-copy="' + esc(s.link) + '">Copy web link</button>' +
       '<a href="' + esc(s.link.replace('#k=', '?preview=1#k=')) + '" target="_blank" rel="noopener"><button>Open her page</button></a></div>';
+    html += studentPanel(s, d.summary && d.summary[s.id]);
     if (!hws.length) html += '<div class="card muted">No homework yet.</div>';
     hws.forEach(function(h){
       var ans = d.answers.filter(function(a){ return a.homework_id === h.id; });
@@ -96,6 +129,7 @@ function render(d){
   });
   document.getElementById("app").innerHTML = html;
   document.querySelectorAll("[data-copy]").forEach(function(b){ b.onclick = function(){ copy(b.dataset.copy, b); }; });
+  wireActions();
 }
 
 if (!AUTH) document.getElementById("app").innerHTML = '<p>Open this from the bot, or with your private teacher link.</p>';
