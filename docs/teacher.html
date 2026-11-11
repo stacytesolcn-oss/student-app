@@ -6,9 +6,9 @@
 <meta name="robots" content="noindex">
 <title>Teacher view</title>
 <style>
-@font-face{font-family:"Bricolage";src:url(/fonts/bricolage-grotesque-latin-700-normal.woff2) format("woff2");font-weight:700;font-display:swap}
-@font-face{font-family:"Karla";src:url(/fonts/karla-latin-400-normal.woff2) format("woff2");font-weight:400;font-display:swap}
-@font-face{font-family:"Karla";src:url(/fonts/karla-latin-600-normal.woff2) format("woff2");font-weight:600;font-display:swap}
+@font-face{font-family:"Bricolage";src:url(fonts/bricolage-grotesque-latin-700-normal.woff2) format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Karla";src:url(fonts/karla-latin-400-normal.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Karla";src:url(fonts/karla-latin-600-normal.woff2) format("woff2");font-weight:600;font-display:swap}
 :root{--ivory:#F6F1E7;--java:#231815;--choc:#643A24;--butter:#F4DC96;--powder:#C1DBE8;--sand:#CCBB9F;--sandl:#EDE4D4;--sceptre:#4D0E12;--pink:#F1DEDA;--ok:#2F6B3A;--okbg:#DCEBD8}
 *{box-sizing:border-box}
 body{margin:0;background:var(--ivory);color:var(--java);font:400 16px/1.5 Karla,system-ui,sans-serif}
@@ -33,6 +33,7 @@ button{font:600 14px Karla;border:0;border-radius:10px;padding:7px 11px;backgrou
 <body>
 <main id="app"><p class="muted">Loading…</p></main>
 <script>
+var API = "https://nrnjubhnpaicuokidnjl.supabase.co/functions/v1/app";
 function tgPost(type){ try{ if (window.TelegramWebviewProxy) TelegramWebviewProxy.postEvent(type, "{}"); }catch(e){} }
 var AUTH = null;
 (function(){
@@ -97,7 +98,7 @@ function render(d){
 }
 
 if (!AUTH) document.getElementById("app").innerHTML = '<p>Open this from the bot, or with your private teacher link.</p>';
-else fetch("/api/teacher", {headers: {"x-auth": AUTH}}).then(function(r){ if (!r.ok) throw r.status; return r.json(); }).then(render)
+else fetch(API + "/teacher", {headers: {"x-auth": AUTH}}).then(function(r){ if (!r.ok) throw r.status; return r.json(); }).then(render)
   .catch(function(e){ document.getElementById("app").innerHTML = '<p>' + (e === 401 ? "Not authorised." : "Couldn't load — try again.") + '</p>'; });
 </script>
 </body>

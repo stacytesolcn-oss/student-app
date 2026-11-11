@@ -8,10 +8,10 @@
 <meta name="apple-mobile-web-app-title" content="My English">
 <title>My English</title>
 <style>
-@font-face{font-family:"Bricolage";src:url(/fonts/bricolage-grotesque-latin-600-normal.woff2) format("woff2");font-weight:600;font-display:swap}
-@font-face{font-family:"Bricolage";src:url(/fonts/bricolage-grotesque-latin-700-normal.woff2) format("woff2");font-weight:700;font-display:swap}
-@font-face{font-family:"Karla";src:url(/fonts/karla-latin-400-normal.woff2) format("woff2");font-weight:400;font-display:swap}
-@font-face{font-family:"Karla";src:url(/fonts/karla-latin-600-normal.woff2) format("woff2");font-weight:600;font-display:swap}
+@font-face{font-family:"Bricolage";src:url(fonts/bricolage-grotesque-latin-600-normal.woff2) format("woff2");font-weight:600;font-display:swap}
+@font-face{font-family:"Bricolage";src:url(fonts/bricolage-grotesque-latin-700-normal.woff2) format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Karla";src:url(fonts/karla-latin-400-normal.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Karla";src:url(fonts/karla-latin-600-normal.woff2) format("woff2");font-weight:600;font-display:swap}
 :root{--ivory:#F6F1E7;--java:#231815;--choc:#643A24;--butter:#F4DC96;--powder:#C1DBE8;--sand:#CCBB9F;--sandl:#EDE4D4;--sceptre:#4D0E12;--pink:#F1DEDA;--ok:#2F6B3A;--okbg:#DCEBD8}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--ivory);color:var(--java);font:400 17px/1.5 Karla,system-ui,sans-serif}
@@ -70,6 +70,7 @@ textarea:focus{outline:none;border-color:var(--sand)}
 <main id="app"><div class="center muted">Loading…</div></main>
 <div class="toast" id="toast"></div>
 <script>
+var API = "https://nrnjubhnpaicuokidnjl.supabase.co/functions/v1/app";
 /* ---------- Telegram bridge (no external script: telegram.org may be blocked) ---------- */
 function tgPost(type, data){
   try{
@@ -96,7 +97,7 @@ tgPost("web_app_ready"); tgPost("web_app_expand");
 var $ = function(s, r){ return (r||document).querySelector(s); };
 var esc = function(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); };
 function api(path, body){
-  return fetch(path, { method: body ? "POST" : "GET",
+  return fetch(API + path, { method: body ? "POST" : "GET",
     headers: Object.assign({"x-auth": AUTH || ""}, body ? {"content-type":"application/json"} : {}),
     body: body ? JSON.stringify(body) : undefined }).then(function(r){
       if (r.status === 401) throw new Error("auth");
@@ -118,7 +119,7 @@ var DATA = null, OPEN = null;
 
 function load(){
   if (!AUTH){ $("#app").innerHTML = '<div class="center"><h1>Hi! 👋</h1><p class="muted">Please open this page from the personal link Stacy sent you.</p></div>'; return; }
-  api("/api/me").then(function(d){ DATA = d; OPEN ? renderHw(OPEN) : renderHome(); })
+  api("/me").then(function(d){ DATA = d; OPEN ? renderHw(OPEN) : renderHome(); })
   .catch(function(e){
     $("#app").innerHTML = e.message === "auth"
       ? '<div class="center"><h1>Hi! 👋</h1><p class="muted">I don\'t recognise this link. Please ask Stacy for your personal link.</p></div>'
@@ -175,13 +176,13 @@ function updateFinish(h){
   b.textContent = did < total ? (did + " of " + total + " done") : "I've finished 🎉";
   b.onclick = function(){
     b.disabled = true;
-    api("/api/submit", {homework_id: h.id}).then(function(){ h.done = true; updateFinish(h); toast("Great job! Stacy will see your answers."); })
+    api("/submit", {homework_id: h.id}).then(function(){ h.done = true; updateFinish(h); toast("Great job! Stacy will see your answers."); })
       .catch(function(){ b.disabled = false; toast("No connection — try again."); });
   };
 }
 
 function send(h, t, it, response, el){
-  return api("/api/answer", {homework_id: h.id, task_id: t.id, item_id: it.id, response: response}).then(function(r){
+  return api("/answer", {homework_id: h.id, task_id: t.id, item_id: it.id, response: response}).then(function(r){
     h.saved[t.id + "|" + it.id] = {response: response, correct: r.correct, attempt: r.attempt, solution: r.solution};
     renderItem(h, t, it); updateFinish(h); return r;
   }).catch(function(){ toast("No connection — your answer wasn't saved. Try again."); });
