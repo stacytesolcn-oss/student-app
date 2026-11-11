@@ -53,9 +53,10 @@ html,body{overflow-x:clip}
   tgPost("web_app_ready"); tgPost("web_app_expand");
 
   var preview = /[?&]preview=1/.test(location.search), AUTH = null;
-  var h = new URLSearchParams(location.hash.slice(1)), init = h.get("tgWebAppData"), k = h.get("k");
+  var h = new URLSearchParams(location.hash.slice(1)), q = new URLSearchParams(location.search), init = h.get("tgWebAppData"), k = h.get("k") || q.get("k");
+  if (preview && k) init = null; // teacher preview: always show the student in the link
   if (init){ try{ sessionStorage.setItem("tgInit", init); }catch(e){} AUTH = "tg " + init; }
-  else { try{ var si = sessionStorage.getItem("tgInit"); if (si) AUTH = "tg " + si; }catch(e){} }
+  else if (!(preview && k)) { try{ var si = sessionStorage.getItem("tgInit"); if (si) AUTH = "tg " + si; }catch(e){} }
   if (!AUTH && k){ if (!preview){ try{ localStorage.setItem("myKey", k); }catch(e){} } AUTH = "key " + k; }
   if (!AUTH){ try{ var sk = localStorage.getItem("myKey"); if (sk) AUTH = "key " + sk; }catch(e){} }
 

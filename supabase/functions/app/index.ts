@@ -105,6 +105,21 @@ const openButton = async (text = "Open my English", page = "/") => ({
   inline_keyboard: [[{ text, web_app: { url: (await appUrl()) + page } }]],
 });
 
+// Teacher's own chat: menu button = teacher view; /teacher = teacher view + each student's page (preview)
+async function teacherKeyboard() {
+  const base = await appUrl();
+  const { data } = await db.from("students").select("name,page,access_key").eq("active", true).order("name");
+  const rows: any[] = [[{ text: "👩‍🏫 Teacher view", web_app: { url: base + "/teacher.html" } }]];
+  for (const st of (data || []) as any[]) {
+    rows.push([{ text: `👀 ${st.name}'s page`, web_app: { url: `${base}/${st.page || ""}?preview=1&k=${st.access_key}` } }]);
+  }
+  return { inline_keyboard: rows };
+}
+async function teacherMenu(chatId: number | string) {
+  await tg("setChatMenuButton", { chat_id: chatId, menu_button: { type: "web_app", text: "Teacher view", web_app: { url: (await appUrl()) + "/teacher.html" } } });
+  await tg("setMyCommands", { commands: [{ command: "teacher", description: "Teacher view and student pages" }], scope: { type: "chat", chat_id: chatId } });
+}
+
 // ---------- homework ----------
 const norm = (s: unknown) =>
   String(s ?? "").toLowerCase().replace(/[’‘`]/g, "'").replace(/[.!?,;:"]+/g, " ").replace(/\s+/g, " ").trim();
@@ -258,13 +273,15 @@ async function bot(req: Request) {
     if (text.startsWith("/start") && arg.startsWith("teacher_") && safeEq(arg.slice(8), c.TEACHER_KEY || "")) {
       await db.from("app_config").upsert({ key: "TEACHER_TG_ID", value: String(uid) });
       cfgCache = null;
-      await tg("sendMessage", { chat_id: m.chat.id, text: "Done — you're set as the teacher. You'll get a message whenever a student finishes homework.",
-        reply_markup: await openButton("Open teacher view", "/teacher.html") });
+      await tg("sendMessage", { chat_id: m.chat.id, text: "Done — you're set as the teacher. Your menu button now opens the teacher view; send /teacher any time for quick links.",
+        reply_markup: await teacherKeyboard() });
+      await teacherMenu(m.chat.id);
       return send(200, { ok: true });
     }
     const isT = c.TEACHER_TG_ID && String(uid) === c.TEACHER_TG_ID;
-    if (text.startsWith("/start") && isT && !arg) {
-      await tg("sendMessage", { chat_id: m.chat.id, text: "Teacher view:", reply_markup: await openButton("Open teacher view", "/teacher.html") });
+    if (isT && ((text.startsWith("/start") && !arg) || text.startsWith("/teacher"))) {
+      await tg("sendMessage", { chat_id: m.chat.id, text: "Teacher tools:", reply_markup: await teacherKeyboard() });
+      await teacherMenu(m.chat.id);
       return send(200, { ok: true });
     }
     if (text.startsWith("/start") && /^[a-f0-9]{20,64}$/.test(arg)) {
@@ -555,6 +572,7 @@ async function setup(req: Request) {
   const hook = await tg("setWebhook", { url: fn, secret_token: c.WEBHOOK_SECRET, allowed_updates: ["message", "callback_query"], drop_pending_updates: true });
   const menu = await tg("setChatMenuButton", { menu_button: { type: "web_app", text: "My English", web_app: { url: base + "/" } } });
   const cmds = await tg("setMyCommands", { commands: [{ command: "start", description: "Open my English" }] });
+  if (c.TEACHER_TG_ID) await teacherMenu(c.TEACHER_TG_ID);
   const me = await tg("getMe", {});
   return send(200, { webhook: hook.ok, menu: menu.ok, commands: cmds.ok, bot: me.result?.username, app: base });
 }
