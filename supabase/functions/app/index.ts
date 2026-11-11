@@ -402,41 +402,42 @@ async function loadState(studentId: string) {
 type Msg = { kind: string; key: string; text: string; reply_markup?: unknown } | null;
 const pageButton = async (s: any, text: string, query = "") => ({ inline_keyboard: [[{ text, web_app: { url: (await appUrl()) + "/" + (s.page || "") + query } }]] });
 
-async function morningCards(s: any, st: Record<string, any>): Promise<Msg> {
-  const c = cardCounts(s, st), date = tzParts(tzOf(s)).date;
-  let text: string;
-  if (c.due > 0) text = `Good morning, ${s.name}! ☀️ You have ${Math.min(c.todayCount || c.due, c.due + c.fresh)} cards to practise today. Just a few minutes with your coffee 🙂`;
-  else if (c.fresh > 0 && c.todayCount > 0) text = `Good morning, ${s.name}! ☀️ ${c.todayCount} new words are waiting for you today.`;
-  else {
-    const t = (c.topics as any[]).filter((x) => (x.words || []).length >= 2);
-    if (!t.length) return null;
-    const pick = t[c.today % t.length];
-    text = `Good morning, ${s.name}! ☀️ All your cards are up to date 🎉 Fancy a quick round of “${pick.name}” to keep the words fresh?`;
-  }
-  return { kind: "cards-am", key: date, text, reply_markup: await pageButton(s, "Practise my cards") };
+// One practice reminder a day (Nov 11): whatever is still open today — cards, homework (on its mid-week day),
+// pronunciation (on profile.pronDays), diary (unless noDiary). Nothing open → nothing sent.
+// Sent at the student's usual practice time (see practiceTime), default 19:00.
+async function practice(s: any, st: Record<string, any>, force = false): Promise<Msg> {
+  const c = cardCounts(s, st), d = diarySummary(s, st), now = tzParts(tzOf(s)), P = s.profile || {};
+  const act: string[] = ((st.cards || {}).act || {})[c.today] || [];
+  const cards = (c.done === 0 && c.todayCount > 0) || (force && c.todayCount > 0);
+  const h = await homeworkPending(s, st);
+  const hwDay = h.back > 0 && h.fwd > 1 && h.back === (h.back + h.fwd >= 4 ? 2 : 1);
+  const hw = h.pending && (hwDay || force);
+  const pron = !!P.pronReminder && ((P.pronDays || ["Monday", "Thursday"]).includes(now.weekday) || force) && !act.includes("pron");
+  const diary = !P.noDiary && !d.wroteToday;
+  const lines: string[] = [];
+  if (cards) lines.push(`🃏 ${c.todayCount} cards are waiting`);
+  if (hw) lines.push("📚 your homework — it's all on your page");
+  if (pron) lines.push("🎬 a quick pronunciation round: pick a video, listen and repeat");
+  if (diary) lines.push("✍️ a couple of sentences in your diary about your day");
+  if (!lines.length) return null;
+  const text = lines.length === 1
+    ? `Hi ${s.name}! 👋 Time for a little English practice: ${lines[0].replace(/^\S+ /, "")}. Just a few minutes is enough 🙂`
+    : `Hi ${s.name}! 👋 Time for a little English practice:\n\n${lines.join("\n")}\n\nJust a few minutes is enough 🙂`;
+  const only = lines.length === 1;
+  const btn = only && pron ? ["Practise pronunciation", "?open=pron"] : only && diary ? ["Open my diary", ""] : ["Open my English", ""];
+  return { kind: "practice", key: now.date, text, reply_markup: await pageButton(s, btn[0], btn[1]) };
 }
-async function evening(s: any, st: Record<string, any>): Promise<Msg> {
-  const c = cardCounts(s, st), d = diarySummary(s, st), date = tzParts(tzOf(s)).date;
-  const cardsLeft = c.done === 0 && c.todayCount > 0;
-  const P = s.profile || {};
-  const diary = !P.noDiary && !d.wroteToday; // noDiary: diary isn't part of this student's homework
-  // pronReminder: nudge to the Pronunciation clips unless a pronunciation unit was opened today
-  // only on profile.pronDays (default Monday + Thursday), not every evening
-  const pronDay = (P.pronDays || ["Monday", "Thursday"]).includes(tzParts(tzOf(s)).weekday);
-  const pron = !!P.pronReminder && pronDay && !(((st.cards || {}).act || {})[c.today] || []).includes("pron");
-  if (pron) {
-    let text: string;
-    if (cardsLeft) text = `Good evening, ${s.name}! 🌙 Two small things: ${c.todayCount} cards are waiting, and how about a little pronunciation practice? Pick a video, listen and repeat — a nice way to refresh what we did 🎬`;
-    else text = `Good evening, ${s.name}! 🌙 How about a little pronunciation practice? Your videos are waiting: watch, repeat and refresh your memory 🎬`;
-    return { kind: "evening", key: date, text, reply_markup: await pageButton(s, cardsLeft ? "Open my English" : "Practise pronunciation", cardsLeft ? "" : "?open=pron") };
-  }
-  let text: string;
-  if (cardsLeft && diary) text = `Good evening, ${s.name}! 🌙 Two small things before bed: ${c.todayCount} cards are waiting, and your diary — how was your day? A couple of sentences is perfect ✍️`;
-  else if (cardsLeft) text = `Good evening, ${s.name}! 🌙 ${c.todayCount} cards are still waiting for you today. It only takes a few minutes.`;
-  else if (diary) text = `Good evening, ${s.name}! 🌙 How was your day? Write a couple of sentences in your diary ✍️`;
-  else return null;
-  return { kind: "evening", key: date, text, reply_markup: await pageButton(s, diary && !cardsLeft ? "Open my diary" : "Open my English") };
+// Usual practice time = median of the first-practice times of the last 14 recorded days (needs 5+),
+// minus 30 min, kept between 08:00 and 21:00, on a 15-min step. Default 19:00.
+function practiceTime(st: Record<string, any>) {
+  const t = st.practice_times || {};
+  const mins = Object.keys(t).map(Number).sort((a, b) => b - a).slice(0, 14).map((k) => Number(t[k])).filter((x) => x >= 0).sort((a, b) => a - b);
+  if (mins.length < 5) return { at: 19 * 60, learned: false, days: mins.length };
+  const med = mins[Math.floor(mins.length / 2)];
+  const at = Math.min(21 * 60, Math.max(8 * 60, Math.floor((med - 30) / 15) * 15));
+  return { at, learned: true, days: mins.length };
 }
+const hhmm = (m: number) => `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
 function nextLessonToday(s: any) {
   const tz = tzOf(s), now = tzParts(tz), P = s.profile || {};
   const skip = new Set([...(P.pack?.skip || []), ...(P.cancel || [])]);
@@ -522,19 +523,6 @@ async function homeworkPending(s: any, st: Record<string, any>) {
   if (back >= 0) for (let d = now.dayNum - back; d <= now.dayNum; d++) if ((act[d] || []).includes("homework")) done = true;
   return { has, pending: has && !done, back, fwd, date: now.date };
 }
-// Homework reminders (all students): (1) 17:00 once between lessons — 1 day after a lesson, 2 days if the gap
-// to the next lesson is 4+ days; skipped when the next lesson is tomorrow, because (2) the 18:00 "lesson tomorrow"
-// message then carries the homework line. Focus of the week is not reminded (Stacy, Nov 11).
-async function homeworkMid(s: any, st: Record<string, any>, force = false): Promise<Msg> {
-  const h = await homeworkPending(s, st);
-  if (!force) {
-    if (!h.pending || h.back <= 0 || h.fwd <= 1) return null;
-    if (h.back !== (h.back + h.fwd >= 4 ? 2 : 1)) return null;
-  }
-  return { kind: "hw-mid", key: h.date, reply_markup: await pageButton(s, "Open my English"),
-    text: `Hi ${s.name}! 📚 Quick check-in: have you had a chance to do your homework? It's all on your page 🙂` };
-}
-
 async function sendOnce(s: any, m: Msg) {
   if (!m) return false;
   const { error } = await db.from("reminder_log").insert({ student_id: s.id, kind: m.kind, key: m.key });
@@ -554,11 +542,9 @@ async function cron(req: Request) {
     if ((s.profile || {}).remindersOff) continue;
     const t = tzParts(tzOf(s));
     const st = await loadState(s.id);
-    if (inWindow(t.minutes, 9 * 60)) sent += +(await sendOnce(s, await morningCards(s, st)));
-    if (inWindow(t.minutes, 20 * 60)) sent += +(await sendOnce(s, await evening(s, st)));
+    if (inWindow(t.minutes, practiceTime(st).at)) sent += +(await sendOnce(s, await practice(s, st)));
     if (inWindow(t.minutes, 10 * 60)) sent += +(await sendOnce(s, await paymentDue(s)));
     if (inWindow(t.minutes, 17 * 60)) for (const m of await homeworkDue(s)) sent += +(await sendOnce(s, m));
-    if (inWindow(t.minutes, 17 * 60)) sent += +(await sendOnce(s, await homeworkMid(s, st)));
     if (inWindow(t.minutes, 18 * 60)) sent += +(await sendOnce(s, await lessonTomorrow(s, false, st)));
     const n = nextLessonToday(s);
     if (n && n.until > 45 && n.until <= 60) sent += +(await sendOnce(s, await lessonSoon(s)));
@@ -580,11 +566,12 @@ async function testReminders(req: Request) {
     `Hi ${s.name}! 👋 This is your English page: cards, diary and homework. I'll send you friendly reminders about your cards, diary, lessons and payments.`;
   const prevUrl = `${await appUrl()}/${s.page || ""}?preview=1&k=${s.access_key}`;
   const msgs: Msg[] = [{ kind: "welcome", key: "test", text: welcome, reply_markup: { inline_keyboard: [[{ text: "Open my English", web_app: { url: prevUrl } }]] } },
-    await morningCards(s, st), await evening(s, st), await lessonTomorrow(s, true, st), await lessonSoon(s, true), await paymentDue(s, true), await homeworkMid(s, st, true), ...(await homeworkDue(s))];
+    await practice(s, st, true), await lessonTomorrow(s, true, st), await lessonSoon(s, true), await paymentDue(s, true), ...(await homeworkDue(s))];
+  const pt = practiceTime(st);
   const labels: string[] = [];
   for (const m of msgs) {
     if (!m) continue;
-    await tg("sendMessage", { chat_id: c.TEACHER_TG_ID, text: `🧪 TEST (${m.kind}) — what ${s.name} would get:\n\n${m.text}`, reply_markup: m.reply_markup });
+    await tg("sendMessage", { chat_id: c.TEACHER_TG_ID, text: `🧪 TEST (${m.kind}) — what ${s.name} would get` + (m.kind === "practice" ? ` (daily at ${hhmm(pt.at)}, ${pt.learned ? `learned from ${pt.days} days` : `default until 5 days of practice — ${pt.days} so far`})` : "") + `:\n\n${m.text}`, reply_markup: m.reply_markup });
     labels.push(m.kind);
   }
   return send(200, { sent: labels });
@@ -626,7 +613,23 @@ async function statePost(req: Request) {
   const { key, data } = JSON.parse(raw);
   if (!STATE_KEYS.has(key) || typeof data !== "object" || data === null) return send(400, { error: "key" });
   await db.from("student_state").upsert({ student_id: s.id, key, data, updated_at: new Date().toISOString() });
+  if (key === "cards" || key === "diary") await notePracticeTime(s, key, data);
   return send(200, { ok: true });
+}
+
+// First practice of the day (cards done, any Progress tick, or a diary entry) → its local time, for practiceTime().
+async function notePracticeTime(s: any, key: string, data: any) {
+  const now = tzParts(tzOf(s)), day = now.dayNum;
+  const did = key === "cards"
+    ? ((data.log || {})[day] || 0) > 0 || ((data.act || {})[day] || []).length > 0
+    : !!String(((data.e || {})[day]) || "").trim();
+  if (!did) return;
+  const { data: row } = await db.from("student_state").select("data").eq("student_id", s.id).eq("key", "practice_times").maybeSingle();
+  const t: Record<string, number> = { ...((row && row.data) || {}) };
+  if (t[day] !== undefined) return;
+  t[day] = now.minutes;
+  for (const k of Object.keys(t)) if (Number(k) < day - 30) delete t[k];
+  await db.from("student_state").upsert({ student_id: s.id, key: "practice_times", data: t, updated_at: new Date().toISOString() });
 }
 
 // ---------- teacher edits ----------
