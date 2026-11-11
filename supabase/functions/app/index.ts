@@ -108,16 +108,11 @@ const openButton = async (text = "Open my English", page = "/") => ({
 // Teacher's own chat: menu button = teacher view; /teacher = teacher view + each student's page (preview)
 async function teacherKeyboard() {
   const base = await appUrl();
-  const { data } = await db.from("students").select("name,page,access_key").eq("active", true).order("name");
-  const rows: any[] = [[{ text: "👩‍🏫 Teacher view", web_app: { url: base + "/teacher.html" } }]];
-  for (const st of (data || []) as any[]) {
-    rows.push([{ text: `👀 ${st.name}'s page`, web_app: { url: `${base}/${st.page || ""}?preview=1&k=${st.access_key}` } }]);
-  }
-  return { inline_keyboard: rows };
+  return { inline_keyboard: [[{ text: "👩‍🏫 Teacher view", web_app: { url: base + "/teacher.html" } }]] };
 }
 async function teacherMenu(chatId: number | string) {
   await tg("setChatMenuButton", { chat_id: chatId, menu_button: { type: "web_app", text: "Teacher view", web_app: { url: (await appUrl()) + "/teacher.html" } } });
-  await tg("setMyCommands", { commands: [{ command: "teacher", description: "Teacher view and student pages" }], scope: { type: "chat", chat_id: chatId } });
+  await tg("setMyCommands", { commands: [{ command: "teacher", description: "Teacher view" }], scope: { type: "chat", chat_id: chatId } });
 }
 
 // ---------- homework ----------
@@ -273,7 +268,7 @@ async function bot(req: Request) {
     if (text.startsWith("/start") && arg.startsWith("teacher_") && safeEq(arg.slice(8), c.TEACHER_KEY || "")) {
       await db.from("app_config").upsert({ key: "TEACHER_TG_ID", value: String(uid) });
       cfgCache = null;
-      await tg("sendMessage", { chat_id: m.chat.id, text: "Done — you're set as the teacher. Your menu button now opens the teacher view; send /teacher any time for quick links.",
+      await tg("sendMessage", { chat_id: m.chat.id, text: "Done — you're set as the teacher. Your menu button opens the teacher view.",
         reply_markup: await teacherKeyboard() });
       await teacherMenu(m.chat.id);
       return send(200, { ok: true });
@@ -560,6 +555,13 @@ async function teacherEdit(req: Request) {
   const { data: s } = await db.from("students").select("id,profile").eq("id", student_id).maybeSingle();
   if (!s) return send(404, { error: "student" });
   if (action === "confirm-paid") await db.from("students").update({ pay_check_at: null }).eq("id", s.id);
+  if (action === "mark-paid") {
+    // Stacy confirms the current package is paid (whether or not the student tapped "I've paid")
+    const P = { ...(s.profile || {}) }, today = tzParts(tzOf(s)).date;
+    P.pack = { ...(P.pack || { size: 8 }), paid: today };
+    P.paidClaimed = today;
+    await db.from("students").update({ profile: P, pay_check_at: null }).eq("id", s.id);
+  }
   if (action === "profile" && patch && typeof patch === "object") {
     const allowed = ["nextPayment", "price", "stripe", "package", "note", "remindersOff"];
     const P = { ...(s.profile || {}) };

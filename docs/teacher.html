@@ -29,6 +29,7 @@ td.m{width:28px;text-align:center}
 input[type=date]{font:400 14px Karla;border:1px solid var(--sandl);border-radius:8px;padding:5px 6px;margin-left:6px}
 button{font:600 14px Karla;border:0;border-radius:10px;padding:7px 11px;background:var(--sandl);color:var(--java);cursor:pointer}
 .links{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.hint{font-size:13px;color:var(--choc);opacity:.75;margin-top:4px}
 </style>
 </head>
 <body>
@@ -74,24 +75,31 @@ function studentPanel(s, sm){
   h += '</div><div class="card"><div class="head"><h3>Diary</h3><span class="pill">' + (dy.entries || 0) + ' entries</span></div>';
   h += dy.last ? '<div class="muted">' + esc(dy.last.date) + (dy.wroteToday ? ' · wrote today ✓' : '') + '</div><div class="resp" style="margin-top:6px">' + esc(dy.last.text) + '</div>' : '<div class="muted">No entries yet.</div>';
   h += '</div><div class="card"><div class="head"><h3>Package & payment</h3>' +
-    (s.pay_check_at ? '<span class="pill late">Says she paid — to check</span>' : '') + '</div>';
-  h += '<div class="muted">Package: ' + (K.size || "—") + ' lessons from ' + esc(K.start || "—") + (K.paid ? ' · paid ' + esc(K.paid) : '') + '</div>';
-  h += '<div class="links" style="align-items:center"><label class="muted">Next payment <input type="date" data-np="' + s.id + '" value="' + esc(P.nextPayment || "") + '"></label>' +
-       '<button data-save-np="' + s.id + '">Save</button>' + (s.pay_check_at ? '<button data-confirm="' + s.id + '">Payment received ✓</button>' : '') + '</div>';
-  h += '<div class="links"><button data-test="' + s.id + '">Send me test reminders</button>' + (P.remindersOff ? '<span class="pill late">Reminders off</span>' : '') + '</div>';
+    (s.pay_check_at ? '<span class="pill late">Says she paid — check</span>' : K.paid ? '<span class="pill done">Paid ✓</span>' : '<span class="pill late">Not paid yet</span>') + '</div>';
+  h += '<div class="muted">' + (K.size || "—") + ' lessons from ' + esc(K.start || "—") + (K.paid ? ' · paid ' + esc(K.paid) : '') + '</div>';
+  if (s.pay_check_at) h += '<div class="links"><button data-markpaid="' + s.id + '">✓ Confirm payment received</button></div><div class="hint">She tapped “I’ve paid”. Check Stripe, then confirm.</div>';
+  else if (!K.paid) h += '<div class="links"><button data-markpaid="' + s.id + '">✓ Mark as paid</button></div><div class="hint">Use when the money has arrived. Payment reminders stop.</div>';
+  h += '<div class="links" style="align-items:center;margin-top:12px"><label class="muted">Next payment <input type="date" data-np="' + s.id + '" value="' + esc(P.nextPayment || "") + '"></label>' +
+       '<button data-save-np="' + s.id + '">Save date</button></div><div class="hint">She gets payment reminders 2 days before, on the day, and on lesson days while it’s unpaid.</div>';
+  h += '</div><div class="card"><div class="head"><h3>Reminders</h3><span class="pill' + (P.remindersOff ? ' late">Off' : ' done">On') + '</span></div>';
+  h += '<div class="links"><button data-remind="' + s.id + '" data-off="' + (P.remindersOff ? '0' : '1') + '">' + (P.remindersOff ? 'Turn reminders on' : 'Pause reminders') + '</button>' +
+       '<button data-test="' + s.id + '">Show me her reminders</button></div>' +
+       '<div class="hint">Pause when she’s on holiday. “Show me her reminders” sends you a copy of each message she would get, so you can check the wording.</div>';
   return h + '</div>';
 }
 function post(body){ return fetch(API + "/teacher", {method: "POST", headers: {"x-auth": AUTH, "content-type": "application/json"}, body: JSON.stringify(body)}).then(function(r){ if (!r.ok) throw r.status; }); }
 function wireActions(){
   document.querySelectorAll("[data-save-np]").forEach(function(b){ b.onclick = function(){
     var id = b.dataset.saveNp, v = document.querySelector('[data-np="' + id + '"]').value || null;
-    post({student_id: id, action: "profile", patch: {nextPayment: v}}).then(function(){ b.textContent = "Saved ✓"; }).catch(function(){ b.textContent = "Error"; }); }; });
-  document.querySelectorAll("[data-confirm]").forEach(function(b){ b.onclick = function(){
-    post({student_id: b.dataset.confirm, action: "confirm-paid"}).then(function(){ b.textContent = "Confirmed ✓"; b.disabled = true; }); }; });
+    post({student_id: id, action: "profile", patch: {nextPayment: v}}).then(function(){ b.textContent = "Saved ✓"; setTimeout(load, 600); }).catch(function(){ b.textContent = "Error"; }); }; });
+  document.querySelectorAll("[data-markpaid]").forEach(function(b){ b.onclick = function(){
+    b.disabled = true; post({student_id: b.dataset.markpaid, action: "mark-paid"}).then(load).catch(function(){ b.disabled = false; b.textContent = "Error — try again"; }); }; });
+  document.querySelectorAll("[data-remind]").forEach(function(b){ b.onclick = function(){
+    b.disabled = true; post({student_id: b.dataset.remind, action: "profile", patch: {remindersOff: b.dataset.off === "1"}}).then(load).catch(function(){ b.disabled = false; }); }; });
   document.querySelectorAll("[data-test]").forEach(function(b){ b.onclick = function(){
     b.textContent = "Sending…";
     fetch(API + "/test-reminders?student=" + b.dataset.test, {headers: {"x-auth": AUTH}}).then(function(r){ return r.json(); })
-      .then(function(j){ b.textContent = j.sent ? "Sent " + j.sent.length + " to your Telegram ✓" : "Error: " + (j.error || ""); })
+      .then(function(j){ b.textContent = j.sent ? "Sent to your Telegram ✓" : "Error: " + (j.error || ""); })
       .catch(function(){ b.textContent = "Error"; }); }; });
 }
 
@@ -136,8 +144,9 @@ function render(d){
 }
 
 if (!AUTH) document.getElementById("app").innerHTML = '<p>Open this from the bot, or with your private teacher link.</p>';
-else fetch(API + "/teacher", {headers: {"x-auth": AUTH}}).then(function(r){ if (!r.ok) throw r.status; return r.json(); }).then(render)
-  .catch(function(e){ document.getElementById("app").innerHTML = '<p>' + (e === 401 ? "Not authorised." : "Couldn't load — try again.") + '</p>'; });
+else load();
+function load(){ return fetch(API + "/teacher", {headers: {"x-auth": AUTH}}).then(function(r){ if (!r.ok) throw r.status; return r.json(); }).then(render)
+  .catch(function(e){ document.getElementById("app").innerHTML = '<p>' + (e === 401 ? "Not authorised." : "Couldn't load — try again.") + '</p>'; }); }
 </script>
 </body>
 </html>
