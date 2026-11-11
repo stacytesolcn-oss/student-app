@@ -418,7 +418,7 @@ async function morningCards(s: any, st: Record<string, any>): Promise<Msg> {
 async function evening(s: any, st: Record<string, any>): Promise<Msg> {
   const c = cardCounts(s, st), d = diarySummary(s, st), date = tzParts(tzOf(s)).date;
   const cardsLeft = c.done === 0 && c.todayCount > 0;
-  const diary = !d.wroteToday;
+  const diary = !(s.profile || {}).noDiary && !d.wroteToday; // noDiary: diary isn't part of this student's homework
   let text: string;
   if (cardsLeft && diary) text = `Good evening, ${s.name}! 🌙 Two small things before bed: ${c.todayCount} cards are waiting, and your diary — how was your day? A couple of sentences is perfect ✍️`;
   else if (cardsLeft) text = `Good evening, ${s.name}! 🌙 ${c.todayCount} cards are still waiting for you today. It only takes a few minutes.`;
@@ -558,7 +558,7 @@ async function markPaid(s: any) {
   withAutoPayment(P);
   await db.from("students").update({ profile: P, pay_check_at: new Date().toISOString() }).eq("id", s.id);
   const t = (await cfg()).TEACHER_TG_ID;
-  if (t) await tg("sendMessage", { chat_id: t, text: `💳 ${s.name} says she has paid — please check the payment.`,
+  if (t) await tg("sendMessage", { chat_id: t, text: `💳 ${s.name} tapped "I've paid" — please check the payment.`,
     reply_markup: await openButton("Open teacher view", "/teacher.html") });
   return P;
 }

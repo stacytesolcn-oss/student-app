@@ -4,15 +4,26 @@ import sys
 src, out = sys.argv[1], sys.argv[2]
 s = open(src, encoding="utf-8").read()
 
-def rep(old, new, count=1):
+def rep(old, new, count=1, optional=False):
     global s
     n = s.count(old)
     if n != count:
+        if optional and n == 0:
+            print("skip (not in this page):", old[:60].replace("\n", " ")); return
         raise SystemExit(f"patch point found {n}x (expected {count}): {old[:70]!r}")
     s = s.replace(old, new)
 
+# 0) older page template (Michael, Oct 2026): package {name,total,start,skip} -> pack {size,start,paid,skip,add}
+if "const K = P.package, used" in s:
+    rep("  return Math.min(K.total, n);", "  return Math.min(K.size, n);")
+    rep("const K = P.package, used = K ? packUsed(K) : 0, left = K ? K.total - used : 0;",
+        "const K = P.pack, used = K ? packUsed(K) : 0, left = K ? K.size - used : 0;")
+    rep("<b>'+esc(K.name)+'</b>", "<b>'+(K.paid ? 'Оплачен пакет: ' : 'Пакет: ')+K.size+' уроков</b>")
+    rep("' из '+K.total+' уроков прошло\">'+Array.from({length:K.total}", "' из '+K.size+' уроков прошло\">'+Array.from({length:K.size}")
+
 # 1) profile comes from the database (Stacy/Claude edit it there, no redeploy)
-rep("  homework: []\n};", "  homework: []\n};\ntry{ Object.assign(PROFILE, window.__PROFILE || {}); }catch(e){}")
+_a = s.index("const PROFILE = {"); _b = s.index("\n};", _a) + 3
+s = s[:_b] + "\ntry{ Object.assign(PROFILE, window.__PROFILE || {}); }catch(e){}" + s[_b:]
 # 2) card progress: server first, then this phone; every save also goes to the server
 rep('try{ const raw = JSON.parse(localStorage.getItem(KEY)||"null"); if(raw && raw.s) store = Object.assign(store, raw); }catch(e){}',
     'try{ const raw = (window.__STATE && window.__STATE.cards) || JSON.parse(localStorage.getItem(KEY)||"null"); if(raw && raw.s) store = Object.assign(store, raw); }catch(e){}')
@@ -27,7 +38,7 @@ rep('function dsave(){ try{ localStorage.setItem(DK, JSON.stringify(D)); }catch(
 rep('  $("schedPh").hidden = true; $("zoomLink2").href = P.zoom || "#"; $("zoomLink2").hidden = !P.zoom;',
     '  $("schedPh").hidden = true; $("zoomLink2").href = P.zoom || "#"; $("zoomLink2").hidden = !P.zoom;\n  try{ window.__payUI && __payUI(P); }catch(e){}')
 # 4b) only call the package "paid" when it is
-rep("<b>Оплачен пакет: '+K.size+' уроков</b>'", "<b>'+(K.paid ? 'Оплачен пакет: ' : 'Пакет: ')+K.size+' уроков</b>'")
+rep("<b>Оплачен пакет: '+K.size+' уроков</b>'", "<b>'+(K.paid ? 'Оплачен пакет: ' : 'Пакет: ')+K.size+' уроков</b>'", optional=True)
 # 4c) Progress tab: look back at past weeks + week summary
 rep("function renderProgress(){\n  const t = today(), wd = (new Date(t*DAY).getUTCDay()+6)%7, mon = t - wd;",
     "var progWeek = 0;\nfunction renderProgress(){\n  const t = today(), wd = (new Date(t*DAY).getUTCDay()+6)%7, mon = t - wd - 7*progWeek;")
@@ -39,7 +50,7 @@ rep("""Первая запись — сегодня?</p>';\n  }""",
 # 5) page scripts wait for the saved progress to load
 n = s.count("<script>")
 s = s.replace("<script>", '<script type="text/plain" data-boot>')
-if n != 3: raise SystemExit(f"expected 3 page scripts, found {n}")
+if n not in (2, 3): raise SystemExit(f"expected 2-3 page scripts, found {n}")
 
 BOOT = r'''
 <style>
@@ -112,11 +123,11 @@ html,body{overflow-x:clip}
         row.innerHTML = '<span class="paydone">Оплата отмечена ✓ Stacy проверит.</span>'; el.appendChild(row); return;
       }
       if (link){ link.textContent = "Оплатить"; link.className = "pr-pay"; row.appendChild(link); }
-      var b = document.createElement("button"); b.type = "button"; b.className = "pr-paid"; b.textContent = "Я оплатила";
+      var b = document.createElement("button"); b.type = "button"; b.className = "pr-paid"; var PAID = P.paidBtn || "Я оплатила"; b.textContent = PAID;
       var armed = false;
       b.onclick = function(){
         if (preview){ b.textContent = "Предпросмотр"; return; }
-        if (!armed){ armed = true; b.textContent = "Подтвердить?"; setTimeout(function(){ armed = false; b.textContent = "Я оплатила"; }, 4000); return; }
+        if (!armed){ armed = true; b.textContent = "Подтвердить?"; setTimeout(function(){ armed = false; b.textContent = PAID; }, 4000); return; }
         b.disabled = true; b.textContent = "…";
         fetch(API + "/paid", { method: "POST", headers: { "x-auth": AUTH } }).then(function(r){ if (!r.ok) throw 0; return r.json(); })
           .then(function(j){ Object.assign(PROFILE, j.profile || {}); try{ renderProfile(); }catch(e){} })
