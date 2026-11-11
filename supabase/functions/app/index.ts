@@ -624,14 +624,13 @@ async function teacherEdit(req: Request) {
   return send(200, { ok: true });
 }
 
-const BOT_DESCRIPTION = `Привет! Это помощник Стейси по английскому 🐈
+// Texts can be overridden in app_config (BOT_DESCRIPTION / BOT_SHORT) without redeploying.
+const BOT_DESCRIPTION = `Твой помощник по английскому от Stacy 🐈
 
-Здесь живёт твоя личная страничка: карточки со словами, дневник, домашка и твой прогресс. Всё в одном месте, ничего не теряется.
+Здесь хранится всё для наших уроков: карточки со словами, дневник, домашка и твой прогресс. Пространство, где легко практиковаться каждый день и видеть, как растёт твой английский.
 
-Бот бережно напоминает про карточки, дневник и уроки, чтобы английский был рядом каждый день, понемногу и без стресса.
-
-Бот для учеников Стейси. Чтобы начать, открой личную ссылку, которую она тебе прислала.`;
-const BOT_SHORT = "Личная страничка по английскому для учеников Стейси: карточки, дневник, домашка и тёплые напоминания.";
+Для учеников Stacy. Чтобы начать, открой свою личную ссылку.`;
+const BOT_SHORT = "Твой помощник по английскому от Stacy: карточки, дневник, домашка и прогресс в одном месте.";
 
 async function setup(req: Request) {
   const c = await cfg();
@@ -645,8 +644,8 @@ async function setup(req: Request) {
   const cmds = await tg("setMyCommands", { commands: [{ command: "start", description: "Open my English" }] });
   if (c.TEACHER_TG_ID) await teacherMenu(c.TEACHER_TG_ID);
   // what people see in an empty chat before Start, and in the bot's profile
-  const desc = await tg("setMyDescription", { description: BOT_DESCRIPTION });
-  const short = await tg("setMyShortDescription", { short_description: BOT_SHORT });
+  const desc = await tg("setMyDescription", { description: c.BOT_DESCRIPTION || BOT_DESCRIPTION });
+  const short = await tg("setMyShortDescription", { short_description: c.BOT_SHORT || BOT_SHORT });
   const me = await tg("getMe", {});
   return send(200, { webhook: hook.ok, menu: menu.ok, commands: cmds.ok, description: desc.ok, short: short.ok, bot: me.result?.username, app: base });
 }
