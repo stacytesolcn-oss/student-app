@@ -65,6 +65,20 @@ function showResp(t, it, r){
 }
 
 
+
+// lessons taught so far in the current package (same rule as her page: weekly schedule from the start date, minus cancelled, plus extra dates)
+function taughtCount(P){
+  var K = P.pack || {}; if (!K.start) return null;
+  var W = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], days = {}, skip = {}, add = {};
+  (P.lessons || []).forEach(function(l){ days[l.day] = 1; });
+  (K.skip || []).concat(P.cancel || []).forEach(function(d){ skip[d] = 1; }); (K.add || []).forEach(function(d){ add[d] = 1; });
+  var today = new Intl.DateTimeFormat("en-CA", {timeZone: P.tzName || "Europe/Moscow"}).format(new Date()), n = 0;
+  for (var t = Date.parse(K.start + "T12:00:00Z"), i = 0; i < 400; i++, t += 864e5){
+    var iso = new Date(t).toISOString().slice(0, 10); if (iso > today) break;
+    if ((days[W[new Date(t).getUTCDay()]] && !skip[iso]) || add[iso]) n++;
+  }
+  return Math.min(n, Number(K.size) || n);
+}
 function studentPanel(s, sm){
   sm = sm || {}; var c = sm.cards || {}, dy = sm.diary || {}, P = s.profile || {}, K = P.pack || {};
   var h = '<div class="card">';
@@ -78,6 +92,8 @@ function studentPanel(s, sm){
   h += dy.last ? '<div class="muted">' + esc(dy.last.date) + (dy.wroteToday ? ' · wrote today ✓' : '') + '</div><div class="resp" style="margin-top:6px">' + esc(dy.last.text) + '</div>' : '<div class="muted">No entries yet.</div>';
   h += '</div><div class="card"><div class="head"><h3>Package & payment</h3>' +
     (s.pay_check_at ? '<span class="pill late">Says she paid — check</span>' : K.paid ? '<span class="pill done">Paid ✓</span>' : '<span class="pill late">Not paid yet</span>') + '</div>';
+  var taught = taughtCount(P);
+  if (taught !== null) h += '<div style="margin:2px 0 6px"><b>' + taught + ' of ' + (K.size || "?") + ' lessons taught</b> <span class="muted">· ' + Math.max(0, (Number(K.size) || 0) - taught) + ' left</span></div>';
   var np = P.nextPayment ? new Date(P.nextPayment + "T12:00:00Z").toLocaleDateString("en-GB", {weekday: "short", day: "numeric", month: "short", timeZone: "UTC"}) : "—";
   h += '<div class="links" style="align-items:center"><label class="muted">Lessons <input type="number" min="1" max="60" class="num" data-size="' + s.id + '" value="' + esc(K.size || "") + '"></label>' +
        '<label class="muted">from <input type="date" data-start="' + s.id + '" value="' + esc(K.start || "") + '"></label>' +
