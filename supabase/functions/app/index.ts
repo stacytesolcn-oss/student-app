@@ -402,30 +402,35 @@ async function loadState(studentId: string) {
 type Msg = { kind: string; key: string; text: string; reply_markup?: unknown } | null;
 const pageButton = async (s: any, text: string, query = "") => ({ inline_keyboard: [[{ text, web_app: { url: (await appUrl()) + "/" + (s.page || "") + query } }]] });
 
-// One practice reminder a day (Nov 11): whatever is still open today — cards, homework (on its mid-week day),
-// pronunciation (on profile.pronDays), diary (unless noDiary). Nothing open → nothing sent.
+// One practice reminder a day, ONE topic per message (Stacy, Nov 11). Priority:
+// homework (on its mid-week day: 1 day after a lesson, 2 if the gap to the next lesson is 4+ days, not when the
+// next lesson is tomorrow — the 18:00 "lesson tomorrow" message carries homework then; only if pending)
+// > pronunciation (profile.pronDays, if not done today) > cards (+ diary for diary students). Nothing open → nothing.
 // Sent at the student's usual practice time (see practiceTime), default 19:00.
-async function practice(s: any, st: Record<string, any>, force = false): Promise<Msg> {
+async function practice(s: any, st: Record<string, any>, force = false, only?: string): Promise<Msg> {
   const c = cardCounts(s, st), d = diarySummary(s, st), now = tzParts(tzOf(s)), P = s.profile || {};
   const act: string[] = ((st.cards || {}).act || {})[c.today] || [];
-  const cards = (c.done === 0 && c.todayCount > 0) || (force && c.todayCount > 0);
   const h = await homeworkPending(s, st);
   const hwDay = h.back > 0 && h.fwd > 1 && h.back === (h.back + h.fwd >= 4 ? 2 : 1);
-  const hw = h.pending && (hwDay || force);
-  const pron = !!P.pronReminder && ((P.pronDays || ["Monday", "Thursday"]).includes(now.weekday) || force) && !act.includes("pron");
-  const diary = !P.noDiary && !d.wroteToday;
-  const lines: string[] = [];
-  if (cards) lines.push(`🃏 ${c.todayCount} cards are waiting`);
-  if (hw) lines.push("📚 your homework — it's all on your page");
-  if (pron) lines.push("🎬 a quick pronunciation round: pick a video, listen and repeat");
-  if (diary) lines.push("✍️ a couple of sentences in your diary about your day");
-  if (!lines.length) return null;
-  const text = lines.length === 1
-    ? `Hi ${s.name}! 👋 Time for a little English practice: ${lines[0].replace(/^\S+ /, "")}. Just a few minutes is enough 🙂`
-    : `Hi ${s.name}! 👋 Time for a little English practice:\n\n${lines.join("\n")}\n\nJust a few minutes is enough 🙂`;
-  const only = lines.length === 1;
-  const btn = only && pron ? ["Practise pronunciation", "?open=pron"] : only && diary ? ["Open my diary", ""] : ["Open my English", ""];
-  return { kind: "practice", key: now.date, text, reply_markup: await pageButton(s, btn[0], btn[1]) };
+  const hw = force ? h.has : h.pending && hwDay;
+  const pron = !!P.pronReminder && (force || ((P.pronDays || ["Sunday"]).includes(now.weekday) && !act.includes("pron")));
+  const cards = force ? c.todayCount > 0 : c.done === 0 && c.todayCount > 0;
+  const diary = !P.noDiary && (force || !d.wroteToday);
+  const topic = only || (hw ? "hw" : pron ? "pron" : (cards || diary) ? "cards" : "");
+  const key = now.date;
+  if (topic === "hw" && hw) return { kind: "practice", key, reply_markup: await pageButton(s, "Open my English"),
+    text: `Hi ${s.name}! 📚 Quick check-in: have you had a chance to do your homework? It's all on your page 🙂` };
+  if (topic === "pron" && pron) return { kind: "practice", key, reply_markup: await pageButton(s, "Practise pronunciation", "?open=pron"),
+    text: `Hi ${s.name}! 🎬 How about a little pronunciation practice today? Pick a video, listen and repeat — a nice way to refresh what we did.` };
+  if (topic === "cards") {
+    if (cards && diary) return { kind: "practice", key, reply_markup: await pageButton(s, "Open my English"),
+      text: `Hi ${s.name}! 🌙 Two small things: ${c.todayCount} cards are waiting, and your diary — how was your day? A couple of sentences is perfect ✍️` };
+    if (cards) return { kind: "practice", key, reply_markup: await pageButton(s, "Practise my cards"),
+      text: `Hi ${s.name}! 🃏 ${c.todayCount} cards are waiting for you today. Just a few minutes is enough 🙂` };
+    if (diary) return { kind: "practice", key, reply_markup: await pageButton(s, "Open my diary"),
+      text: `Hi ${s.name}! ✍️ How was your day? Write a couple of sentences in your diary.` };
+  }
+  return null;
 }
 // Usual practice time = median of the first-practice times of the last 14 recorded days (needs 5+),
 // minus 30 min, kept between 08:00 and 21:00, on a 15-min step. Default 19:00.
@@ -566,7 +571,7 @@ async function testReminders(req: Request) {
     `Hi ${s.name}! 👋 This is your English page: cards, diary and homework. I'll send you friendly reminders about your cards, diary, lessons and payments.`;
   const prevUrl = `${await appUrl()}/${s.page || ""}?preview=1&k=${s.access_key}`;
   const msgs: Msg[] = [{ kind: "welcome", key: "test", text: welcome, reply_markup: { inline_keyboard: [[{ text: "Open my English", web_app: { url: prevUrl } }]] } },
-    await practice(s, st, true), await lessonTomorrow(s, true, st), await lessonSoon(s, true), await paymentDue(s, true), ...(await homeworkDue(s))];
+    await practice(s, st, true, "cards"), await practice(s, st, true, "hw"), await practice(s, st, true, "pron"), await lessonTomorrow(s, true, st), await lessonSoon(s, true), await paymentDue(s, true), ...(await homeworkDue(s))];
   const pt = practiceTime(st);
   const labels: string[] = [];
   for (const m of msgs) {
