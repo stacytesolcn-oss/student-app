@@ -77,8 +77,8 @@ function studentPanel(s, sm){
   h += '</div><div class="card"><div class="head"><h3>Package & payment</h3>' +
     (s.pay_check_at ? '<span class="pill late">Says she paid — check</span>' : K.paid ? '<span class="pill done">Paid ✓</span>' : '<span class="pill late">Not paid yet</span>') + '</div>';
   h += '<div class="muted">' + (K.size || "—") + ' lessons from ' + esc(K.start || "—") + (K.paid ? ' · paid ' + esc(K.paid) : '') + '</div>';
-  if (s.pay_check_at) h += '<div class="links"><button data-markpaid="' + s.id + '">✓ Confirm payment received</button></div><div class="hint">She tapped “I’ve paid”. Check Stripe, then confirm.</div>';
-  else if (!K.paid) h += '<div class="links"><button data-markpaid="' + s.id + '">✓ Mark as paid</button></div><div class="hint">Use when the money has arrived. Payment reminders stop.</div>';
+  h += '<div class="links"><button data-markpaid="' + s.id + '">✓ Payment received</button></div><div class="hint">' +
+    (s.pay_check_at ? 'She tapped “I’ve paid”. Check Stripe, then tap this.' : K.paid ? 'Tap when her next payment arrives — a new package starts that day.' : 'Tap when the money arrives — reminders stop.') + '</div>';
   h += '<div class="links" style="align-items:center;margin-top:12px"><label class="muted">Next payment <input type="date" data-np="' + s.id + '" value="' + esc(P.nextPayment || "") + '"></label>' +
        '<button data-save-np="' + s.id + '">Save date</button></div><div class="hint">She gets payment reminders 2 days before, on the day, and on lesson days while it’s unpaid.</div>';
   h += '</div><div class="card"><div class="head"><h3>Reminders</h3><span class="pill' + (P.remindersOff ? ' late">Off' : ' done">On') + '</span></div>';

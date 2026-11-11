@@ -556,10 +556,18 @@ async function teacherEdit(req: Request) {
   if (!s) return send(404, { error: "student" });
   if (action === "confirm-paid") await db.from("students").update({ pay_check_at: null }).eq("id", s.id);
   if (action === "mark-paid") {
-    // Stacy confirms the current package is paid (whether or not the student tapped "I've paid")
-    const P = { ...(s.profile || {}) }, today = tzParts(tzOf(s)).date;
-    P.pack = { ...(P.pack || { size: 8 }), paid: today };
-    P.paidClaimed = today;
+    // One "Payment received" button for Stacy:
+    // - she tapped "I've paid" already → that already updated her package; just confirm
+    // - current package unpaid → it's now paid
+    // - current package already paid → this payment starts a new package today
+    const { data: full } = await db.from("students").select("id,profile,pay_check_at,tz").eq("id", s.id).maybeSingle();
+    const P = { ...((full || s).profile || {}) }, today = tzParts(tzOf(full || s)).date;
+    if (!full?.pay_check_at) {
+      const old = P.pack || { size: 8 };
+      if (P.pack && !P.pack.paid) P.pack = { ...P.pack, paid: today };
+      else { P.prevPacks = [...(P.prevPacks || []), old].slice(-6); P.pack = { size: old.size || 8, start: today, paid: today, skip: [], add: [] }; }
+      P.paidClaimed = today;
+    }
     await db.from("students").update({ profile: P, pay_check_at: null }).eq("id", s.id);
   }
   if (action === "profile" && patch && typeof patch === "object") {
