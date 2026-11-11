@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Teacher view</title>
+<style>
+@font-face{font-family:"Bricolage";src:url(/fonts/bricolage-grotesque-latin-700-normal.woff2) format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Karla";src:url(/fonts/karla-latin-400-normal.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Karla";src:url(/fonts/karla-latin-600-normal.woff2) format("woff2");font-weight:600;font-display:swap}
+:root{--ivory:#F6F1E7;--java:#231815;--choc:#643A24;--butter:#F4DC96;--powder:#C1DBE8;--sand:#CCBB9F;--sandl:#EDE4D4;--sceptre:#4D0E12;--pink:#F1DEDA;--ok:#2F6B3A;--okbg:#DCEBD8}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ivory);color:var(--java);font:400 16px/1.5 Karla,system-ui,sans-serif}
+main{max-width:860px;margin:0 auto;padding:max(18px,env(safe-area-inset-top)) 16px 40px}
+h1,h2,h3{font-family:Bricolage,Karla,sans-serif;font-weight:700;margin:0}
+h1{font-size:26px} h2{font-size:21px;margin:28px 0 8px} h3{font-size:17px}
+.card{background:#fff;border:1px solid var(--sandl);border-radius:16px;padding:14px;margin:10px 0}
+.muted{color:var(--choc);opacity:.85;font-size:14px}
+.pill{font:600 12px Karla;padding:3px 9px;border-radius:99px;background:var(--powder);white-space:nowrap}
+.pill.done{background:var(--okbg);color:var(--ok)} .pill.draft{background:var(--sandl)} .pill.late{background:var(--pink);color:var(--sceptre)}
+.head{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+details summary{cursor:pointer;list-style:none} details summary::-webkit-details-marker{display:none}
+table{width:100%;border-collapse:collapse;font-size:15px;margin-top:8px}
+td{padding:6px 4px;border-top:1px solid var(--sandl);vertical-align:top}
+td.m{width:28px;text-align:center}
+.ok{color:var(--ok);font-weight:600} .no{color:var(--sceptre);font-weight:600}
+.resp{white-space:pre-wrap}
+button{font:600 14px Karla;border:0;border-radius:10px;padding:7px 11px;background:var(--sandl);color:var(--java);cursor:pointer}
+.links{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+</style>
+</head>
+<body>
+<main id="app"><p class="muted">Loading…</p></main>
+<script>
+function tgPost(type){ try{ if (window.TelegramWebviewProxy) TelegramWebviewProxy.postEvent(type, "{}"); }catch(e){} }
+var AUTH = null;
+(function(){
+  var h = new URLSearchParams(location.hash.slice(1)), init = h.get("tgWebAppData"), k = h.get("k");
+  if (init){ AUTH = "tg " + init; return; }
+  if (k){ try{ localStorage.setItem("teacherKey", k); }catch(e){} history.replaceState(null, "", location.pathname); AUTH = "key " + k; return; }
+  try{ var s = localStorage.getItem("teacherKey"); if (s) AUTH = "key " + s; }catch(e){}
+})();
+tgPost("web_app_ready"); tgPost("web_app_expand");
+var esc = function(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); };
+var when = function(t){ return t ? new Date(t).toLocaleString("en-GB", {weekday:"short", day:"numeric", month:"short", hour:"2-digit", minute:"2-digit"}) : ""; };
+function copy(text, b){ (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).catch(function(){}); var o = b.textContent; b.textContent = "Copied ✓"; setTimeout(function(){ b.textContent = o; }, 1500); }
+
+function itemText(t, it){
+  if (t.type === "gap") return it.text;
+  if (t.type === "choice") return (it.text ? it.text + " — " : "") + it.options.map(function(o, i){ return i === it.answer ? "[" + o + "]" : o; }).join(" / ");
+  if (t.type === "order") return "→ " + [].concat(it.answer)[0];
+  if (t.type === "write") return it.stem;
+  if (t.type === "voice") return it.prompt;
+  return "";
+}
+function showResp(t, it, r){
+  if (t.type === "choice") return it.options[Number(r)];
+  return Array.isArray(r) ? r.join(" / ") : r;
+}
+
+function render(d){
+  var today = new Date().toISOString().slice(0, 10);
+  var html = '<h1>Students</h1>';
+  d.students.forEach(function(s){
+    var hws = d.homework.filter(function(h){ return h.student_id === s.id; });
+    html += '<h2>' + esc(s.name) + '</h2><div class="muted">' + (s.tg_user_id ? "Telegram linked ✓" : "Telegram not linked yet") + ' · ' + esc(s.tz) + '</div>' +
+      '<div class="links">' + (s.telegramLink ? '<button data-copy="' + esc(s.telegramLink) + '">Copy Telegram link</button>' : '') +
+      '<button data-copy="' + esc(s.link) + '">Copy web link</button></div>';
+    if (!hws.length) html += '<div class="card muted">No homework yet.</div>';
+    hws.forEach(function(h){
+      var ans = d.answers.filter(function(a){ return a.homework_id === h.id; });
+      var pill = !h.published ? '<span class="pill draft">Draft</span>' : h.completed_at ? '<span class="pill done">Done ' + esc(when(h.completed_at)) + '</span>'
+        : h.started_at ? '<span class="pill">Started ' + esc(when(h.started_at)) + '</span>'
+        : '<span class="pill' + (h.due && h.due < today ? ' late' : '') + '">Not started' + (h.due ? " · due " + esc(h.due) : "") + '</span>';
+      var firstWrong = 0, attempted = 0;
+      html += '<details class="card"' + (h.completed_at && !h._seen ? ' open' : '') + '><summary><div class="head"><h3>' + esc(h.title) + '</h3>' + pill + '</div>';
+      var body = '';
+      (h.tasks || []).forEach(function(t){
+        body += '<div style="margin-top:12px;font-weight:600">' + esc(t.title || t.type) + '</div><table>';
+        (t.items || []).forEach(function(it){
+          var a = ans.filter(function(x){ return x.task_id === t.id && x.item_id === it.id; });
+          if (a.length){ attempted++; if (a[0].correct === false) firstWrong++; }
+          var cells = a.length ? a.map(function(x){
+            var mark = x.correct === true ? '<span class="ok">✓</span>' : x.correct === false ? '<span class="no">✗</span>' : '';
+            return mark + ' <span class="resp">' + esc(showResp(t, it, x.response)) + '</span>';
+          }).join("<br>") : '<span class="muted">—</span>';
+          body += '<tr><td style="width:45%">' + esc(itemText(t, it)) + '</td><td>' + cells + '</td></tr>';
+        });
+        body += '</table>';
+      });
+      html += '<div class="muted">' + attempted + ' items answered · ' + firstWrong + ' wrong on first try</div></summary>' + body + '</details>';
+    });
+  });
+  document.getElementById("app").innerHTML = html;
+  document.querySelectorAll("[data-copy]").forEach(function(b){ b.onclick = function(){ copy(b.dataset.copy, b); }; });
+}
+
+if (!AUTH) document.getElementById("app").innerHTML = '<p>Open this from the bot, or with your private teacher link.</p>';
+else fetch("/api/teacher", {headers: {"x-auth": AUTH}}).then(function(r){ if (!r.ok) throw r.status; return r.json(); }).then(render)
+  .catch(function(e){ document.getElementById("app").innerHTML = '<p>' + (e === 401 ? "Not authorised." : "Couldn't load — try again.") + '</p>'; });
+</script>
+</body>
+</html>

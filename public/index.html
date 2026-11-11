@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#F6F1E7">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="My English">
+<title>My English</title>
+<style>
+@font-face{font-family:"Bricolage";src:url(/fonts/bricolage-grotesque-latin-600-normal.woff2) format("woff2");font-weight:600;font-display:swap}
+@font-face{font-family:"Bricolage";src:url(/fonts/bricolage-grotesque-latin-700-normal.woff2) format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Karla";src:url(/fonts/karla-latin-400-normal.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Karla";src:url(/fonts/karla-latin-600-normal.woff2) format("woff2");font-weight:600;font-display:swap}
+:root{--ivory:#F6F1E7;--java:#231815;--choc:#643A24;--butter:#F4DC96;--powder:#C1DBE8;--sand:#CCBB9F;--sandl:#EDE4D4;--sceptre:#4D0E12;--pink:#F1DEDA;--ok:#2F6B3A;--okbg:#DCEBD8}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--ivory);color:var(--java);font:400 17px/1.5 Karla,system-ui,sans-serif}
+main{max-width:560px;margin:0 auto;padding:max(18px,env(safe-area-inset-top)) 16px calc(40px + env(safe-area-inset-bottom))}
+h1,h2,h3{font-family:Bricolage,Karla,sans-serif;font-weight:700;letter-spacing:-.01em;margin:0}
+h1{font-size:28px;line-height:1.15}
+h2{font-size:21px;margin:26px 0 10px}
+h3{font-size:18px}
+.muted{color:var(--choc);opacity:.85}
+.card{background:#fff;border:1px solid var(--sandl);border-radius:18px;padding:16px;margin:12px 0}
+.focus{background:var(--butter);border:0}
+.focus .lbl{font:600 13px Karla;text-transform:uppercase;letter-spacing:.06em;color:var(--sceptre)}
+.hw{display:flex;align-items:center;gap:12px;width:100%;text-align:left;cursor:pointer;font:inherit;color:inherit}
+.hw .t{flex:1}
+.pill{font:600 13px Karla;padding:4px 10px;border-radius:99px;background:var(--powder);white-space:nowrap}
+.pill.done{background:var(--okbg);color:var(--ok)}
+.pill.late{background:var(--pink);color:var(--sceptre)}
+button{font:600 16px Karla;border:0;border-radius:14px;padding:12px 16px;min-height:46px;cursor:pointer}
+.btn{background:var(--java);color:var(--ivory)}
+.btn:disabled{opacity:.35}
+.finish .btn:disabled{opacity:1;background:var(--sandl);color:var(--choc);box-shadow:0 4px 14px rgba(35,24,21,.08)}
+.opt:disabled,.gap:disabled,textarea:disabled{color:var(--java);opacity:1;-webkit-text-fill-color:var(--java)}
+.btn2{background:var(--sandl);color:var(--java)}
+.back{background:none;padding:6px 0;min-height:auto;color:var(--choc)}
+.task{margin:22px 0}
+.task .ins{margin:4px 0 10px;color:var(--choc)}
+.item{background:#fff;border:1px solid var(--sandl);border-radius:16px;padding:14px;margin:10px 0}
+.item.ok{border-color:#A9CBA3;background:#F4FAF2}
+.item.no{border-color:#E3B7B0}
+.line{line-height:2.1}
+.gap{font:600 17px Karla;width:7.5em;max-width:60vw;border:0;border-bottom:2px solid var(--sand);background:var(--ivory);border-radius:6px 6px 0 0;padding:2px 6px;color:var(--java)}
+.gap:focus{outline:none;border-bottom-color:var(--java)}
+.opts{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.opt{background:var(--ivory);border:1.5px solid var(--sandl);text-align:left;font-weight:400}
+.opt.sel-ok{background:var(--okbg);border-color:#A9CBA3}
+.opt.sel-no{background:var(--pink);border-color:#E3B7B0}
+.tiles{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;min-height:46px}
+.tile{background:var(--powder);font-weight:600;padding:9px 13px;min-height:42px;border-radius:12px}
+.built{border:1.5px dashed var(--sand);border-radius:12px;padding:6px;min-height:58px}
+.built .tile{background:var(--butter)}
+textarea{width:100%;min-height:96px;font:400 17px/1.45 Karla;border:1.5px solid var(--sandl);border-radius:12px;padding:10px;background:var(--ivory);color:var(--java);resize:vertical}
+textarea:focus{outline:none;border-color:var(--sand)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.fb{font-weight:600;margin-top:8px}
+.fb.ok{color:var(--ok)} .fb.no{color:var(--sceptre)}
+.stem{font-weight:600;margin-bottom:6px}
+.note{background:var(--powder);border-radius:12px;padding:10px 12px;margin:8px 0;font-size:15px}
+.finish{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom));margin-top:24px}
+.finish .btn{width:100%;box-shadow:0 6px 20px rgba(35,24,21,.18)}
+.center{text-align:center;padding:40px 10px}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(120px);background:var(--java);color:var(--ivory);padding:10px 16px;border-radius:12px;transition:transform .25s;z-index:9;font-weight:600}
+.toast.on{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<main id="app"><div class="center muted">Loading…</div></main>
+<div class="toast" id="toast"></div>
+<script>
+/* ---------- Telegram bridge (no external script: telegram.org may be blocked) ---------- */
+function tgPost(type, data){
+  try{
+    var d = JSON.stringify(data || {});
+    if (window.TelegramWebviewProxy && TelegramWebviewProxy.postEvent) TelegramWebviewProxy.postEvent(type, d);
+    else if (window.parent && window.parent !== window) window.parent.postMessage(JSON.stringify({eventType:type, eventData:data||{}}), "*");
+  }catch(e){}
+}
+
+/* ---------- who am I ---------- */
+var AUTH = null;
+(function(){
+  var h = new URLSearchParams(location.hash.slice(1));
+  var init = h.get("tgWebAppData");
+  if (init){ try{ sessionStorage.setItem("tgInit", init); }catch(e){} AUTH = "tg " + init; return; }
+  try{ var s = sessionStorage.getItem("tgInit"); if (s){ AUTH = "tg " + s; return; } }catch(e){}
+  var k = h.get("k");
+  if (k){ try{ localStorage.setItem("myKey", k); }catch(e){} AUTH = "key " + k; return; }
+  try{ var saved = localStorage.getItem("myKey"); if (saved) AUTH = "key " + saved; }catch(e){}
+})();
+tgPost("web_app_ready"); tgPost("web_app_expand");
+
+/* ---------- helpers ---------- */
+var $ = function(s, r){ return (r||document).querySelector(s); };
+var esc = function(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); };
+function api(path, body){
+  return fetch(path, { method: body ? "POST" : "GET",
+    headers: Object.assign({"x-auth": AUTH || ""}, body ? {"content-type":"application/json"} : {}),
+    body: body ? JSON.stringify(body) : undefined }).then(function(r){
+      if (r.status === 401) throw new Error("auth");
+      if (!r.ok) throw new Error("net");
+      return r.json();
+    });
+}
+var toastT;
+function toast(msg){ var t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toastT); toastT = setTimeout(function(){ t.classList.remove("on"); }, 2200); }
+function copy(text){
+  function fallback(){ var ta = document.createElement("textarea"); ta.value = text; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); try{ document.execCommand("copy"); }catch(e){} ta.remove(); }
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).catch(fallback); else fallback();
+  toast("Copied! Paste it in your chat with Stacy.");
+}
+function fmtDate(d){ if(!d) return ""; var x = new Date(d + "T12:00:00"); return x.toLocaleDateString("en-GB", {weekday:"short", day:"numeric", month:"short"}); }
+function todayStr(tz){ return new Intl.DateTimeFormat("en-CA", {timeZone: tz || undefined}).format(new Date()); }
+
+var DATA = null, OPEN = null;
+
+function load(){
+  if (!AUTH){ $("#app").innerHTML = '<div class="center"><h1>Hi! 👋</h1><p class="muted">Please open this page from the personal link Stacy sent you.</p></div>'; return; }
+  api("/api/me").then(function(d){ DATA = d; OPEN ? renderHw(OPEN) : renderHome(); })
+  .catch(function(e){
+    $("#app").innerHTML = e.message === "auth"
+      ? '<div class="center"><h1>Hi! 👋</h1><p class="muted">I don\'t recognise this link. Please ask Stacy for your personal link.</p></div>'
+      : '<div class="center"><h1>Oops</h1><p class="muted">No connection right now. Please try again in a minute.</p><button class="btn" onclick="load()">Try again</button></div>';
+  });
+}
+
+/* ---------- home ---------- */
+function renderHome(){
+  OPEN = null;
+  var d = DATA, today = todayStr(d.tz);
+  var todo = d.homework.filter(function(h){ return !h.done; }), done = d.homework.filter(function(h){ return h.done; });
+  var html = '<h1>Hi, ' + esc(d.name) + '!</h1>';
+  if (d.focus) html += '<div class="card focus"><div class="lbl">Focus of the week</div><div style="margin-top:6px;white-space:pre-line">' + esc(d.focus) + '</div></div>';
+  html += '<h2>Homework</h2>';
+  if (!d.homework.length) html += '<div class="card muted">No homework right now. Enjoy your week! ☕</div>';
+  todo.concat(done).forEach(function(h){
+    var pill = h.done ? '<span class="pill done">Done ✓</span>'
+      : h.due ? '<span class="pill' + (h.due < today ? ' late' : '') + '">' + (h.due === today ? "Today" : "Due " + esc(fmtDate(h.due))) + '</span>' : "";
+    html += '<button class="card hw" data-id="' + h.id + '"><span class="t"><h3>' + esc(h.title) + '</h3>' +
+      (h.intro ? '<span class="muted" style="font-size:15px">' + esc(h.intro).slice(0, 90) + '</span>' : '') + '</span>' + pill + '</button>';
+  });
+  $("#app").innerHTML = html;
+  document.querySelectorAll(".hw").forEach(function(b){ b.onclick = function(){ OPEN = b.dataset.id; renderHw(OPEN); scrollTo(0,0); }; });
+}
+
+/* ---------- one homework ---------- */
+function renderHw(id){
+  var h = DATA.homework.find(function(x){ return x.id === id; });
+  if (!h){ renderHome(); return; }
+  var html = '<button class="back" id="back">← Back</button><h1>' + esc(h.title) + '</h1>';
+  if (h.intro) html += '<p class="muted">' + esc(h.intro) + '</p>';
+  h.tasks.forEach(function(t, ti){
+    html += '<section class="task"><h2 style="margin-top:0">' + (ti+1) + '. ' + esc(t.title || "") + '</h2>' +
+      (t.instructions ? '<div class="ins">' + esc(t.instructions) + '</div>' : '');
+    t.items.forEach(function(it, ii){ html += '<div class="item" id="i-' + t.id + '-' + it.id + '"></div>'; });
+    html += '</section>';
+  });
+  html += '<div class="finish"><button class="btn" id="finish"></button></div>';
+  $("#app").innerHTML = html;
+  $("#back").onclick = function(){ renderHome(); scrollTo(0,0); };
+  h.tasks.forEach(function(t){ t.items.forEach(function(it){ renderItem(h, t, it); }); });
+  updateFinish(h);
+}
+
+function saved(h, t, it){ return h.saved[t.id + "|" + it.id]; }
+
+function updateFinish(h){
+  var b = $("#finish"); if (!b) return;
+  var total = 0, did = 0;
+  h.tasks.forEach(function(t){ t.items.forEach(function(it){ total++; if (saved(h, t, it)) did++; }); });
+  if (h.done){ b.textContent = "Done ✓ — Stacy can see your answers"; b.disabled = true; return; }
+  b.disabled = did < total;
+  b.textContent = did < total ? (did + " of " + total + " done") : "I've finished 🎉";
+  b.onclick = function(){
+    b.disabled = true;
+    api("/api/submit", {homework_id: h.id}).then(function(){ h.done = true; updateFinish(h); toast("Great job! Stacy will see your answers."); })
+      .catch(function(){ b.disabled = false; toast("No connection — try again."); });
+  };
+}
+
+function send(h, t, it, response, el){
+  return api("/api/answer", {homework_id: h.id, task_id: t.id, item_id: it.id, response: response}).then(function(r){
+    h.saved[t.id + "|" + it.id] = {response: response, correct: r.correct, attempt: r.attempt, solution: r.solution};
+    renderItem(h, t, it); updateFinish(h); return r;
+  }).catch(function(){ toast("No connection — your answer wasn't saved. Try again."); });
+}
+
+function feedback(s){
+  if (!s || s.correct === null || s.correct === undefined) return "";
+  if (s.correct) return '<div class="fb ok">✓ Correct</div>';
+  if (s.solution === null || s.solution === undefined) return '<div class="fb no">Not quite — try again.</div>';
+  return null; // caller shows the answer
+}
+
+function renderItem(h, t, it){
+  var el = document.getElementById("i-" + t.id + "-" + it.id); if (!el) return;
+  var s = saved(h, t, it), locked = h.done || (s && (s.correct === true || (s.correct === false && s.solution != null)));
+  el.className = "item" + (s && s.correct === true ? " ok" : s && s.correct === false && locked ? " no" : "");
+
+  if (t.type === "gap"){
+    var parts = String(it.text).split(/_{3,}/), prev = s ? (Array.isArray(s.response) ? s.response : [s.response]) : [];
+    var html = '<div class="line">';
+    parts.forEach(function(p, i){
+      html += esc(p);
+      if (i < parts.length - 1) html += '<input class="gap" autocomplete="off" autocapitalize="off" spellcheck="false" data-i="' + i + '" value="' + esc(prev[i] || "") + '"' + (locked ? " disabled" : "") + '>';
+    });
+    html += '</div>';
+    var fb = feedback(s);
+    if (fb === null) html += '<div class="fb no">Answer: ' + esc([].concat(s.solution).join(" / ")) + '</div>';
+    else html += fb;
+    if (!locked) html += '<div class="row"><button class="btn2" data-act="check">Check</button></div>';
+    el.innerHTML = html;
+    if (!locked){
+      var go = function(){ var v = [].map.call(el.querySelectorAll(".gap"), function(x){ return x.value.trim(); });
+        if (v.some(function(x){ return !x; })) { toast("Fill in the gap first."); return; } send(h, t, it, v.length === 1 ? v[0] : v); };
+      el.querySelector('[data-act="check"]').onclick = go;
+      el.querySelectorAll(".gap").forEach(function(x){ x.onkeydown = function(e){ if (e.key === "Enter"){ e.preventDefault(); go(); } }; });
+    }
+    return;
+  }
+
+  if (t.type === "choice"){
+    var html = '<div>' + esc(it.text || "") + '</div><div class="opts">';
+    it.options.forEach(function(o, i){
+      var cls = "";
+      if (s && Number(s.response) === i) cls = s.correct ? " sel-ok" : " sel-no";
+      if (s && s.solution != null && Number(s.solution) === i) cls = " sel-ok";
+      html += '<button class="opt' + cls + '" data-i="' + i + '"' + (locked ? " disabled" : "") + '>' + esc(o) + '</button>';
+    });
+    html += '</div>';
+    var fb = feedback(s); html += fb === null ? '<div class="fb no">The green one is correct.</div>' : fb;
+    el.innerHTML = html;
+    if (!locked) el.querySelectorAll(".opt").forEach(function(b){ b.onclick = function(){ send(h, t, it, Number(b.dataset.i)); }; });
+    return;
+  }
+
+  if (t.type === "order"){
+    var pool = it.words.slice(), built = [];
+    var draw = function(){
+      var html = (it.hint ? '<div class="muted" style="font-size:15px">' + esc(it.hint) + '</div>' : '') +
+        '<div class="tiles built">' + built.map(function(w, i){ return '<button class="tile" data-b="' + i + '">' + esc(w) + '</button>'; }).join("") + '</div>' +
+        '<div class="tiles">' + pool.map(function(w, i){ return '<button class="tile" data-p="' + i + '">' + esc(w) + '</button>'; }).join("") + '</div>';
+      var fb = feedback(s);
+      html += fb === null ? '<div class="fb no">Answer: ' + esc(s.solution) + '</div>' : fb;
+      html += '<div class="row"><button class="btn2" data-act="check"' + (pool.length ? " disabled" : "") + '>Check</button><button class="back" data-act="reset">Start again</button></div>';
+      el.innerHTML = html;
+      el.querySelectorAll("[data-p]").forEach(function(b){ b.onclick = function(){ built.push(pool.splice(+b.dataset.p, 1)[0]); draw(); }; });
+      el.querySelectorAll("[data-b]").forEach(function(b){ b.onclick = function(){ pool.push(built.splice(+b.dataset.b, 1)[0]); draw(); }; });
+      el.querySelector('[data-act="reset"]').onclick = function(){ pool = it.words.slice(); built = []; draw(); };
+      el.querySelector('[data-act="check"]').onclick = function(){ send(h, t, it, built.join(" ")); };
+    };
+    if (locked){
+      var fb = feedback(s);
+      el.innerHTML = '<div class="tiles built">' + String(s.response).split(" ").map(function(w){ return '<span class="tile">' + esc(w) + '</span>'; }).join("") + '</div>' +
+        (fb === null ? '<div class="fb no">Answer: ' + esc(s.solution) + '</div>' : fb);
+    } else draw();
+    return;
+  }
+
+  if (t.type === "write"){
+    var val = s ? s.response : "";
+    el.innerHTML = '<div class="stem">' + esc(it.stem) + '</div><textarea' + (h.done ? " disabled" : "") + ' placeholder="Write here…">' + esc(val) + '</textarea>' +
+      '<div class="row">' + (h.done ? "" : '<button class="btn2" data-act="save">' + (s ? "Save changes" : "Save") + '</button>') +
+      '<button class="back" data-act="copy">Copy for Telegram</button>' + (s ? '<span class="muted" style="font-size:14px">Saved ✓</span>' : '') + '</div>';
+    var ta = el.querySelector("textarea");
+    var sv = el.querySelector('[data-act="save"]');
+    if (sv) sv.onclick = function(){ var v = ta.value.trim(); if (!v){ toast("Write something first."); return; } send(h, t, it, v).then(function(r){ if (r) toast("Saved!"); }); };
+    el.querySelector('[data-act="copy"]').onclick = function(){ copy(it.stem + " " + ta.value.trim()); };
+    return;
+  }
+
+  if (t.type === "voice"){
+    el.innerHTML = '<div class="stem">' + esc(it.prompt) + '</div>' +
+      '<div class="note">🎙 Send Stacy a voice message in Telegram. Don\'t read it aloud — just talk!</div>' +
+      '<div class="row">' + (s ? '<span class="fb ok">Sent ✓</span>' : '<button class="btn2" data-act="sent">I\'ve sent it</button>') + '</div>';
+    var b = el.querySelector('[data-act="sent"]'); if (b) b.onclick = function(){ send(h, t, it, "sent"); };
+    return;
+  }
+}
+
+load();
+</script>
+</body>
+</html>
