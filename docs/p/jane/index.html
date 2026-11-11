@@ -865,6 +865,11 @@ html,body{overflow-x:clip}
       if (x[1] && el.classList.contains("pkgbar")) return;
       var old = el.querySelector(".payrow"); if (old) old.remove();
       if (!P.nextPayment && !paidNow) return;
+      if (x[1] && P.package){
+        // bold line = the package, small line = the payment date
+        var tb = el.querySelector(".t b"), ts = el.querySelector(".t span");
+        if (tb && ts){ var dateLine = tb.textContent; tb.textContent = P.package; ts.textContent = dateLine; }
+      }
       var link = x[1] ? el.querySelector(":scope > a") : el.querySelector("a.btn");
       var row = document.createElement("div"); row.className = "payrow";
       if (paidNow){
