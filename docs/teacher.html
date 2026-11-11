@@ -31,6 +31,7 @@ button{font:600 14px Karla;border:0;border-radius:10px;padding:7px 11px;backgrou
 .links{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .num{width:64px;font:400 14px Karla;border:1px solid var(--sandl);border-radius:8px;padding:5px 6px;margin-left:6px}
 button.primary{background:var(--java);color:var(--ivory)}
+textarea.note{width:100%;font:400 15px/1.45 Karla;border:1px solid var(--sandl);border-radius:10px;padding:8px 10px;margin-top:8px;resize:vertical;background:#fff;color:var(--java)}
 .hint{font-size:13px;color:var(--choc);opacity:.75;margin-top:4px}
 </style>
 </head>
@@ -90,6 +91,10 @@ function studentPanel(s, sm){
   if (c.struggling && c.struggling.length) h += '<div style="margin-top:6px"><b>Struggling:</b> ' + c.struggling.map(esc).join(", ") + '</div>';
   h += '</div><div class="card"><div class="head"><h3>Diary</h3><span class="pill">' + (dy.entries || 0) + ' entries</span></div>';
   h += dy.last ? '<div class="muted">' + esc(dy.last.date) + (dy.wroteToday ? ' · wrote today ✓' : '') + '</div><div class="resp" style="margin-top:6px">' + esc(dy.last.text) + '</div>' : '<div class="muted">No entries yet.</div>';
+  h += '</div><div class="card"><div class="head"><h3>Focus of the week</h3>' + (P.note ? '<span class="pill done">On her page</span>' : '<span class="pill">Empty</span>') + '</div>' +
+       '<textarea class="note" data-note="' + s.id + '" rows="3" placeholder="What to focus on this week, or a short message for her…">' + esc(P.note || "") + '</textarea>' +
+       '<div class="links"><button data-save-note="' + s.id + '">Save</button>' + (P.note ? '<button data-clear-note="' + s.id + '">Remove</button>' : '') + '</div>' +
+       '<div class="hint">Shows at the top of her page. On your phone, tap the 🎤 on the keyboard to dictate.</div>';
   h += '</div><div class="card"><div class="head"><h3>Package & payment</h3>' +
     (s.pay_check_at ? '<span class="pill late">Says she paid — check</span>' : K.paid ? '<span class="pill done">Paid ✓</span>' : '<span class="pill late">Not paid yet</span>') + '</div>';
   var taught = taughtCount(P);
@@ -120,6 +125,11 @@ function wireActions(){
     var id = b.dataset.savePack; b.disabled = true;
     post({student_id: id, action: "profile", patch: {packSize: Number(document.querySelector('[data-size="' + id + '"]').value) || undefined,
       packStart: document.querySelector('[data-start="' + id + '"]').value || undefined}}).then(load).catch(function(){ b.disabled = false; b.textContent = "Error"; }); }; });
+  document.querySelectorAll("[data-save-note]").forEach(function(b){ b.onclick = function(){
+    var id = b.dataset.saveNote; b.disabled = true;
+    post({student_id: id, action: "profile", patch: {note: document.querySelector('[data-note="' + id + '"]').value.trim()}}).then(load).catch(function(){ b.disabled = false; b.textContent = "Error"; }); }; });
+  document.querySelectorAll("[data-clear-note]").forEach(function(b){ b.onclick = function(){
+    b.disabled = true; post({student_id: b.dataset.clearNote, action: "profile", patch: {note: ""}}).then(load); }; });
   document.querySelectorAll("[data-auto]").forEach(function(b){ b.onclick = function(){
     b.disabled = true; post({student_id: b.dataset.auto, action: "profile", patch: {autoPayment: true}}).then(load); }; });
   document.querySelectorAll("[data-markpaid]").forEach(function(b){ b.onclick = function(){
