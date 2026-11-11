@@ -341,7 +341,16 @@ function cardSummary(s: any, st: Record<string, any>) {
   const struggling = c.words.filter((w) => c.prog[w] && c.prog[w].n >= 2 && (c.prog[w].i || 0) <= 1);
   const days = Object.keys((st.cards || {}).log || {}).map(Number).filter((d) => (st.cards.log[d] || 0) > 0);
   const last = days.length ? Math.max(...days) : null;
-  return { total: c.words.length, learned, dueToday: c.todayCount, doneToday: c.done, struggling,
+  // this week (Mon–today) from the Progress ticks: activity → number of days
+  const act = (st.cards || {}).act || {}, wd = (new Date(c.today * DAY).getUTCDay() + 6) % 7, mon = c.today - wd;
+  const week: Record<string, number> = {};
+  let activeDays = 0;
+  for (let d = mon; d <= c.today; d++) {
+    const l: string[] = act[d] || [];
+    if (l.length) activeDays++;
+    for (const k of l) week[k] = (week[k] || 0) + 1;
+  }
+  return { total: c.words.length, learned, dueToday: c.todayCount, doneToday: c.done, struggling, week, activeDays,
            lastPractice: last === null ? null : new Date(last * DAY).toISOString().slice(0, 10) };
 }
 function diarySummary(s: any, st: Record<string, any>) {

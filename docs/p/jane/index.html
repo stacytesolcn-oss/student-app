@@ -823,6 +823,12 @@ html,body{overflow-x:clip}
 .payrow > a,.payrow > button{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:center;text-align:center;border-radius:999px;padding:12px 10px;font-family:var(--caps);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;text-decoration:none;border:1.5px solid var(--brown);cursor:pointer;line-height:1.2;width:auto}
 .payrow .pr-pay{background:var(--brown);color:var(--on-brown)}
 .payrow .pr-paid{background:transparent;color:var(--brown)}
+.prognav{display:flex;align-items:center;justify-content:space-between;margin:0 0 10px}
+.prognav span{font-weight:600}
+.prognav button{border:1px solid var(--line);background:var(--card);color:inherit;border-radius:999px;width:38px;height:38px;font-size:1.2rem;cursor:pointer}
+.prognav button:disabled{opacity:.3}
+.progsum{margin:10px 0 0;font-size:.9rem;color:var(--muted)}
+.ptoggle{cursor:pointer;user-select:none}
 .payrow .paydone{font-weight:600;font-size:.9rem;color:var(--muted)}
 </style>
 <div class="bootmsg" id="bootmsg">Загружаю…</div>
@@ -890,6 +896,40 @@ html,body{overflow-x:clip}
       };
       row.appendChild(b); el.appendChild(row);
     });
+  };
+
+  // ---- Progress: week navigation + what she did that week ----
+  var MONTHS = ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
+  window.__progWeek = function(mon, t){
+    var days = document.getElementById("days"); if (!days) return;
+    var nav = document.getElementById("progNav");
+    if (!nav){
+      nav = document.createElement("div"); nav.id = "progNav"; nav.className = "prognav";
+      nav.innerHTML = '<button type="button" data-w="1" aria-label="Прошлая неделя">‹</button><span></span><button type="button" data-w="-1" aria-label="Следующая неделя">›</button>';
+      days.parentNode.insertBefore(nav, days);
+      nav.querySelectorAll("button").forEach(function(b){ b.onclick = function(){ progWeek = Math.max(0, progWeek + Number(b.dataset.w)); renderProgress(); }; });
+    }
+    var a = new Date(mon*DAY), b = new Date((mon+6)*DAY);
+    nav.querySelector("span").textContent = progWeek === 0 ? "Эта неделя" :
+      (a.getUTCMonth() === b.getUTCMonth() ? a.getUTCDate() + "–" + b.getUTCDate() + " " + MONTHS[b.getUTCMonth()]
+        : a.getUTCDate() + " " + MONTHS[a.getUTCMonth()] + " – " + b.getUTCDate() + " " + MONTHS[b.getUTCMonth()]);
+    nav.querySelector('[data-w="-1"]').disabled = progWeek === 0;
+    var sum = document.getElementById("progSum");
+    if (!sum){ sum = document.createElement("p"); sum.id = "progSum"; sum.className = "progsum"; days.parentNode.insertBefore(sum, days.nextSibling); }
+    var act = (store && store.act) || {}, parts = [];
+    LOGS.forEach(function(L){ var c = 0; for (var d = mon; d < mon + 7; d++) if ((act[d] || []).indexOf(L[0]) >= 0) c++; if (c) parts.push(L[1] + ": " + c + " дн."); });
+    sum.textContent = parts.length ? parts.join(" · ") : (progWeek === 0 ? "" : "На этой неделе ничего не отмечено");
+    var logs = document.getElementById("logs"); if (logs) logs.style.display = progWeek === 0 ? "" : "none";
+  };
+  // ---- Diary: "My pages" under a toggle ----
+  var pagesOpen = false;
+  window.__pagesToggle = function(n){
+    var list = document.getElementById("dPages"); if (!list) return;
+    var h = list.previousElementSibling; if (!h || h.tagName !== "H3") return;
+    h.classList.add("ptoggle"); h.setAttribute("role", "button"); h.setAttribute("aria-expanded", String(pagesOpen));
+    h.textContent = "My pages" + (n ? " (" + n + ")" : "") + (pagesOpen ? " ▴" : " ▾");
+    list.hidden = !pagesOpen;
+    h.onclick = function(){ pagesOpen = !pagesOpen; window.__pagesToggle(n); };
   };
 
   function note(t){ var n = document.createElement("div"); n.className = "syncnote"; n.textContent = t; document.body.appendChild(n); }
@@ -1308,14 +1348,16 @@ function renderHomework(){
     if(hwDone(id) && (PROFILE.homework||[]).every(h=>hwDone(h.id))) peek(); }));
 }
 const LOGS = [["cards","Карточки"],["watch","Смотрела что-то"],["listen","Слушала что-то"],["read","Читала что-то"],["speak","Говорила по-английски"],["write","Писала по-английски"],["homework","Сделала домашку"]];
+var progWeek = 0;
 function renderProgress(){
-  const t = today(), wd = (new Date(t*DAY).getUTCDay()+6)%7, mon = t - wd;
+  const t = today(), wd = (new Date(t*DAY).getUTCDay()+6)%7, mon = t - wd - 7*progWeek;
   let n = 0;
   $("days").innerHTML = ["Пн","Вт","Ср","Чт","Пт","Сб","Вс"].map((L,i)=>{
     const d = mon+i, on = ((store.act||{})[d]||[]).length>0; if(on) n++;
     return '<div class="day'+(on?' on':'')+(d===t?' now':'')+'"><i>'+(on?'✓':'')+'</i>'+L+'</div>';
   }).join("");
   $("tcount").textContent = n+" из 7 дней";
+  try{ window.__progWeek && __progWeek(mon, t); }catch(e){}
   $("logs").innerHTML = LOGS.map(([k,l])=>'<button class="log" data-log="'+k+'" aria-pressed="'+didToday(k)+'">'+(didToday(k)?'✓ ':'')+esc(l)+'</button>').join("");
   document.querySelectorAll("[data-log]").forEach(b=>b.addEventListener("click",()=>{ markDone(b.dataset.log, !didToday(b.dataset.log)); render(); }));
   const c = counts(ALL);
@@ -1735,6 +1777,7 @@ testUI(); render();
       var x = dt(d);
       return '<button class="dprow" data-page="'+d+'"><span class="num">'+x.getUTCDate()+'</span><span class="wd">'+WDE[x.getUTCDay()]+' · '+MON[x.getUTCMonth()]+'</span><span class="tx">'+esc(txt(d))+'</span></button>';
     }).join("") : '<p class="dempty">Здесь будут твои страницы. Первая запись — сегодня?</p>';
+    try{ window.__pagesToggle && __pagesToggle(p.length); }catch(e){}
   }
 
   function drawAll(){

@@ -67,6 +67,9 @@ function studentPanel(s, sm){
   var h = '<div class="card">';
   h += '<div class="head"><h3>Cards</h3><span class="pill">' + (c.learned || 0) + ' / ' + (c.total || 0) + ' practised</span></div>';
   h += '<div class="muted">Today: ' + (c.doneToday || 0) + ' done · ' + (c.dueToday || 0) + ' waiting · last practice: ' + esc(c.lastPractice || "—") + '</div>';
+  var LBL = {cards:"Cards", watch:"Watched", listen:"Listened", read:"Read", speak:"Spoke English", write:"Wrote", homework:"Homework"};
+  var wk = c.week || {}, wkParts = Object.keys(wk).map(function(k){ return (LBL[k] || k) + " " + wk[k]; });
+  h += '<div style="margin-top:6px"><b>This week:</b> ' + (c.activeDays || 0) + ' active days' + (wkParts.length ? ' · ' + esc(wkParts.join(" · ")) : '') + '</div>';
   if (c.struggling && c.struggling.length) h += '<div style="margin-top:6px"><b>Struggling:</b> ' + c.struggling.map(esc).join(", ") + '</div>';
   h += '</div><div class="card"><div class="head"><h3>Diary</h3><span class="pill">' + (dy.entries || 0) + ' entries</span></div>';
   h += dy.last ? '<div class="muted">' + esc(dy.last.date) + (dy.wroteToday ? ' · wrote today ✓' : '') + '</div><div class="resp" style="margin-top:6px">' + esc(dy.last.text) + '</div>' : '<div class="muted">No entries yet.</div>';
