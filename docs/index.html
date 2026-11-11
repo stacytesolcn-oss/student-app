@@ -121,7 +121,7 @@ function load(){
   if (!AUTH){ $("#app").innerHTML = '<div class="center"><h1>Hi! 👋</h1><p class="muted">Please open this page from the personal link Stacy sent you.</p></div>'; return; }
   api("/me").then(function(d){
     // A student with a personal page goes straight there (homework stays reachable with ?hw).
-    if (d.page && !/[?&]hw/.test(location.search)){ location.replace(new URL(d.page, location.href.split("#")[0]).href + location.search + location.hash); return; }
+    if (d.page && !/[?&]hw/.test(location.search)){ var u = new URL(d.page, location.href.split("#")[0]); new URLSearchParams(location.search).forEach(function(v, k){ u.searchParams.set(k, v); }); u.searchParams.set("v", String(Date.now())); /* always the newest page, not a cached copy */ location.replace(u.href + location.hash); return; }
     DATA = d; OPEN ? renderHw(OPEN) : renderHome(); })
   .catch(function(e){
     $("#app").innerHTML = e.message === "auth"
