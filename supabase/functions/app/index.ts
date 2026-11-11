@@ -466,13 +466,16 @@ function lessonsOn(s: any, when: Date) {
   return (P.lessons || []).filter((l: any) => l.day === t.weekday && !(l.from && t.date < l.from) && !(l.until && t.date > l.until))
     .map((l: any) => ({ ...l, date: t.date, weekday: t.weekday }));
 }
-async function lessonTomorrow(s: any, force = false): Promise<Msg> {
+async function lessonTomorrow(s: any, force = false, st?: Record<string, any>): Promise<Msg> {
   let ls = lessonsOn(s, new Date(Date.now() + DAY));
   if (!ls.length && force) ls = (s.profile?.lessons || []).slice(0, 1).map((l: any) => ({ ...l, date: "test", weekday: l.day }));
   if (!ls.length) return null;
   const l = ls.sort((a: any, b: any) => String(a.time).localeCompare(String(b.time)))[0];
+  const h = st ? await homeworkPending(s, st) : null;
+  const hw = h && (h.pending || (force && h.has)) ? " And if you haven't done your homework yet, there's still time today 📚" : "";
   return { kind: "lesson-eve", key: `${l.date}:${l.time}`,
-    text: `Hi ${s.name}! 📅 Just a reminder: your English lesson is tomorrow (${l.weekday}) at ${l.time}, Moscow time. See you there!` };
+    text: `Hi ${s.name}! 📅 Just a reminder: your English lesson is tomorrow (${l.weekday}) at ${l.time}, Moscow time. See you there!` + hw,
+    reply_markup: hw ? await pageButton(s, "Open my English") : undefined };
 }
 async function paymentDue(s: any, force = false): Promise<Msg> {
   const P = s.profile || {}, due = P.nextPayment;
@@ -504,27 +507,32 @@ async function homeworkDue(s: any): Promise<Msg[]> {
   return out;
 }
 
-// Mid-week homework check-in (all students, 17:00): once between lessons — 1 day after a lesson
-// (2 days if the gap to the next lesson is 4+ days) — unless "homework" was ticked since that lesson.
-async function homeworkMid(s: any, st: Record<string, any>, force = false): Promise<Msg> {
+// Homework (profile.homework or open app homework) not ticked "homework" since the last lesson.
+async function homeworkPending(s: any, st: Record<string, any>) {
   const P = s.profile || {};
-  const hasHw = (P.homework || []).length > 0, hasFocus = !!String(P.note || "").trim();
+  const hasHw = (P.homework || []).length > 0;
   const { data: open } = await db.from("homework").select("id").eq("student_id", s.id).eq("published", true).is("completed_at", null).limit(1);
-  const hasApp = !!(open && open.length);
-  if (!hasHw && !hasFocus && !hasApp) return null;
+  const has = hasHw || !!(open && open.length);
   const now = tzParts(tzOf(s));
   let back = -1, fwd = -1;
   for (let k = 0; k <= 7; k++) if (lessonsOn(s, new Date(Date.now() - k * DAY)).length) { back = k; break; }
   for (let k = 1; k <= 7; k++) if (lessonsOn(s, new Date(Date.now() + k * DAY)).length) { fwd = k; break; }
+  let done = false;
+  const act = (st.cards || {}).act || {};
+  if (back >= 0) for (let d = now.dayNum - back; d <= now.dayNum; d++) if ((act[d] || []).includes("homework")) done = true;
+  return { has, pending: has && !done, back, fwd, date: now.date };
+}
+// Homework reminders (all students): (1) 17:00 once between lessons — 1 day after a lesson, 2 days if the gap
+// to the next lesson is 4+ days; skipped when the next lesson is tomorrow, because (2) the 18:00 "lesson tomorrow"
+// message then carries the homework line. Focus of the week is not reminded (Stacy, Nov 11).
+async function homeworkMid(s: any, st: Record<string, any>, force = false): Promise<Msg> {
+  const h = await homeworkPending(s, st);
   if (!force) {
-    if (back <= 0 || fwd < 0) return null;
-    if (back !== (back + fwd >= 4 ? 2 : 1)) return null;
-    const act = (st.cards || {}).act || {};
-    for (let d = now.dayNum - back; d <= now.dayNum; d++) if ((act[d] || []).includes("homework")) return null;
+    if (!h.pending || h.back <= 0 || h.fwd <= 1) return null;
+    if (h.back !== (h.back + h.fwd >= 4 ? 2 : 1)) return null;
   }
-  const what = (hasHw || hasApp) && hasFocus ? "your homework and focus of the week" : hasFocus ? "your focus of the week" : "your homework";
-  return { kind: "hw-mid", key: now.date, reply_markup: await pageButton(s, "Open my English"),
-    text: `Hi ${s.name}! 📚 Quick check-in: have you had a chance to look at ${what}? It's all on your page 🙂` };
+  return { kind: "hw-mid", key: h.date, reply_markup: await pageButton(s, "Open my English"),
+    text: `Hi ${s.name}! 📚 Quick check-in: have you had a chance to do your homework? It's all on your page 🙂` };
 }
 
 async function sendOnce(s: any, m: Msg) {
@@ -551,7 +559,7 @@ async function cron(req: Request) {
     if (inWindow(t.minutes, 10 * 60)) sent += +(await sendOnce(s, await paymentDue(s)));
     if (inWindow(t.minutes, 17 * 60)) for (const m of await homeworkDue(s)) sent += +(await sendOnce(s, m));
     if (inWindow(t.minutes, 17 * 60)) sent += +(await sendOnce(s, await homeworkMid(s, st)));
-    if (inWindow(t.minutes, 18 * 60)) sent += +(await sendOnce(s, await lessonTomorrow(s)));
+    if (inWindow(t.minutes, 18 * 60)) sent += +(await sendOnce(s, await lessonTomorrow(s, false, st)));
     const n = nextLessonToday(s);
     if (n && n.until > 45 && n.until <= 60) sent += +(await sendOnce(s, await lessonSoon(s)));
   }
@@ -572,7 +580,7 @@ async function testReminders(req: Request) {
     `Hi ${s.name}! 👋 This is your English page: cards, diary and homework. I'll send you friendly reminders about your cards, diary, lessons and payments.`;
   const prevUrl = `${await appUrl()}/${s.page || ""}?preview=1&k=${s.access_key}`;
   const msgs: Msg[] = [{ kind: "welcome", key: "test", text: welcome, reply_markup: { inline_keyboard: [[{ text: "Open my English", web_app: { url: prevUrl } }]] } },
-    await morningCards(s, st), await evening(s, st), await lessonTomorrow(s, true), await lessonSoon(s, true), await paymentDue(s, true), await homeworkMid(s, st, true), ...(await homeworkDue(s))];
+    await morningCards(s, st), await evening(s, st), await lessonTomorrow(s, true, st), await lessonSoon(s, true), await paymentDue(s, true), await homeworkMid(s, st, true), ...(await homeworkDue(s))];
   const labels: string[] = [];
   for (const m of msgs) {
     if (!m) continue;
