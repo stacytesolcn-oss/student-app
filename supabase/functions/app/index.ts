@@ -280,13 +280,14 @@ async function bot(req: Request) {
       return send(200, { ok: true });
     }
     if (text.startsWith("/start") && /^[a-f0-9]{20,64}$/.test(arg)) {
-      const { data: s } = await db.from("students").select("id,name").eq("access_key", arg).maybeSingle();
+      const { data: s } = await db.from("students").select("id,name,profile").eq("access_key", arg).maybeSingle();
       if (s) {
         await db.from("students").update({ tg_user_id: null, tg_chat_id: null }).eq("tg_user_id", uid).neq("id", s.id);
         await db.from("students").update({ tg_user_id: uid, tg_chat_id: m.chat.id }).eq("id", s.id);
-        await tg("sendMessage", { chat_id: m.chat.id,
-          text: `Hi ${s.name}! 👋 This is your English page: cards, diary and homework. I'll send you friendly reminders about your cards, diary, lessons and payments.`,
-          reply_markup: await openButton() });
+        // personal welcome (profile.welcome) or the default
+        const welcome = s.profile?.welcome ||
+          `Hi ${s.name}! 👋 This is your English page: cards, diary and homework. I'll send you friendly reminders about your cards, diary, lessons and payments.`;
+        await tg("sendMessage", { chat_id: m.chat.id, text: welcome, reply_markup: await openButton() });
         return send(200, { ok: true });
       }
     }
@@ -605,7 +606,7 @@ async function teacherEdit(req: Request) {
     await db.from("students").update({ profile: P, pay_check_at: null }).eq("id", s.id);
   }
   if (action === "profile" && patch && typeof patch === "object") {
-    const allowed = ["nextPayment", "price", "stripe", "package", "note", "remindersOff"];
+    const allowed = ["nextPayment", "price", "stripe", "package", "note", "remindersOff", "welcome"];
     const P = { ...(s.profile || {}) };
     for (const k of allowed) if (k in patch) P[k] = patch[k];
     if ("nextPayment" in patch) P.nextPaymentManual = !!patch.nextPayment;
