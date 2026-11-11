@@ -1,5 +1,5 @@
-// Student app — Phase 1 server (Supabase Edge Function "app").
-// Routes: GET /me · POST /answer · POST /submit · GET /teacher · POST /bot · POST /cron · GET /setup
+// Student app server (Supabase Edge Function "app").
+// Routes: /me /answer /submit /state /paid /teacher /test-reminders /bot /cron /setup
 // Auth header "x-auth": "tg <initData>" (inside Telegram) or "key <access key>" (personal link).
 import { createClient } from "npm:@supabase/supabase-js@2";
 
@@ -13,9 +13,9 @@ let cfgCache: Record<string, string> | null = null, cfgAt = 0;
 async function cfg(): Promise<Record<string, string>> {
   if (cfgCache && Date.now() - cfgAt < 60_000) return cfgCache;
   const { data } = await db.from("app_config").select("key,value");
-  cfgCache = Object.fromEntries((data || []).map((r: any) => [r.key, r.value]));
-  cfgAt = Date.now();
-  return cfgCache!;
+  const fresh = Object.fromEntries((data || []).map((r: any) => [r.key, r.value]));
+  if (Object.keys(fresh).length) { cfgCache = fresh; cfgAt = Date.now(); }
+  return fresh;
 }
 const appUrl = async () => ((await cfg()).APP_URL || "").replace(/\/$/, "");
 
@@ -165,7 +165,7 @@ async function me(req: Request) {
     return { id: h.id, title: h.title, intro: h.intro, due: h.due, done: !!h.completed_at,
              completed_at: h.completed_at, tasks: publicTasks(h.tasks), saved };
   });
-  return send(200, { name: s.name, focus: s.focus, tz: s.tz, linkedTelegram: !!s.tg_user_id, homework: out });
+  return send(200, { name: s.name, focus: s.focus, tz: s.tz, page: s.page || null, linkedTelegram: !!s.tg_user_id, homework: out });
 }
 
 async function answer(req: Request) {
@@ -208,7 +208,7 @@ async function submit(req: Request) {
 async function teacher(req: Request) {
   if (!(await isTeacher(req))) return send(401, { error: "teacher only" });
   const [{ data: students }, { data: hw }] = await Promise.all([
-    db.from("students").select("id,name,tz,access_key,tg_user_id,focus,active").order("name"),
+    db.from("students").select("id,name,tz,access_key,tg_user_id,focus,active,profile,page,pay_check_at").order("name"),
     db.from("homework").select("id,student_id,title,due,tasks,published,started_at,completed_at,created_at")
       .order("created_at", { ascending: false }).limit(100),
   ]);
@@ -220,8 +220,16 @@ async function teacher(req: Request) {
     answers = data || [];
   }
   const c = await cfg(), base = await appUrl();
+  const { data: states } = await db.from("student_state").select("student_id,key,data,updated_at");
+  const summary: Record<string, unknown> = {};
+  for (const s of (students || []) as any[]) {
+    const st: Record<string, any> = {}, upd: Record<string, string> = {};
+    for (const r of (states || []) as any[]) if (r.student_id === s.id) { st[r.key] = r.data; upd[r.key] = r.updated_at; }
+    summary[s.id] = { cards: cardSummary(s, st), diary: diarySummary(s, st), updated: upd };
+  }
   return send(200, {
-    students: (students || []).map((s: any) => ({ ...s, link: `${base}/#k=${s.access_key}`,
+    summary,
+    students: (students || []).map((s: any) => ({ ...s, link: `${base}/${s.page || ""}#k=${s.access_key}`,
       telegramLink: c.BOT_USERNAME ? `https://t.me/${c.BOT_USERNAME}?start=${s.access_key}` : null })),
     homework: hw || [], answers,
   });
@@ -231,7 +239,17 @@ async function bot(req: Request) {
   const c = await cfg();
   if (!safeEq(req.headers.get("x-telegram-bot-api-secret-token") || "", c.WEBHOOK_SECRET || "")) return send(401, {});
   try {
-    const m = (await req.json()).message;
+    const upd = await req.json();
+    const cq = upd.callback_query;
+    if (cq && cq.data === "paid") {
+      const { data: st } = await db.from("students").select("*").eq("tg_user_id", cq.from.id).maybeSingle();
+      if (st) await markPaid(st);
+      await tg("answerCallbackQuery", { callback_query_id: cq.id, text: st ? "Thank you! Stacy will check it 🙂" : "" });
+      if (st && cq.message) await tg("editMessageReplyMarkup", { chat_id: cq.message.chat.id, message_id: cq.message.message_id, reply_markup: { inline_keyboard: [] } });
+      if (st && cq.message) await tg("sendMessage", { chat_id: cq.message.chat.id, text: "Thank you! 💛 Your new package has started. Stacy will check the payment." });
+      return send(200, { ok: true });
+    }
+    const m = upd.message;
     if (!m || !m.text || m.chat.type !== "private") return send(200, { ok: true });
     const text = m.text.trim(), uid = m.from.id;
     const arg = text.split(/\s+/)[1] || "";
@@ -255,7 +273,7 @@ async function bot(req: Request) {
         await db.from("students").update({ tg_user_id: null, tg_chat_id: null }).eq("tg_user_id", uid).neq("id", s.id);
         await db.from("students").update({ tg_user_id: uid, tg_chat_id: m.chat.id }).eq("id", s.id);
         await tg("sendMessage", { chat_id: m.chat.id,
-          text: `Hi ${s.name}! 👋 Your English page is here. I'll also remind you about homework.`,
+          text: `Hi ${s.name}! 👋 This is your English page: cards, diary and homework. I'll send you friendly reminders about your cards, diary, lessons and payments.`,
           reply_markup: await openButton() });
         return send(200, { ok: true });
       }
@@ -273,24 +291,233 @@ async function bot(req: Request) {
   return send(200, { ok: true }); // never make Telegram retry forever
 }
 
+// ---------- time helpers (student's own time zone) ----------
+const DAY = 864e5;
+function tzParts(tz: string, d = new Date()) {
+  const p: Record<string, string> = {};
+  new Intl.DateTimeFormat("en-US", { timeZone: tz, hourCycle: "h23", year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", weekday: "long" }).formatToParts(d).forEach((x) => (p[x.type] = x.value));
+  const date = `${p.year}-${p.month}-${p.day}`;
+  const offMs = Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour % 24, +p.minute) - Math.floor(d.getTime() / 6e4) * 6e4;
+  return { date, minutes: (+p.hour % 24) * 60 + +p.minute, weekday: p.weekday, dayNum: Math.floor((d.getTime() + offMs) / DAY) };
+}
+const tzOf = (s: any) => s.profile?.tzName || s.tz || "Europe/Moscow";
+const prettyDate = (iso: string) => new Date(iso + "T12:00:00Z").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" });
+const daysBetween = (a: string, b: string) => Math.round((Date.parse(b + "T00:00:00Z") - Date.parse(a + "T00:00:00Z")) / DAY);
+
+// ---------- progress summaries ----------
+function cardCounts(s: any, st: Record<string, any>) {
+  const store = st.cards || { s: {}, log: {} }, meta = st.cards_meta || {};
+  const words: string[] = meta.words || Object.keys(store.s || {});
+  const today = tzParts(tzOf(s)).dayNum;
+  const prog = store.s || {};
+  const due = words.filter((w) => prog[w] && prog[w].due <= today).length;
+  const fresh = words.filter((w) => !prog[w]).length;
+  const done = (store.log || {})[today] || 0;
+  const cap = meta.cap || 12;
+  const todayCount = Math.max(0, Math.min(cap - done, due + fresh));
+  return { words, prog, due, fresh, done, todayCount, today, topics: meta.topics || [] };
+}
+function cardSummary(s: any, st: Record<string, any>) {
+  const c = cardCounts(s, st);
+  const learned = c.words.filter((w) => c.prog[w] && c.prog[w].n > 0).length;
+  const struggling = c.words.filter((w) => c.prog[w] && c.prog[w].n >= 2 && (c.prog[w].i || 0) <= 1);
+  const days = Object.keys((st.cards || {}).log || {}).map(Number).filter((d) => (st.cards.log[d] || 0) > 0);
+  const last = days.length ? Math.max(...days) : null;
+  return { total: c.words.length, learned, dueToday: c.todayCount, doneToday: c.done, struggling,
+           lastPractice: last === null ? null : new Date(last * DAY).toISOString().slice(0, 10) };
+}
+function diarySummary(s: any, st: Record<string, any>) {
+  const e = (st.diary || {}).e || {};
+  const days = Object.keys(e).filter((k) => String(e[k] || "").trim()).map(Number).sort((a, b) => b - a);
+  const today = tzParts(tzOf(s)).dayNum;
+  return { entries: days.length, wroteToday: !!String(e[today] || "").trim(),
+           last: days.length ? { date: new Date(days[0] * DAY).toISOString().slice(0, 10), text: String(e[days[0]]).slice(0, 400) } : null };
+}
+async function loadState(studentId: string) {
+  const { data } = await db.from("student_state").select("key,data").eq("student_id", studentId);
+  return Object.fromEntries((data || []).map((r: any) => [r.key, r.data])) as Record<string, any>;
+}
+
+// ---------- reminder messages (English, friendly, short) ----------
+type Msg = { kind: string; key: string; text: string; reply_markup?: unknown } | null;
+const pageButton = async (s: any, text: string) => ({ inline_keyboard: [[{ text, web_app: { url: (await appUrl()) + "/" + (s.page || "") } }]] });
+
+async function morningCards(s: any, st: Record<string, any>): Promise<Msg> {
+  const c = cardCounts(s, st), date = tzParts(tzOf(s)).date;
+  let text: string;
+  if (c.due > 0) text = `Good morning, ${s.name}! ☀️ You have ${Math.min(c.todayCount || c.due, c.due + c.fresh)} cards to practise today. Just a few minutes with your coffee 🙂`;
+  else if (c.fresh > 0 && c.todayCount > 0) text = `Good morning, ${s.name}! ☀️ ${c.todayCount} new words are waiting for you today.`;
+  else {
+    const t = (c.topics as any[]).filter((x) => (x.words || []).length >= 2);
+    if (!t.length) return null;
+    const pick = t[c.today % t.length];
+    text = `Good morning, ${s.name}! ☀️ All your cards are up to date 🎉 Fancy a quick round of “${pick.name}” to keep the words fresh?`;
+  }
+  return { kind: "cards-am", key: date, text, reply_markup: await pageButton(s, "Practise my cards") };
+}
+async function evening(s: any, st: Record<string, any>): Promise<Msg> {
+  const c = cardCounts(s, st), d = diarySummary(s, st), date = tzParts(tzOf(s)).date;
+  const cardsLeft = c.done === 0 && c.todayCount > 0;
+  const diary = !d.wroteToday;
+  let text: string;
+  if (cardsLeft && diary) text = `Good evening, ${s.name}! 🌙 Two small things before bed: ${c.todayCount} cards are waiting, and your diary — how was your day? A couple of sentences is perfect ✍️`;
+  else if (cardsLeft) text = `Good evening, ${s.name}! 🌙 ${c.todayCount} cards are still waiting for you today. It only takes a few minutes.`;
+  else if (diary) text = `Good evening, ${s.name}! 🌙 How was your day? Write a couple of sentences in your diary ✍️`;
+  else return null;
+  return { kind: "evening", key: date, text, reply_markup: await pageButton(s, diary && !cardsLeft ? "Open my diary" : "Open my English") };
+}
+function nextLessonToday(s: any) {
+  const tz = tzOf(s), now = tzParts(tz), P = s.profile || {};
+  const skip = new Set([...(P.pack?.skip || []), ...(P.cancel || [])]);
+  if (skip.has(now.date)) return null;
+  let best: any = null;
+  for (const l of P.lessons || []) {
+    if (l.day !== now.weekday) continue;
+    if ((l.from && now.date < l.from) || (l.until && now.date > l.until)) continue;
+    const [hh, mm] = String(l.time).split(":").map(Number);
+    const start = hh * 60 + (mm || 0), until = start - now.minutes;
+    if (until > 0 && (!best || until < best.until)) best = { time: l.time, until };
+  }
+  return best ? { ...best, date: now.date } : null;
+}
+async function lessonSoon(s: any, force = false): Promise<Msg> {
+  const n = nextLessonToday(s);
+  if (!n && !force) return null;
+  const P = s.profile || {}, time = n?.time || (P.lessons?.[0]?.time ?? "");
+  const buttons = P.zoom ? { inline_keyboard: [[{ text: "Join Zoom", url: P.zoom }]] } : undefined;
+  return { kind: "lesson", key: `${n?.date}:${time}`,
+    text: `Hi ${s.name}! 👋 Your English lesson starts in 1 hour, at ${time} (Moscow time). See you soon!`, reply_markup: buttons };
+}
+async function paymentDue(s: any, force = false): Promise<Msg> {
+  const P = s.profile || {}, due = P.nextPayment;
+  if (!due) return null;
+  const today = tzParts(tzOf(s)).date, d = daysBetween(today, due);
+  if (P.paidClaimed && daysBetween(P.paidClaimed, due) <= 14) return null; // already said she paid for this one
+  if (!force && d !== 2 && d !== 0) return null;
+  const price = P.payAmount ? ` (${P.payAmount})` : "";
+  const text = d === 0
+    ? `Hi ${s.name}! 💳 Friendly reminder: your payment for the next lesson package${price} is due today.`
+    : `Hi ${s.name}! 💳 Friendly reminder: your next payment${price} is due on ${prettyDate(due)}.`;
+  const row: any[] = [];
+  if (P.stripe) row.push({ text: "Pay", url: P.stripe });
+  row.push({ text: "I've paid ✓", callback_data: "paid" });
+  return { kind: "pay", key: `${due}:${d}`, text, reply_markup: { inline_keyboard: [row] } };
+}
+async function homeworkDue(s: any): Promise<Msg[]> {
+  const { data } = await db.from("homework").select("id,title,due").eq("student_id", s.id).eq("published", true).is("completed_at", null).not("due", "is", null);
+  const today = tzParts(tzOf(s)).date, tomorrow = tzParts(tzOf(s), new Date(Date.now() + DAY)).date;
+  const out: Msg[] = [];
+  for (const h of (data || []) as any[]) {
+    if (h.due !== today && h.due !== tomorrow) continue;
+    out.push({ kind: "hw", key: `${h.id}:${today}`, reply_markup: await openButton("Do my homework"),
+      text: `Hi ${s.name}! Friendly reminder: your homework “${h.title}” is for ${h.due === today ? "today" : "tomorrow"}. It takes just a few minutes 🙂` });
+  }
+  return out;
+}
+
+async function sendOnce(s: any, m: Msg) {
+  if (!m) return false;
+  const { error } = await db.from("reminder_log").insert({ student_id: s.id, kind: m.kind, key: m.key });
+  if (error) return false; // already sent
+  const r = await tg("sendMessage", { chat_id: s.tg_chat_id, text: m.text, reply_markup: m.reply_markup });
+  if (!r.ok) await db.from("reminder_log").delete().eq("student_id", s.id).eq("kind", m.kind).eq("key", m.key);
+  return !!r.ok;
+}
+const inWindow = (minutes: number, target: number) => minutes >= target && minutes < target + 15;
+
 async function cron(req: Request) {
   const c = await cfg();
   if (!safeEq(req.headers.get("x-cron") || "", c.CRON_SECRET || "")) return send(401, {});
-  const { data: rows } = await db.from("homework")
-    .select("id,title,due,reminded_on,student:students(id,name,tz,tg_chat_id,active)")
-    .eq("published", true).is("completed_at", null).not("due", "is", null);
+  const { data: students } = await db.from("students").select("*").eq("active", true).not("tg_chat_id", "is", null);
   let sent = 0;
-  for (const h of (rows || []) as any[]) {
-    const s = h.student;
-    if (!s || !s.active || !s.tg_chat_id) continue;
-    const today = dateIn(s.tz), tomorrow = dateIn(s.tz, new Date(Date.now() + 864e5));
-    if (h.reminded_on === today || (h.due !== today && h.due !== tomorrow)) continue;
-    const r = await tg("sendMessage", { chat_id: s.tg_chat_id,
-      text: `Hi ${s.name}! Friendly reminder: your homework "${h.title}" is for ${h.due === today ? "today" : "tomorrow"}. It takes just a few minutes 🙂`,
-      reply_markup: await openButton("Do my homework") });
-    if (r.ok) { sent++; await db.from("homework").update({ reminded_on: today }).eq("id", h.id); }
+  for (const s of (students || []) as any[]) {
+    if ((s.profile || {}).remindersOff) continue;
+    const t = tzParts(tzOf(s));
+    const st = await loadState(s.id);
+    if (inWindow(t.minutes, 9 * 60)) sent += +(await sendOnce(s, await morningCards(s, st)));
+    if (inWindow(t.minutes, 20 * 60)) sent += +(await sendOnce(s, await evening(s, st)));
+    if (inWindow(t.minutes, 10 * 60)) sent += +(await sendOnce(s, await paymentDue(s)));
+    if (inWindow(t.minutes, 17 * 60)) for (const m of await homeworkDue(s)) sent += +(await sendOnce(s, m));
+    const n = nextLessonToday(s);
+    if (n && n.until > 45 && n.until <= 60) sent += +(await sendOnce(s, await lessonSoon(s)));
   }
   return send(200, { ok: true, sent });
+}
+
+// Teacher: send every reminder type for a student to Stacy's own Telegram, right now.
+async function testReminders(req: Request) {
+  if (!(await isTeacher(req))) return send(401, { error: "teacher only" });
+  const c = await cfg();
+  const id = new URL(req.url).searchParams.get("student");
+  const q = db.from("students").select("*").eq("active", true);
+  const { data: s } = await (id ? q.eq("id", id) : q.order("created_at")).limit(1).maybeSingle();
+  if (!s || !c.TEACHER_TG_ID) return send(400, { error: "no student or teacher not linked" });
+  const st = await loadState(s.id);
+  const msgs = [await morningCards(s, st), await evening(s, st), await lessonSoon(s, true), await paymentDue(s, true), ...(await homeworkDue(s))];
+  const labels: string[] = [];
+  for (const m of msgs) {
+    if (!m) continue;
+    await tg("sendMessage", { chat_id: c.TEACHER_TG_ID, text: `🧪 TEST (${m.kind}) — what ${s.name} would get:\n\n${m.text}`, reply_markup: m.reply_markup });
+    labels.push(m.kind);
+  }
+  return send(200, { sent: labels });
+}
+
+// ---------- package / payment ----------
+async function markPaid(s: any) {
+  const P = { ...(s.profile || {}) }, today = tzParts(tzOf(s)).date;
+  if (P.paidClaimed === today) return P; // double tap
+  const old = P.pack || { size: 8 };
+  P.prevPacks = [...(P.prevPacks || []), old].slice(-6);
+  P.pack = { size: old.size || 8, start: today, paid: today, skip: [], add: [] };
+  P.paidClaimed = today;
+  await db.from("students").update({ profile: P, pay_check_at: new Date().toISOString() }).eq("id", s.id);
+  const t = (await cfg()).TEACHER_TG_ID;
+  if (t) await tg("sendMessage", { chat_id: t, text: `💳 ${s.name} says she has paid. A new package started today — please check the payment.`,
+    reply_markup: await openButton("Open teacher view", "/teacher.html") });
+  return P;
+}
+async function paid(req: Request) {
+  const s = await studentFromReq(req);
+  if (!s) return send(401, { error: "unknown" });
+  return send(200, { ok: true, profile: await markPaid(s) });
+}
+
+// ---------- saved progress (cards, diary) ----------
+const STATE_KEYS = new Set(["cards", "diary", "cards_meta"]);
+async function stateGet(req: Request) {
+  const s = await studentFromReq(req);
+  if (!s) return send(401, { error: "unknown" });
+  return send(200, { name: s.name, profile: s.profile || {}, state: await loadState(s.id) });
+}
+async function statePost(req: Request) {
+  const s = await studentFromReq(req);
+  if (!s) return send(401, { error: "unknown" });
+  const raw = await req.text();
+  if (raw.length > 400_000) return send(413, { error: "too big" });
+  const { key, data } = JSON.parse(raw);
+  if (!STATE_KEYS.has(key) || typeof data !== "object" || data === null) return send(400, { error: "key" });
+  await db.from("student_state").upsert({ student_id: s.id, key, data, updated_at: new Date().toISOString() });
+  return send(200, { ok: true });
+}
+
+// ---------- teacher edits ----------
+async function teacherEdit(req: Request) {
+  if (!(await isTeacher(req))) return send(401, { error: "teacher only" });
+  const { student_id, action, patch } = await req.json();
+  const { data: s } = await db.from("students").select("id,profile").eq("id", student_id).maybeSingle();
+  if (!s) return send(404, { error: "student" });
+  if (action === "confirm-paid") await db.from("students").update({ pay_check_at: null }).eq("id", s.id);
+  if (action === "profile" && patch && typeof patch === "object") {
+    const allowed = ["nextPayment", "price", "stripe", "package", "note", "remindersOff"];
+    const P = { ...(s.profile || {}) };
+    for (const k of allowed) if (k in patch) P[k] = patch[k];
+    if (patch.packSize) P.pack = { ...(P.pack || {}), size: Number(patch.packSize) };
+    if (patch.packStart) P.pack = { ...(P.pack || {}), start: patch.packStart };
+    await db.from("students").update({ profile: P }).eq("id", s.id);
+  }
+  return send(200, { ok: true });
 }
 
 async function setup(req: Request) {
@@ -300,7 +527,7 @@ async function setup(req: Request) {
   if (!BOT_TOKEN()) return send(400, { error: "BOT_TOKEN secret is not set yet" });
   const fn = `${Deno.env.get("SUPABASE_URL")}/functions/v1/app/bot`;
   const base = await appUrl();
-  const hook = await tg("setWebhook", { url: fn, secret_token: c.WEBHOOK_SECRET, allowed_updates: ["message"], drop_pending_updates: true });
+  const hook = await tg("setWebhook", { url: fn, secret_token: c.WEBHOOK_SECRET, allowed_updates: ["message", "callback_query"], drop_pending_updates: true });
   const menu = await tg("setChatMenuButton", { menu_button: { type: "web_app", text: "My English", web_app: { url: base + "/" } } });
   const cmds = await tg("setMyCommands", { commands: [{ command: "start", description: "Open my English" }] });
   const me = await tg("getMe", {});
@@ -314,7 +541,12 @@ Deno.serve(async (req) => {
     if (path === "/me" && req.method === "GET") return await me(req);
     if (path === "/answer" && req.method === "POST") return await answer(req);
     if (path === "/submit" && req.method === "POST") return await submit(req);
+    if (path === "/state" && req.method === "GET") return await stateGet(req);
+    if (path === "/state" && req.method === "POST") return await statePost(req);
+    if (path === "/paid" && req.method === "POST") return await paid(req);
     if (path === "/teacher" && req.method === "GET") return await teacher(req);
+    if (path === "/teacher" && req.method === "POST") return await teacherEdit(req);
+    if (path === "/test-reminders" && req.method === "GET") return await testReminders(req);
     if (path === "/bot" && req.method === "POST") return await bot(req);
     if (path === "/cron" && req.method === "POST") return await cron(req);
     if (path === "/setup" && req.method === "GET") return await setup(req);
