@@ -1545,7 +1545,7 @@ function renderProfile(){
   const pkgHtml = K ? '<div class="pkg"><div class="row"><b>'+(K.paid ? 'Оплачен пакет: ' : 'Пакет: ')+K.size+' уроков</b><span>с '+esc(startDate)+'</span></div>'+
     '<div class="boxes" role="img" aria-label="'+used+' из '+K.size+' уроков прошло">'+Array.from({length:K.size},(_,i)=>'<i class="'+(i<used?'on':'')+'">'+(i<used?CHECK:'')+'</i>').join("")+'</div>'+
     (left>0 ? '' : '<span class="note">Все уроки пакета прошли.</span>')+
-    (pay ? (daysToPay < 0 ? '<span class="small"><b>Нужно оплатить: '+esc(payDate)+'</b>. Пожалуйста, оплати до следующего урока</span>' : daysToPay === 0 ? '<span class="small"><b>Оплата сегодня</b></span>' : '<span class="small">Следующая оплата: '+esc(payDate)+'</span>') : '')+'</div>' : '';
+    (pay ? (daysToPay < 0 ? '<span class="small"><b>Нужно оплатить: '+esc(payDate)+'</b></span>' : daysToPay === 0 ? '<span class="small"><b>Оплата сегодня</b></span>' : '<span class="small">Следующая оплата: '+esc(payDate)+'</span>') : '')+'</div>' : '';
   const payBtn = P.stripe && ((K && left <= 0) || (pay && daysToPay <= 7)) ? '<a href="'+esc(P.stripe)+'" target="_blank" rel="noopener" style="justify-self:start">Оплатить</a>' : '';
   if(K){
     $("payBar").hidden = false; $("payBar").classList.add("pkgbar"); $("payBar").innerHTML = pkgHtml + payBtn;
