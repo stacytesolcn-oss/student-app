@@ -1552,7 +1552,7 @@ function renderProfile(){
   } else {
     $("payBar").hidden = !pay || daysToPay > 7;
     $("payBar").innerHTML = pay ? '<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg></span>'+
-      '<span class="t"><b>Следующая оплата: '+esc(payDate)+'</b><span>'+(daysToPay < 0 ? 'Пожалуйста, оплати до следующего урока' : 'Абонемент на месяц')+'</span></span>'+
+      '<span class="t"><b>Следующая оплата: '+esc(payDate)+'</b><span>'+(daysToPay < 0 ? 'Нужно оплатить' : 'Абонемент на месяц')+'</span></span>'+
       (P.stripe ? '<a href="'+esc(P.stripe)+'" target="_blank" rel="noopener">Оплатить</a>' : '') : '';
   }
   const W = P.wins || {}; $("winsBox").hidden = !W.text; $("winsTitle").textContent = W.title || "Small wins"; $("winsText").textContent = W.text || "";
