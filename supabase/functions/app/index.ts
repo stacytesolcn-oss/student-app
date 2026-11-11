@@ -532,7 +532,12 @@ async function testReminders(req: Request) {
   const { data: s } = await (id ? q.eq("id", id) : q.order("created_at")).limit(1).maybeSingle();
   if (!s || !c.TEACHER_TG_ID) return send(400, { error: "no student or teacher not linked" });
   const st = await loadState(s.id);
-  const msgs = [await morningCards(s, st), await evening(s, st), await lessonTomorrow(s, true), await lessonSoon(s, true), await paymentDue(s, true), ...(await homeworkDue(s))];
+  // the welcome she gets after tapping Start; the button opens a read-only preview of her page
+  const welcome = s.profile?.welcome ||
+    `Hi ${s.name}! 👋 This is your English page: cards, diary and homework. I'll send you friendly reminders about your cards, diary, lessons and payments.`;
+  const prevUrl = `${await appUrl()}/${s.page || ""}?preview=1&k=${s.access_key}`;
+  const msgs: Msg[] = [{ kind: "welcome", key: "test", text: welcome, reply_markup: { inline_keyboard: [[{ text: "Open my English", web_app: { url: prevUrl } }]] } },
+    await morningCards(s, st), await evening(s, st), await lessonTomorrow(s, true), await lessonSoon(s, true), await paymentDue(s, true), ...(await homeworkDue(s))];
   const labels: string[] = [];
   for (const m of msgs) {
     if (!m) continue;
@@ -619,6 +624,15 @@ async function teacherEdit(req: Request) {
   return send(200, { ok: true });
 }
 
+const BOT_DESCRIPTION = `Привет! Это помощник Стейси по английскому 🐈
+
+Здесь живёт твоя личная страничка: карточки со словами, дневник, домашка и твой прогресс. Всё в одном месте, ничего не теряется.
+
+Бот бережно напоминает про карточки, дневник и уроки, чтобы английский был рядом каждый день, понемногу и без стресса.
+
+Бот для учеников Стейси. Чтобы начать, открой личную ссылку, которую она тебе прислала.`;
+const BOT_SHORT = "Личная страничка по английскому для учеников Стейси: карточки, дневник, домашка и тёплые напоминания.";
+
 async function setup(req: Request) {
   const c = await cfg();
   const k = new URL(req.url).searchParams.get("k") || "";
@@ -630,8 +644,11 @@ async function setup(req: Request) {
   const menu = await tg("setChatMenuButton", { menu_button: { type: "web_app", text: "My English", web_app: { url: base + "/" } } });
   const cmds = await tg("setMyCommands", { commands: [{ command: "start", description: "Open my English" }] });
   if (c.TEACHER_TG_ID) await teacherMenu(c.TEACHER_TG_ID);
+  // what people see in an empty chat before Start, and in the bot's profile
+  const desc = await tg("setMyDescription", { description: BOT_DESCRIPTION });
+  const short = await tg("setMyShortDescription", { short_description: BOT_SHORT });
   const me = await tg("getMe", {});
-  return send(200, { webhook: hook.ok, menu: menu.ok, commands: cmds.ok, bot: me.result?.username, app: base });
+  return send(200, { webhook: hook.ok, menu: menu.ok, commands: cmds.ok, description: desc.ok, short: short.ok, bot: me.result?.username, app: base });
 }
 
 Deno.serve(async (req) => {
