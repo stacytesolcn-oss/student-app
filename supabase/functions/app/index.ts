@@ -466,7 +466,7 @@ async function paymentDue(s: any, force = false): Promise<Msg> {
   const P = s.profile || {}, due = P.nextPayment;
   if (!due) return null;
   const today = tzParts(tzOf(s)).date, d = daysBetween(today, due);
-  if (P.paidClaimed && daysBetween(P.paidClaimed, due) <= 14) return null; // already said she paid for this one
+  if (P.paidClaimed && daysBetween(P.paidClaimed, due) <= 0) return null; // already paid on/after this due date
   // 2 days before, on the day, and — while overdue — on each lesson day
   const overdueLessonDay = d < 0 && lessonsOn(s, new Date()).length > 0;
   if (!force && d !== 2 && d !== 0 && !overdueLessonDay) return null;
