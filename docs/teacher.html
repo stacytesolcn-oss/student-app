@@ -89,8 +89,16 @@ function studentPanel(s, sm){
   var wk = c.week || {}, wkParts = Object.keys(wk).map(function(k){ return (LBL[k] || k) + " " + wk[k]; });
   h += '<div style="margin-top:6px"><b>This week:</b> ' + (c.activeDays || 0) + ' active days' + (wkParts.length ? ' · ' + esc(wkParts.join(" · ")) : '') + '</div>';
   if (c.struggling && c.struggling.length) h += '<div style="margin-top:6px"><b>Struggling:</b> ' + c.struggling.map(esc).join(", ") + '</div>';
+  (sm.hw || []).forEach(function(w){
+    h += '</div><details class="card"' + (w.submitted ? '' : ' open') + '><summary><div class="head"><h3>Homework: ' + esc(w.title) + '</h3>' +
+      (w.submitted ? '<span class="pill done">Finished ✓</span>' : '<span class="pill">In progress</span>') + '</div>' +
+      '<div class="muted">Last saved: ' + esc(String(w.updated || "").slice(0, 16).replace("T", " ")) + ' UTC · tap to open</div></summary>' +
+      '<div class="resp" style="margin-top:8px;white-space:pre-wrap">' + esc(w.summary || "No answers yet.") + '</div></details><div style="display:none">';
+  });
+  if (!P.noDiary) {
   h += '</div><div class="card"><div class="head"><h3>Diary</h3><span class="pill">' + (dy.entries || 0) + ' entries</span></div>';
   h += dy.last ? '<div class="muted">' + esc(dy.last.date) + (dy.wroteToday ? ' · wrote today ✓' : '') + '</div><div class="resp" style="margin-top:6px">' + esc(dy.last.text) + '</div>' : '<div class="muted">No entries yet.</div>';
+  }
   h += '</div><div class="card"><div class="head"><h3>Focus of the week</h3>' + (P.note ? '<span class="pill done">On her page</span>' : '<span class="pill">Empty</span>') + '</div>' +
        '<textarea class="note" data-note="' + s.id + '" rows="3" placeholder="What to focus on this week, or a short message for her…">' + esc(P.note || "") + '</textarea>' +
        '<div class="links"><button data-save-note="' + s.id + '">Save</button>' + (P.note ? '<button data-clear-note="' + s.id + '">Remove</button>' : '') + '</div>' +

@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Have you ever…?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Lexend:wght@500;700&display=swap">
+<style>
+:root{
+  --bg:#f1f4f1; --surface:#ffffff; --ink:#1b2624; --muted:#5b6b67; --line:#d5dfdb;
+  --river:#1f5f5b; --river-soft:#dcebe7; --vest:#e2702a; --vest-soft:#fbe6d8;
+  --good:#2f7d4a; --good-soft:#dff0e4; --bad:#b2402f; --bad-soft:#f7e0db;
+  --display:"Lexend","Atkinson Hyperlegible",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#111816; --surface:#1a2320; --ink:#e7eeeb; --muted:#9fb0ab; --line:#2c3a36;
+  --river:#7cc4bb; --river-soft:#1d3532; --vest:#f2944f; --vest-soft:#3a2a1e;
+  --good:#79c893; --good-soft:#1c3324; --bad:#ec8c7c; --bad-soft:#3b2220; color-scheme:dark}}
+*{box-sizing:border-box}
+html{scroll-padding-top:calc(110px + env(safe-area-inset-top,0px))}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:19px;line-height:1.6;letter-spacing:.01em;word-spacing:.06em}
+.wrap{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-top:env(safe-area-inset-top,0px);padding-bottom:110px}
+h1,h2,h3{font-family:var(--display);line-height:1.25;text-wrap:balance;margin:0}
+h1{font-size:1.15rem;font-weight:700;color:var(--river)}
+h2{font-size:1.45rem;font-weight:700}
+h3{font-size:1.15rem}
+p{margin:0}
+.rubric{color:var(--muted);font-size:1rem;max-width:62ch}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
+.tab{flex:0 0 auto;font-family:var(--display);font-size:.85rem;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 12px;cursor:pointer;min-height:36px}
+.tab[aria-current="true"]{background:var(--river);color:var(--bg);border-color:var(--river)}
+.tab.done::after{content:" ✓";color:var(--good)}
+.tab[aria-current="true"].done::after{color:var(--bg)}
+.stage{display:flex;flex-direction:column;gap:18px;padding-top:22px}
+.stage-head{display:flex;flex-direction:column;gap:6px}
+.step{font-family:var(--display);font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--vest)}
+.note{background:var(--river-soft);border-radius:12px;padding:12px 14px;font-size:1rem}
+button{font:inherit;cursor:pointer;color:var(--ink)}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--vest);outline-offset:2px}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:8px 14px;font-size:1rem;min-height:44px}
+.btn.primary{background:var(--river);color:var(--bg);border-color:var(--river)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.list{display:flex;flex-direction:column;gap:10px}
+
+/* task 1 */
+.sbtn{display:flex;gap:10px;align-items:flex-start;text-align:left;width:100%;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:12px 14px;font-size:1.1rem;min-height:56px}
+.sbtn .num{font-family:var(--display);color:var(--muted);font-size:.9rem;min-width:2ch;padding-top:3px}
+.sitem{display:flex;flex-direction:column;gap:8px}
+.sitem.good .sbtn{border-color:var(--good);background:var(--good-soft)}
+.sitem.fix .sbtn{border-color:var(--vest);background:var(--vest-soft)}
+.sitem.fixed .sbtn{border-color:var(--good);background:var(--good-soft)}
+.sitem.missed .sbtn{border:2px dashed var(--vest)}
+mark{background:var(--bad-soft);color:var(--bad);font-weight:700;border-radius:4px;padding:0 3px;text-decoration:underline wavy var(--bad);text-underline-offset:4px}
+mark.ok{background:var(--good-soft);color:var(--good);text-decoration:none}
+.fixrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-left:4px}
+.fixrow input,.gap input{font:inherit;font-size:1.05rem;border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--surface);color:var(--ink);min-height:44px;flex:1;min-width:160px}
+.fb{font-size:1rem;border-radius:10px;padding:8px 12px}
+.fb.ok{background:var(--good-soft);color:var(--good);font-weight:700}
+.fb.no{background:var(--bad-soft);color:var(--bad)}
+.fb.info{background:var(--river-soft);color:var(--ink)}
+
+/* task 2 */
+.people{display:flex;gap:6px;flex-wrap:wrap}
+.pbtn{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px;min-height:40px;font-family:var(--display);font-size:.9rem}
+.pbtn[aria-current="true"]{background:var(--vest);border-color:var(--vest);color:#fff}
+.pbtn.done::after{content:" ✓"}
+.profile{display:flex;gap:14px;align-items:flex-start}
+.avatar{width:72px;height:72px;object-fit:cover;border-radius:50%;background:var(--river);color:var(--bg);display:grid;place-items:center;font-family:var(--display);font-size:1.4rem;flex:none}
+.meta{color:var(--muted);font-size:.95rem}
+.story{font-size:1.05rem}
+.bank{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:4px 12px;font-size:.95rem}
+.banner{position:relative;height:210px;border-radius:18px;overflow:hidden;background:var(--river)}
+.bimgs{position:absolute;inset:0;display:flex;gap:3px}
+.bimgs img{flex:1;min-width:0;height:100%;object-fit:cover;display:block}
+.banner::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(10,20,18,.78) 0%,rgba(10,20,18,.25) 45%,rgba(10,20,18,0) 70%)}
+.bcap{position:absolute;left:18px;right:18px;bottom:14px;z-index:1;display:flex;flex-direction:column;gap:2px;color:#fff}
+.bcap h2{color:#fff;font-size:1.6rem;text-shadow:0 1px 8px rgba(0,0,0,.35)}
+.photo{position:relative;border-radius:18px;overflow:hidden;background:var(--river-soft)}
+.photo .bimgs{gap:6px;background:var(--bg)}
+.photo .bimgs img{border-radius:0}
+.photo .bimgs img:first-child{flex:1.5}
+.pcap{position:absolute;left:0;right:0;bottom:0;padding:40px 18px 14px;margin:0;color:#fff;font-family:var(--display);font-size:1.35rem;font-weight:700;background:linear-gradient(to top,rgba(10,20,18,.75),rgba(10,20,18,0))}
+.bstep{font-family:var(--display);font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;color:#ffd2b3}
+@media (min-width:600px){.banner{height:260px}}
+
+.pics{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin-bottom:10px}
+.pic{margin:0;background:var(--bg);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.pic img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block}
+.pic figcaption{font-size:.85rem;line-height:1.3;padding:6px 8px}
+.tip{background:var(--vest-soft);border-radius:12px;padding:10px 14px;font-size:1rem}
+details summary{cursor:pointer;font-family:var(--display);font-size:.95rem;color:var(--river);min-height:36px;display:flex;align-items:center}
+.guess{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:12px}
+.stems{display:flex;flex-wrap:wrap;gap:6px}
+.stem{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:6px 10px;font-size:.95rem;min-height:40px}
+.stem[aria-pressed="true"]{background:var(--river-soft);border-color:var(--river);font-weight:700}
+.gap{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:1.05rem}
+.truth{background:var(--river-soft);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.truth ul{margin:0;padding-left:20px}
+.res{font-size:.95rem;font-weight:700}
+.res.ok{color:var(--good)}.res.no{color:var(--bad)}.res.q{color:var(--muted)}
+
+/* voice / interview */
+.stembox{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;font-size:1.1rem}
+.stembox span{color:var(--muted)}
+.big{background:var(--vest-soft);border-radius:14px;padding:18px;font-size:1.05rem;display:flex;flex-direction:column;gap:8px}
+textarea.qs{width:100%;min-height:150px;font:inherit;font-size:1rem;border:1.5px solid var(--line);border-radius:10px;padding:10px;background:var(--surface);color:var(--ink)}
+.backlink{font-family:var(--display);font-size:.85rem;color:var(--muted);text-decoration:none;min-height:32px;display:flex;align-items:center}
+.copied{color:var(--good);font-weight:700;font-size:.95rem}
+.copybox{width:100%;min-height:120px;font:inherit;font-size:.95rem;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--surface);color:var(--ink)}
+
+.foot{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding-top:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;justify-content:space-between;gap:8px;z-index:5}
+.foot .btn{flex:1;max-width:220px}
+@media (prefers-reduced-motion:no-preference){.stage{animation:in .25s ease-out}@keyframes in{from{transform:translateY(6px)}to{transform:none}}}
+@media (max-width:420px){body{font-size:18px}.sbtn{font-size:1.02rem}.avatar{width:46px;height:46px;font-size:1.2rem}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a href="../" class="backlink">← My English</a>
+    <h1>Have you ever…? · have / has + V3</h1>
+    <nav class="tabs" id="tabs" aria-label="Задания"></nav>
+  </header>
+  <main id="app"></main>
+</div>
+<div class="foot">
+  <button class="btn" id="prev">← Назад</button>
+  <button class="btn primary" id="next">Дальше →</button>
+</div>
+
+<script>
+/* Homework page inside the student app: loads and saves answers on the server (key "hw:<id>"). */
+var HW_ID="hw6", HW_TITLE="Have you ever…?";
+(function(){
+  var API="https://nrnjubhnpaicuokidnjl.supabase.co/functions/v1/app", KEY="hw:"+HW_ID, LS="michael-"+KEY;
+  var AUTH=null, h=new URLSearchParams(location.hash.slice(1)), q=new URLSearchParams(location.search);
+  var init=h.get("tgWebAppData"), k=h.get("k")||q.get("k"), preview=/[?&]preview=1/.test(location.search);
+  if(init){ try{sessionStorage.setItem("tgInit",init);}catch(e){} AUTH="tg "+init; }
+  else { try{ var si=sessionStorage.getItem("tgInit"); if(si) AUTH="tg "+si; }catch(e){} }
+  if(!AUTH&&k) AUTH="key "+k;
+  if(!AUTH){ try{ var sk=localStorage.getItem("myKey"); if(sk) AUTH="key "+sk; }catch(e){} }
+  function local(){ try{ return JSON.parse(localStorage.getItem(LS)||"null"); }catch(e){ return null; } }
+  window.__hwLoad=function(cb){
+    var done=false, fin=function(d){ if(done)return; done=true; cb(d); };
+    if(!AUTH){ fin(local()); return; }
+    setTimeout(function(){ fin(local()); }, 7000);
+    fetch(API+"/state",{headers:{"x-auth":AUTH}}).then(function(r){ if(!r.ok) throw 0; return r.json(); })
+      .then(function(j){ var sv=(j.state||{})[KEY]||null, lc=local(); fin(sv&&lc&&(lc.at||0)>(sv.at||0)?lc:(sv||lc)); })
+      .catch(function(){ fin(local()); });
+  };
+  var pending=null, timer=null;
+  function flush(){
+    if(pending==null||!AUTH||preview) return; var body=pending;
+    fetch(API+"/state",{method:"POST",keepalive:body.length<60000,headers:{"x-auth":AUTH,"content-type":"application/json"},body:body})
+      .then(function(r){ if(r.ok&&pending===body) pending=null; }).catch(function(){});
+  }
+  window.__hwSave=function(data){
+    data.at=Date.now();
+    try{ localStorage.setItem(LS,JSON.stringify(data)); }catch(e){}
+    pending=JSON.stringify({key:KEY,data:data}); clearTimeout(timer);
+    timer=setTimeout(flush, data.submitted?0:800);
+  };
+  document.addEventListener("visibilitychange",function(){ if(document.visibilityState==="hidden") flush(); });
+  setInterval(flush,30000);
+})();
+</script>
+
+<script>
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function el(tag,attrs,...kids){const e=document.createElement(tag);for(const k in (attrs||{})){const v=attrs[k];if(v==null)continue;if(k==="class")e.className=v;else if(k==="html")e.innerHTML=v;else if(k.startsWith("on"))e.addEventListener(k.slice(2),v);else e.setAttribute(k,v);}for(const c of kids){if(c==null||c===false)continue;e.append(c.nodeType?c:document.createTextNode(c));}return e;}
+function norm(s){return (s||"").toLowerCase().replace(/[’‘`]/g,"'").replace(/[.,!?;:"]/g," ").replace(/\s+/g," ").trim();}
+
+/* ================= TASK 1: find & fix ================= */
+const T1=[
+  {s:"They have never been climbed a mountain.",w:"been climbed",fix:["climbed"],hint:"После have never — сразу V3. Been здесь лишний."},
+  {s:"I have never ran a marathon.",w:"ran",fix:["run"],hint:"run – ran – run. Нужна третья форма."},
+  {s:"They didn't saw a footballer.",w:"didn't saw",fix:["haven't seen","have not seen","have never seen"],hint:"Это опыт в жизни → have / haven't + V3 (see – saw – seen)."},
+  {s:"He has not win a gold medal.",w:"win",fix:["won"],hint:"win – won – won. После has нужна третья форма."},
+  {s:"My sister have learned the piano.",w:"have",fix:["has"],hint:"he / she / my sister → has."},
+  {s:"Last week a woman has seen Maxim Matveyev in a coffee shop.",w:"has seen",fix:["saw"],hint:"Last week — это «Когда?» → прошедшее время (see – saw)."},
+  {s:"He has never climbed a mountain.",ok:true},
+  {s:"I have seen a footballer, but I have never met one.",ok:true},
+  {s:"Have you seen Trigger?",ok:true},
+  {s:"My mom has learned the piano.",ok:true},
+  {s:"Sandy learned the piano when he was young.",ok:true},
+  {s:"They haven't visited the Antarctic.",ok:true}
+];
+
+/* ================= TASK 2: people ================= */
+/* bank items: id, label (base form), test = how to recognise the phrase, ok = correct V3 */
+const BANK=[
+  {id:"mountain",label:"climb a mountain",key:/mountain/,ok:/\bclimbed (a |the |many |big |small )*mountains?\b/,v3:"climbed a mountain"},
+  {id:"medal",label:"win a gold medal",key:/medal/,ok:/\bwon (a |many |some )*(gold )?medals?\b/,v3:"won a gold medal"},
+  {id:"piano",label:"learn the piano",key:/piano/,ok:/\b(learned|learnt) (to play )?the piano\b|\bplayed the piano\b/,v3:"learned the piano"},
+  {id:"antarctic",label:"visit the Antarctic",key:/antarctic/,ok:/\b(visited|been to) (the )?antarctic(a)?\b/,v3:"visited the Antarctic"},
+  {id:"famous",label:"meet a famous person / a footballer",key:/famous|footballer|football player/,ok:/\bmet (a |many |some )*(famous (person|people|footballers?|players?)|footballers?|football players?)\b/,v3:"met a famous footballer"},
+  {id:"marathon",label:"run a marathon",key:/marathon/,ok:/\brun (a |two |many )*marathons?\b/,v3:"run a marathon"},
+  {id:"lights",label:"see the Northern Lights",key:/northern|lights|aurora/,ok:/\bseen (the )?(northern lights|aurora)\b/,v3:"seen the Northern Lights"},
+  {id:"pottery",label:"try pottery / take a pottery class",key:/pottery/,ok:/\btried pottery\b|\btaken (a )?pottery class(es)?\b/,v3:"tried pottery"},
+  {id:"tedlasso",label:"see Ted Lasso",key:/ted|lasso/,ok:/\b(seen|watched) ted lasso\b/,v3:"seen Ted Lasso"},
+  {id:"tent",label:"sleep in a tent",key:/tent/,ok:/\bslept in (a )?tents?\b/,v3:"slept in a tent"},
+  {id:"kayak",label:"go on a kayak trip",key:/kayak/,ok:/\b(gone|been) on (a )?kayak trips?\b/,v3:"gone on a kayak trip"},
+  {id:"safari",label:"go on a safari",key:/safari/,ok:/\b(gone|been) on (a )?safari\b/,v3:"gone on a safari"},
+  {id:"fishing",label:"go fishing",key:/fishing/,ok:/\b(gone|been) fishing\b/,v3:"gone fishing"},
+  {id:"skiing",label:"go skiing",key:/ski/,ok:/\b(gone|been) skiing\b/,v3:"gone skiing"},
+  {id:"samovar",label:"try samovar tea",key:/samovar/,ok:/\btried (samovar tea|tea from (a |the )?samovar)\b/,v3:"tried samovar tea"},
+  {id:"dubai",label:"be to + place (Dubai, Spain, Italy…)",key:/dubai/,ok:/\bbeen to dubai\b/,v3:"been to Dubai"}
+];
+/* truth: yes = has, many = has … many times, never = has never */
+const PEOPLE=[
+  {name:"Anna",p:"she",age:27,city:"Moscow",
+   story:["Anna is a sales manager. Her company's main office is in Dubai, so she goes there on business trips every month.",
+          "She loves nice hotels and spa days. She hates camping: “Sleep on the ground? No, thank you!”",
+          "She doesn't do any sport, and she takes a taxi everywhere.",
+          "On Sunday evenings she stays at home and watches her favourite American series about a football coach in England.",
+          "Last year a friend gave her a present: a class where you make cups and plates with your hands."],
+   truth:{"to:Dubai":"many",tent:"never",marathon:"never",tedlasso:"many",pottery:"yes",kayak:"never"}},
+  {name:"Pavel",p:"he",age:31,city:"Sochi",
+   story:["Pavel grew up in Murmansk, in the north of Russia.",
+          "A few years ago he played football for a big club. Now he is a football coach for kids in Sochi.",
+          "He loves winter sports.",
+          "His brother lives in Spain, and Pavel visits him every summer.",
+          "His sister plays the piano, but Pavel says: “Music isn't for me.”"],
+   truth:{lights:"many",medal:"yes",famous:"many",skiing:"many","to:Spain":"many",piano:"never"}},
+  {name:"Lena",p:"she",age:25,city:"Buenos Aires",
+   story:["Lena is a travel blogger from Saint Petersburg. Now she lives in Buenos Aires.",
+          "She loves cold places and snowy mountains.",
+          "Last year she went to the far south, to “the end of the world”.",
+          "She loves nature more than hotels.",
+          "She has a small boat for one person, and in summer she travels on rivers.",
+          "Her dream for next winter is Norway."],
+   truth:{mountain:"many",antarctic:"yes",tent:"many",kayak:"many",lights:"never"}},
+  {name:"Igor",p:"he",age:29,city:"Kazan",
+   story:["Igor is a chef. He has a restaurant with Tatar food in Kazan, and every guest gets tea from a big old samovar.",
+          "On the walls of his restaurant there are photos of wild animals from Africa.",
+          "His wife is from Italy. Her family lives in Rome, and they visit them every year.",
+          "Every Saturday he brings fresh fish from the river for the restaurant.",
+          "He runs 10 kilometres every morning.",
+          "But he never goes to the mountains. He's afraid of heights."],
+   truth:{samovar:"many",safari:"yes","to:Italy":"many",fishing:"many",marathon:"yes",mountain:"never"}}
+];
+
+/* ================= state ================= */
+const S={
+  stage:0,
+  t1:{order:shuffle(T1.map((_,i)=>i)),st:T1.map(()=>({state:"idle",tries:0,val:"",msg:null})),finished:false},
+  t2:{cur:0,revealed:PEOPLE.map(()=>false)},
+  t4:{text:""},
+  submitted:false
+};
+const STAGES=[
+  {tab:"1 Найди ошибку",render:r1,done:()=>S.t1.finished&&S.t1.st.every((x,i)=>T1[i].ok||x.state==="fixed"||x.state==="shown")},
+  {tab:"2 Угадай",render:r2,done:()=>S.t2.revealed.every(Boolean)},
+  {tab:"3 Интервью",render:r4,done:()=>false},
+  {tab:"4 Отправить",render:r5,done:()=>false}
+];
+
+/* ================= copy ================= */
+function copyBtn(label,getText){
+  const host=el("div",{class:"row"});
+  const msg=el("span",{class:"copied"});
+  const b=el("button",{class:"btn",onclick:()=>{
+    const text=getText();
+    const old=host.parentNode&&host.parentNode.querySelector(".copybox");if(old)old.remove();
+    const fallback=()=>{const ta=el("textarea",{class:"copybox",readonly:""});ta.value=text;host.after(ta);ta.focus();ta.select();msg.textContent="Выдели текст и скопируй вручную.";};
+    try{navigator.clipboard.writeText(text).then(()=>{msg.textContent="Скопировано! Вставь в Telegram.";},fallback);}catch(e){fallback();}
+  }},label);
+  host.append(b,msg);return host;
+}
+
+/* ================= render shell ================= */
+const app=document.getElementById("app"),tabs=document.getElementById("tabs");
+function render(){
+  tabs.innerHTML="";
+  STAGES.forEach((s,i)=>tabs.append(el("button",{class:"tab"+(s.done()?" done":""),"aria-current":String(i===S.stage),onclick:()=>go(i)},s.tab)));
+  app.innerHTML="";
+  app.append(STAGES[S.stage].render());
+  document.getElementById("prev").disabled=S.stage===0;
+  const nx=document.getElementById("next");
+  nx.disabled=S.stage===STAGES.length-1;
+  hwPush();
+}
+function go(i){S.stage=i;render();window.scrollTo(0,0);const t=tabs.children[i];if(t&&t.scrollIntoView)t.scrollIntoView({inline:"center",block:"nearest"});}
+document.getElementById("prev").onclick=()=>{if(S.stage>0)go(S.stage-1);};
+document.getElementById("next").onclick=()=>{if(S.stage<STAGES.length-1)go(S.stage+1);};
+function rerenderKeepScroll(){const y=window.scrollY;render();window.scrollTo(0,y);}
+
+function banner(names,step,title,pos){
+  return el("div",{class:"banner"},
+    el("div",{class:"bimgs","aria-hidden":"true"},...names.map((n,i)=>el("img",{src:"img/"+n+".webp",alt:"",style:(pos&&pos[i])?"object-position:"+pos[i]:null}))),
+    el("div",{class:"bcap"},step?el("span",{class:"bstep"},step):null,el("h2",{},title)));
+}
+function photo(names,pos,caption,h){
+  return el("div",{class:"photo",style:h?"height:"+h+"px":null},
+    el("div",{class:"bimgs","aria-hidden":"true"},...names.map((n,i)=>el("img",{src:"img/"+n+".webp",alt:"",style:(pos&&pos[i])?"object-position:"+pos[i]:null}))),
+    caption?el("p",{class:"pcap"},caption):null);
+}
+/* ================= Task 1 ================= */
+function sentenceNode(item,showMark,markOk,fixVal){
+  if(!showMark||item.ok)return document.createTextNode(item.s);
+  const i=item.s.indexOf(item.w);
+  const f=document.createDocumentFragment();
+  f.append(item.s.slice(0,i));
+  f.append(el("mark",{class:markOk?"ok":null},markOk?fixVal:item.w));
+  f.append(item.s.slice(i+item.w.length));
+  return f;
+}
+function r1(){
+  const box=el("section",{class:"stage"});
+  box.append(el("div",{class:"stage-head"},
+    banner(["lights"],"Задание 1 из 3","Find the mistake",["center 35%"]),
+    el("p",{class:"note"},"Повторение · ~25 минут · можно делать по частям. Ответы сохраняются автоматически."),
+    el("p",{class:"rubric"},"Некоторые предложения правильные, в некоторых есть ошибка. Нажми на предложение, если думаешь, что в нём ошибка. Если ошибка есть — она подсветится, и ты напишешь, как правильно. Когда закончишь, нажми «Я закончил» внизу.")));
+  const list=el("div",{class:"list"});
+  S.t1.order.forEach((idx,n)=>{
+    const it=T1[idx],st=S.t1.st[idx];
+    const cls={idle:"",good:"good",fix:"fix",fixed:"fixed",shown:"fixed",wrongtap:"good"}[st.state]||"";
+    const wrap=el("div",{class:"sitem "+cls+(st.missed&&st.state==="fix"?" missed":"")});
+    const showMark=["fix","fixed","shown"].includes(st.state);
+    const done=["fixed","shown"].includes(st.state);
+    const b=el("button",{class:"sbtn","aria-label":it.s,onclick:()=>{
+      if(st.state!=="idle")return;
+      st.state=it.ok?"good":"fix";
+      rerenderKeepScroll();
+    }},el("span",{class:"num"},(n+1)+"."),el("span",{},sentenceNode(it,showMark,done,done?st.answer:"")));
+    if(st.state!=="idle")b.setAttribute("aria-disabled","true");
+    wrap.append(b);
+    if(st.state==="good")wrap.append(el("p",{class:"fb ok"},"✓ It's a good sentence — nothing to change."));
+    if(st.state==="fix"){
+      if(st.missed)wrap.append(el("p",{class:"fb info"},"Здесь тоже есть ошибка. Исправь выделенную часть."));
+      else if(st.tries===0)wrap.append(el("p",{class:"fb info"},"Да, здесь ошибка! Напиши, как правильно сказать выделенную часть."));
+      const inp=el("input",{type:"text",autocomplete:"off",autocapitalize:"off",spellcheck:"false","aria-label":"Correct words",placeholder:"Напиши правильный вариант"});
+      inp.value=st.val;inp.addEventListener("input",()=>{st.val=inp.value;hwPush();});
+      const check=()=>{
+        if(!norm(st.val))return;
+        const ok=it.fix.some(f=>norm(f)===norm(st.val));
+        st.tries++;
+        if(ok){st.state="fixed";st.answer=st.val.trim();st.msg=null;}
+        else if(st.tries>=2){st.state="shown";st.answer=it.fix[0];st.msg="Правильно: "+it.fix.join(" / ")+". "+it.hint;}
+        else st.msg=it.hint;
+        rerenderKeepScroll();
+      };
+      inp.addEventListener("keydown",e=>{if(e.key==="Enter")check();});
+      wrap.append(el("div",{class:"fixrow"},inp,el("button",{class:"btn primary",onclick:check},"Check")));
+      if(st.msg)wrap.append(el("p",{class:"fb no"},"Not quite. "+st.msg));
+    }
+    if(st.state==="fixed")wrap.append(el("p",{class:"fb ok"},"✓ Great! "+it.s.replace(it.w,st.answer)));
+    if(st.state==="shown")wrap.append(el("p",{class:"fb info"},st.msg));
+    list.append(wrap);
+  });
+  box.append(list);
+  const fin=el("div",{class:"row"});
+  if(!S.t1.finished){
+    fin.append(el("button",{class:"btn primary",onclick:()=>{
+      S.t1.finished=true;
+      T1.forEach((it,i)=>{const st=S.t1.st[i];if(!it.ok&&st.state==="idle"){st.state="fix";st.missed=true;}});
+      rerenderKeepScroll();
+    }},"Я закончил — проверить"));
+  }else{
+    const missed=S.t1.st.filter((x,i)=>x.missed).length;
+    const goods=T1.filter((it,i)=>it.ok&&S.t1.st[i].state==="idle").length;
+    fin.append(el("p",{class:"fb info"},
+      (missed?`Ты не нашёл ${missed} ошиб${missed===1?"ку":"ки"} — они подсвечены оранжевым, исправь их. `:"Ты нашёл все ошибки! ")+
+      (goods?`Предложения без отметки — правильные.`:"")));
+  }
+  box.append(fin);
+  return box;
+}
+function t1Text(){
+  const lines=["Task 1 · Find the mistake"];
+  S.t1.order.forEach((idx,n)=>{const it=T1[idx],st=S.t1.st[idx];
+    let r="—";
+    if(st.state==="good")r="good sentence ✓";
+    else if(st.state==="fixed")r=`fixed ✓ (${st.answer})${st.missed?" — missed at first":""}`;
+    else if(st.state==="shown")r=`answer shown (${it.fix[0]})`;
+    else if(st.state==="fix")r="not fixed yet";
+    lines.push(`${n+1}. ${it.s} → ${r}`);});
+  return lines.join("\n");
+}
+
+/* ================= Task 2 ================= */
+function r2(){
+  const box=el("section",{class:"stage"});
+  box.append(el("div",{class:"stage-head"},
+    el("span",{class:"step"},"Задание 2 из 3"),
+    el("h2",{},"Who has done what?"),
+    el("p",{class:"rubric"},"Прочитай про каждого человека. Как ты думаешь, что он(а) делал(а) в жизни, а что — никогда? Запиши голосовое в Telegram: 3–4 догадки про каждого. Используй начало фраз и банк слов. Не читай с экрана. Потом нажми кнопку и проверь, что правда.")));
+  box.append(el("div",{class:"stembox"},
+    el("p",{},"I think she has never ",el("span",{},"…"),"."),
+    el("p",{},"I think he has ",el("span",{},"…"),"."),
+    el("p",{},"I think she has ",el("span",{},"…")," many times.")));
+  box.append(el("div",{class:"card"},el("details",{open:""},el("summary",{},"Банк слов (word bank)"),
+    el("div",{class:"bank"},...BANK.map(b=>el("span",{class:"chip"},b.label))),
+    el("p",{class:"tip",style:"margin-top:10px"},"go → went → gone: He has gone fishing. be → been: She has been to Dubai many times.",el("br"),"Помни: has + V3, без been: has climbed, has run, has slept."))));
+
+  box.append(photo(["safari","marathon"],["center 62%","center 45%"],null,170));
+  const nav=el("div",{class:"people"});
+  PEOPLE.forEach((p,i)=>nav.append(el("button",{class:"pbtn"+(S.t2.revealed[i]?" done":""),"aria-current":String(i===S.t2.cur),onclick:()=>{S.t2.cur=i;rerenderKeepScroll();}},p.name)));
+  box.append(nav);
+
+  const i=S.t2.cur,P=PEOPLE[i];
+  const card=el("div",{class:"card"});
+  card.append(el("div",{class:"profile"},el("img",{class:"avatar",src:"img/"+P.name.toLowerCase()+".webp",alt:P.name}),
+    el("div",{},el("h3",{},P.name),el("p",{class:"meta"},`${P.age} · ${P.city}`))));
+  card.append(el("div",{class:"story"},...P.story.map(s=>el("p",{style:"margin-bottom:8px"},s))));
+  if(!S.t2.revealed[i]){
+    card.append(el("p",{class:"note"},`🎙 Запиши голосовое про ${P.name}: 3–4 догадки.`));
+    card.append(el("div",{class:"row"},el("button",{class:"btn primary",onclick:()=>{S.t2.revealed[i]=true;rerenderKeepScroll();}},"Я записал — посмотреть ответы")));
+  }else{
+    const lines=Object.entries(P.truth).map(([id,t])=>{const b=id.startsWith("to:")?{v3:"been to "+id.slice(3)}:BANK.find(x=>x.id===id);
+      const MANY={"met a famous footballer":"met famous footballers","climbed a mountain":"climbed mountains","gone on a kayak trip":"gone on kayak trips"};
+      return t==="never"?`${P.name} has never ${b.v3}.`:t==="many"?`${P.name} has ${MANY[b.v3]||b.v3} many times.`:`${P.name} has ${b.v3}.`;});
+    card.append(el("div",{class:"truth"},el("b",{},`${P.name}'s answers. Did you guess right?`),el("ul",{},...lines.map(l=>el("li",{},l)))));
+    if(i<PEOPLE.length-1)card.append(el("div",{class:"row"},el("button",{class:"btn primary",onclick:()=>{S.t2.cur=i+1;window.scrollTo(0,0);render();}},`Next: ${PEOPLE[i+1].name} →`)));
+  }
+  box.append(card);
+  return box;
+}
+
+/* ================= Task 4: interview ================= */
+function r4(){
+  const box=el("section",{class:"stage"});
+  box.append(el("div",{class:"stage-head"},
+    el("span",{class:"step"},"Задание 3 из 3"),
+    el("h2",{},"Your interview"),
+    el("p",{class:"rubric"},"Теперь твоя очередь! Возьми интервью у Сабины и у 2–3 коллег или друзей. Задай каждому 4–5 вопросов «Have you ever…?». Можно использовать фразы из банка слов или свои. В субботу расскажи мне, что ты узнал.")));
+  box.append(el("div",{class:"stembox"},
+    el("p",{},"Have you ever ",el("span",{},"…"),"?"),
+    el("p",{},"Sabina has ",el("span",{},"…"),", but she has never ",el("span",{},"…"),"."),
+    el("p",{},"I have ",el("span",{},"…")," too. / I have never ",el("span",{},"…"),".")));
+  box.append(photo(["tent"],["center 55%"],null,150));
+  const ta=el("textarea",{class:"qs","aria-label":"My questions",placeholder:"Напиши свои вопросы здесь, например:\nHave you ever slept in a tent?\nHave you ever seen the Northern Lights?"});
+  ta.value=S.t4.text;ta.addEventListener("input",()=>{S.t4.text=ta.value;hwPush();});
+  box.append(el("div",{class:"card"},el("b",{},"My questions"),ta));
+  return box;
+}
+function t4Text(){return "Task 3 · My interview questions\n"+(S.t4.text.trim()||"—");}
+
+/* ================= Task 5: send ================= */
+function r5(){
+  const box=el("section",{class:"stage"});
+  box.append(el("div",{class:"stage-head"},el("h2",{},"Отправь мне"),
+    el("p",{class:"rubric"},"Когда всё готово, нажми кнопку — Stacy увидит твои ответы. Голосовые из задания 2 отправь в Telegram. Интервью — расскажешь в субботу.")));
+  box.append(el("div",{class:"big"},el("p",{},"✓ Задания 1 и 3 → сохраняются здесь"),el("p",{},"🎙 Задание 2 → голосовые в Telegram"),el("p",{},"💬 Интервью → на уроке в субботу")));
+  box.append(S.submitted
+    ? el("p",{class:"fb ok"},"Отправлено ✓ Stacy видит твои ответы.")
+    : el("div",{class:"row"},el("button",{class:"btn primary",onclick:()=>{S.submitted=true;rerenderKeepScroll();}},"Готово — отправить Stacy")));
+  box.append(photo(["piano"],["center 82%"],null,220));
+  return box;
+}
+
+/* ================= saving (answers go to the app, Stacy sees them) ================= */
+function t2Text(){return "Task 2 · Who has done what? (voice in Telegram) — answers opened: "+PEOPLE.map((p,i)=>p.name+(S.t2.revealed[i]?" ✓":" —")).join(", ");}
+let hwLoaded=false;
+function hwPush(){
+  if(!hwLoaded)return;
+  try{window.__hwSave({title:HW_TITLE,submitted:!!S.submitted,summary:[t1Text(),t2Text(),t4Text()].join("\n\n"),
+    s:{stage:S.stage,t1:S.t1,t2:S.t2,t4:S.t4,submitted:!!S.submitted}});}catch(e){}
+}
+app.append(el("p",{class:"rubric",style:"padding-top:22px"},"Загружаю…"));
+window.__hwLoad(function(d){
+  try{ const z=d&&d.s;
+    if(z){ if(z.t1&&z.t1.st&&z.t1.st.length===T1.length&&z.t1.order&&z.t1.order.length===T1.length)S.t1=z.t1;
+      if(z.t2&&z.t2.revealed&&z.t2.revealed.length===PEOPLE.length)S.t2=z.t2;
+      if(z.t4)S.t4={text:String(z.t4.text||"")};
+      S.submitted=!!z.submitted; S.stage=Math.min(STAGES.length-1,Math.max(0,z.stage|0)); } }catch(e){}
+  hwLoaded=true; render();
+});
+</script>
+</body>
+</html>

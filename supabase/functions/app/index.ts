@@ -235,7 +235,9 @@ async function teacher(req: Request) {
   for (const s of (students || []) as any[]) {
     const st: Record<string, any> = {}, upd: Record<string, string> = {};
     for (const r of (states || []) as any[]) if (r.student_id === s.id) { st[r.key] = r.data; upd[r.key] = r.updated_at; }
-    summary[s.id] = { cards: cardSummary(s, st), diary: diarySummary(s, st), updated: upd };
+    const hwPages = Object.keys(st).filter((k) => k.startsWith("hw:")).map((k) => ({ id: k.slice(3), title: String(st[k].title || k.slice(3)),
+      submitted: !!st[k].submitted, summary: String(st[k].summary || "").slice(0, 6000), updated: upd[k] })).sort((a, b) => String(b.updated).localeCompare(String(a.updated)));
+    summary[s.id] = { cards: cardSummary(s, st), diary: diarySummary(s, st), hw: hwPages, updated: upd };
   }
   return send(200, {
     summary,
@@ -513,10 +515,12 @@ async function homeworkDue(s: any): Promise<Msg[]> {
   return out;
 }
 
-// Homework (profile.homework or open app homework) not ticked "homework" since the last lesson.
+// Homework still open: an item in profile.homework that is neither marked done by Stacy (done: true) nor ticked
+// by the student (cards.hw[id]), or open app-built homework — and no "homework" tick since the last lesson.
 async function homeworkPending(s: any, st: Record<string, any>) {
   const P = s.profile || {};
-  const hasHw = (P.homework || []).length > 0;
+  const ticked = (st.cards || {}).hw || {};
+  const hasHw = (P.homework || []).some((x: any) => x && !x.done && !ticked[x.id]);
   const { data: open } = await db.from("homework").select("id").eq("student_id", s.id).eq("published", true).is("completed_at", null).limit(1);
   const has = hasHw || !!(open && open.length);
   const now = tzParts(tzOf(s));
@@ -616,10 +620,44 @@ async function statePost(req: Request) {
   const raw = await req.text();
   if (raw.length > 400_000) return send(413, { error: "too big" });
   const { key, data } = JSON.parse(raw);
-  if (!STATE_KEYS.has(key) || typeof data !== "object" || data === null) return send(400, { error: "key" });
+  const isHw = /^hw:[\w-]{1,40}$/.test(key); // a homework page's answers (docs/p/<student>/<hw>/)
+  if (!(STATE_KEYS.has(key) || isHw) || typeof data !== "object" || data === null) return send(400, { error: "key" });
+  let wasSubmitted = false;
+  if (isHw) {
+    const { data: prev } = await db.from("student_state").select("data").eq("student_id", s.id).eq("key", key).maybeSingle();
+    wasSubmitted = !!(prev && prev.data && prev.data.submitted);
+    if (wasSubmitted) data.submitted = true; // a finished homework stays finished
+  }
+  if (key === "cards") {
+    // keep homework ticks the server added (a homework page was finished) if this phone hasn't loaded them yet
+    const { data: prev } = await db.from("student_state").select("data").eq("student_id", s.id).eq("key", "cards").maybeSingle();
+    const sv = (prev && prev.data && prev.data.hwServer) || {};
+    if (Object.keys(sv).length) { data.hwServer = sv; data.hw = { ...sv, ...(data.hw || {}) }; }
+  }
   await db.from("student_state").upsert({ student_id: s.id, key, data, updated_at: new Date().toISOString() });
   if (key === "cards" || key === "diary") await notePracticeTime(s, key, data);
+  if (isHw) await hwSaved(s, key.slice(3), data, wasSubmitted);
   return send(200, { ok: true });
+}
+
+// Homework page saved. First work of the day counts as practice; on "submitted": tick it done on the student's
+// page (cards.hw + today's "homework" tick, which also stops homework reminders) and tell Stacy.
+async function hwSaved(s: any, hwId: string, data: any, wasSubmitted: boolean) {
+  const now = tzParts(tzOf(s)), day = now.dayNum;
+  const { data: row } = await db.from("student_state").select("data").eq("student_id", s.id).eq("key", "practice_times").maybeSingle();
+  const t: Record<string, number> = { ...((row && row.data) || {}) };
+  if (t[day] === undefined) { t[day] = now.minutes; await db.from("student_state").upsert({ student_id: s.id, key: "practice_times", data: t, updated_at: new Date().toISOString() }); }
+  if (!data.submitted || wasSubmitted) return;
+  const { data: cr } = await db.from("student_state").select("data").eq("student_id", s.id).eq("key", "cards").maybeSingle();
+  const cards: any = { s: {}, log: {}, off: 0, ...((cr && cr.data) || {}) };
+  cards.hw = { ...(cards.hw || {}), [hwId]: day };
+  cards.hwServer = { ...(cards.hwServer || {}), [hwId]: day };
+  cards.act = { ...(cards.act || {}) };
+  cards.act[day] = [...new Set([...(cards.act[day] || []), "homework"])];
+  await db.from("student_state").upsert({ student_id: s.id, key: "cards", data: cards, updated_at: new Date().toISOString() });
+  const teacher = (await cfg()).TEACHER_TG_ID;
+  if (teacher) await tg("sendMessage", { chat_id: teacher, text: `✅ ${s.name} finished the homework "${String(data.title || hwId).slice(0, 80)}".`,
+    reply_markup: await openButton("See answers", "/teacher.html") });
 }
 
 // First practice of the day (cards done, any Progress tick, or a diary entry) → its local time, for practiceTime().
