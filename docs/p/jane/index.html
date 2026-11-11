@@ -1190,7 +1190,7 @@ function renderProfile(){
   const daysToPay = pay ? Math.round((Date.parse(pay+"T00:00:00Z")/DAY) - today()) : 99;
   const K = P.pack, used = K ? packUsed(K) : 0, left = K ? K.size - used : 0;
   const paidDate = K && K.paid ? new Date(K.paid+"T00:00:00Z").toLocaleDateString("ru-RU",{day:"numeric",month:"long",timeZone:"UTC"}) : "";
-  const pkgHtml = K ? '<div class="pkg"><div class="row"><b>Оплачен пакет: '+K.size+' уроков</b>'+(paidDate?'<span>'+esc(paidDate)+'</span>':'')+'</div>'+
+  const pkgHtml = K ? '<div class="pkg"><div class="row"><b>'+(K.paid ? 'Оплачен пакет: ' : 'Пакет: ')+K.size+' уроков</b>'+(paidDate?'<span>'+esc(paidDate)+'</span>':'')+'</div>'+
     (K.month ? '<span class="month">'+esc(K.month)+'</span>' : '')+
     '<div class="boxes" style="grid-template-columns:repeat('+Math.max(K.size,9)+',1fr)" role="img" aria-label="Пройдено '+used+' из '+K.size+' уроков">'+Array.from({length:K.size},(_,i)=>'<i class="'+(i<used?'on':'')+'">'+(i<used?CHECK:'')+'</i>').join("")+'</div>'+
     '<span class="note">'+(left>0 ? 'Пройдено '+used+' из '+K.size+' · осталось '+left : 'Все уроки пакета пройдены. Пора оплатить новый пакет.')+'</span></div>' : '';

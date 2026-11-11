@@ -246,7 +246,7 @@ async function bot(req: Request) {
       if (st) await markPaid(st);
       await tg("answerCallbackQuery", { callback_query_id: cq.id, text: st ? "Thank you! Stacy will check it 🙂" : "" });
       if (st && cq.message) await tg("editMessageReplyMarkup", { chat_id: cq.message.chat.id, message_id: cq.message.message_id, reply_markup: { inline_keyboard: [] } });
-      if (st && cq.message) await tg("sendMessage", { chat_id: cq.message.chat.id, text: "Thank you! 💛 Your new package has started. Stacy will check the payment." });
+      if (st && cq.message) await tg("sendMessage", { chat_id: cq.message.chat.id, text: "Thank you! 💛 Stacy will check the payment." });
       return send(200, { ok: true });
     }
     const m = upd.message;
@@ -469,12 +469,18 @@ async function markPaid(s: any) {
   const P = { ...(s.profile || {}) }, today = tzParts(tzOf(s)).date;
   if (P.paidClaimed === today) return P; // double tap
   const old = P.pack || { size: 8 };
-  P.prevPacks = [...(P.prevPacks || []), old].slice(-6);
-  P.pack = { size: old.size || 8, start: today, paid: today, skip: [], add: [] };
+  if (P.pack && !P.pack.paid) {
+    // paying for the package she's already in (e.g. November started on the 10th)
+    P.pack = { ...P.pack, paid: today };
+  } else {
+    // current package already paid → this payment starts a new one today
+    P.prevPacks = [...(P.prevPacks || []), old].slice(-6);
+    P.pack = { size: old.size || 8, start: today, paid: today, skip: [], add: [] };
+  }
   P.paidClaimed = today;
   await db.from("students").update({ profile: P, pay_check_at: new Date().toISOString() }).eq("id", s.id);
   const t = (await cfg()).TEACHER_TG_ID;
-  if (t) await tg("sendMessage", { chat_id: t, text: `💳 ${s.name} says she has paid. A new package started today — please check the payment.`,
+  if (t) await tg("sendMessage", { chat_id: t, text: `💳 ${s.name} says she has paid — please check the payment.`,
     reply_markup: await openButton("Open teacher view", "/teacher.html") });
   return P;
 }

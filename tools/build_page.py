@@ -26,6 +26,8 @@ rep('function dsave(){ try{ localStorage.setItem(DK, JSON.stringify(D)); }catch(
 # 4) "I've paid" button after the payment/package blocks render
 rep('  $("schedPh").hidden = true; $("zoomLink2").href = P.zoom || "#"; $("zoomLink2").hidden = !P.zoom;',
     '  $("schedPh").hidden = true; $("zoomLink2").href = P.zoom || "#"; $("zoomLink2").hidden = !P.zoom;\n  try{ window.__payUI && __payUI(P); }catch(e){}')
+# 4b) only call the package "paid" when it is
+rep("<b>Оплачен пакет: '+K.size+' уроков</b>'", "<b>'+(K.paid ? 'Оплачен пакет: ' : 'Пакет: ')+K.size+' уроков</b>'")
 # 5) page scripts wait for the saved progress to load
 n = s.count("<script>")
 s = s.replace("<script>", '<script type="text/plain" data-boot>')
