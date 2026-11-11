@@ -1677,7 +1677,7 @@ function render(){
   $("hubTiles").innerHTML =
     tile('data-hub="cards"','',q.length||'✓','teal',"Word cards",(q.length?"Карточек на сегодня: "+q.length:"На сегодня всё ✓")+" · "+ALL.length+" in total","›")+
     tile('data-hub="pron"','','<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h2M7 8v8M11 5v14M15 8v8M19 11v2"/></svg>','coral',"Pronunciation",pronDone ? "Сегодня: "+pronDone+" из "+UNITS.length+" ✓" : "Склейки в живой речи · можно повторять каждый день","›")+
-    tile('data-diary="1"','','✎','gold',"My diary","Расскажи о своём дне фразами из карточек","›");
+    ""; // diary removed for Michael (Nov 11, 2026)
   document.querySelectorAll("[data-hub]").forEach(b=>b.addEventListener("click",()=>setSub(b.dataset.hub)));
   document.querySelectorAll("[data-diary]").forEach(b=>b.addEventListener("click",()=>show("diary")));
   $("topics").innerHTML =
@@ -2040,4 +2040,8 @@ testUI(); render();
 })();
 </script>
 
+<script type="text/plain" data-boot>
+/* Link from the bot's pronunciation reminder: ?open=pron opens Practice → Pronunciation */
+try{ if(new URLSearchParams(location.search).get("open")==="pron"){ psub="pron"; show("cards"); } }catch(e){}
+</script>
 </body></html>

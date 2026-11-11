@@ -400,7 +400,7 @@ async function loadState(studentId: string) {
 
 // ---------- reminder messages (English, friendly, short) ----------
 type Msg = { kind: string; key: string; text: string; reply_markup?: unknown } | null;
-const pageButton = async (s: any, text: string) => ({ inline_keyboard: [[{ text, web_app: { url: (await appUrl()) + "/" + (s.page || "") } }]] });
+const pageButton = async (s: any, text: string, query = "") => ({ inline_keyboard: [[{ text, web_app: { url: (await appUrl()) + "/" + (s.page || "") + query } }]] });
 
 async function morningCards(s: any, st: Record<string, any>): Promise<Msg> {
   const c = cardCounts(s, st), date = tzParts(tzOf(s)).date;
@@ -418,7 +418,16 @@ async function morningCards(s: any, st: Record<string, any>): Promise<Msg> {
 async function evening(s: any, st: Record<string, any>): Promise<Msg> {
   const c = cardCounts(s, st), d = diarySummary(s, st), date = tzParts(tzOf(s)).date;
   const cardsLeft = c.done === 0 && c.todayCount > 0;
-  const diary = !(s.profile || {}).noDiary && !d.wroteToday; // noDiary: diary isn't part of this student's homework
+  const P = s.profile || {};
+  const diary = !P.noDiary && !d.wroteToday; // noDiary: diary isn't part of this student's homework
+  // pronReminder: nudge to the Pronunciation clips unless a pronunciation unit was opened today
+  const pron = !!P.pronReminder && !(((st.cards || {}).act || {})[c.today] || []).includes("pron");
+  if (pron) {
+    let text: string;
+    if (cardsLeft) text = `Good evening, ${s.name}! 🌙 Two small things: ${c.todayCount} cards are waiting, and how about a little pronunciation practice? Pick a video, listen and repeat — a nice way to refresh what we did 🎬`;
+    else text = `Good evening, ${s.name}! 🌙 How about a little pronunciation practice? Your videos are waiting: watch, repeat and refresh your memory 🎬`;
+    return { kind: "evening", key: date, text, reply_markup: await pageButton(s, cardsLeft ? "Open my English" : "Practise pronunciation", cardsLeft ? "" : "?open=pron") };
+  }
   let text: string;
   if (cardsLeft && diary) text = `Good evening, ${s.name}! 🌙 Two small things before bed: ${c.todayCount} cards are waiting, and your diary — how was your day? A couple of sentences is perfect ✍️`;
   else if (cardsLeft) text = `Good evening, ${s.name}! 🌙 ${c.todayCount} cards are still waiting for you today. It only takes a few minutes.`;
