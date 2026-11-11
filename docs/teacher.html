@@ -29,6 +29,8 @@ td.m{width:28px;text-align:center}
 input[type=date]{font:400 14px Karla;border:1px solid var(--sandl);border-radius:8px;padding:5px 6px;margin-left:6px}
 button{font:600 14px Karla;border:0;border-radius:10px;padding:7px 11px;background:var(--sandl);color:var(--java);cursor:pointer}
 .links{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.num{width:64px;font:400 14px Karla;border:1px solid var(--sandl);border-radius:8px;padding:5px 6px;margin-left:6px}
+button.primary{background:var(--java);color:var(--ivory)}
 .hint{font-size:13px;color:var(--choc);opacity:.75;margin-top:4px}
 </style>
 </head>
@@ -76,11 +78,17 @@ function studentPanel(s, sm){
   h += dy.last ? '<div class="muted">' + esc(dy.last.date) + (dy.wroteToday ? ' · wrote today ✓' : '') + '</div><div class="resp" style="margin-top:6px">' + esc(dy.last.text) + '</div>' : '<div class="muted">No entries yet.</div>';
   h += '</div><div class="card"><div class="head"><h3>Package & payment</h3>' +
     (s.pay_check_at ? '<span class="pill late">Says she paid — check</span>' : K.paid ? '<span class="pill done">Paid ✓</span>' : '<span class="pill late">Not paid yet</span>') + '</div>';
-  h += '<div class="muted">' + (K.size || "—") + ' lessons from ' + esc(K.start || "—") + (K.paid ? ' · paid ' + esc(K.paid) : '') + '</div>';
-  h += '<div class="links"><button data-markpaid="' + s.id + '">✓ Payment received</button></div><div class="hint">' +
-    (s.pay_check_at ? 'She tapped “I’ve paid”. Check Stripe, then tap this.' : K.paid ? 'Tap when her next payment arrives — a new package starts that day.' : 'Tap when the money arrives — reminders stop.') + '</div>';
-  h += '<div class="links" style="align-items:center;margin-top:12px"><label class="muted">Next payment <input type="date" data-np="' + s.id + '" value="' + esc(P.nextPayment || "") + '"></label>' +
-       '<button data-save-np="' + s.id + '">Save date</button></div><div class="hint">She gets payment reminders 2 days before, on the day, and on lesson days while it’s unpaid.</div>';
+  var np = P.nextPayment ? new Date(P.nextPayment + "T12:00:00Z").toLocaleDateString("en-GB", {weekday: "short", day: "numeric", month: "short", timeZone: "UTC"}) : "—";
+  h += '<div class="links" style="align-items:center"><label class="muted">Lessons <input type="number" min="1" max="60" class="num" data-size="' + s.id + '" value="' + esc(K.size || "") + '"></label>' +
+       '<label class="muted">from <input type="date" data-start="' + s.id + '" value="' + esc(K.start || "") + '"></label>' +
+       '<button data-save-pack="' + s.id + '">Save package</button></div>' +
+       '<div class="hint">' + (K.paid ? 'Paid ' + esc(K.paid) + '. ' : '') + 'Paying per lesson? Put the number of lessons she paid for.</div>';
+  h += '<div style="margin-top:14px"><b>Next payment: ' + esc(np) + '</b> <span class="muted">· ' + (P.nextPaymentManual ? 'set by you' : 'automatic') + '</span></div>';
+  h += '<div class="links" style="align-items:center"><input type="date" data-np="' + s.id + '" value="' + esc(P.nextPayment || "") + '"><button data-save-np="' + s.id + '">Change date</button>' +
+       (P.nextPaymentManual ? '<button data-auto="' + s.id + '">Use automatic</button>' : '') + '</div>' +
+       '<div class="hint">Automatic: an unpaid package is due at its first lesson; a paid one at the first lesson after it ends.</div>';
+  h += '<div class="links" style="margin-top:14px"><button class="primary" data-markpaid="' + s.id + '">✓ Payment received</button></div><div class="hint">' +
+    (s.pay_check_at ? 'She tapped “I’ve paid”. Check Stripe, then tap this.' : K.paid ? 'Tap when her next payment arrives. A new package starts after this one ends, with the number of lessons above.' : 'Tap when the money arrives. Reminders stop and the next payment date is set automatically.') + '</div>';
   h += '</div><div class="card"><div class="head"><h3>Reminders</h3><span class="pill' + (P.remindersOff ? ' late">Off' : ' done">On') + '</span></div>';
   h += '<div class="links"><button data-remind="' + s.id + '" data-off="' + (P.remindersOff ? '0' : '1') + '">' + (P.remindersOff ? 'Turn reminders on' : 'Pause reminders') + '</button>' +
        '<button data-test="' + s.id + '">Show me her reminders</button></div>' +
@@ -92,8 +100,15 @@ function wireActions(){
   document.querySelectorAll("[data-save-np]").forEach(function(b){ b.onclick = function(){
     var id = b.dataset.saveNp, v = document.querySelector('[data-np="' + id + '"]').value || null;
     post({student_id: id, action: "profile", patch: {nextPayment: v}}).then(function(){ b.textContent = "Saved ✓"; setTimeout(load, 600); }).catch(function(){ b.textContent = "Error"; }); }; });
+  document.querySelectorAll("[data-save-pack]").forEach(function(b){ b.onclick = function(){
+    var id = b.dataset.savePack; b.disabled = true;
+    post({student_id: id, action: "profile", patch: {packSize: Number(document.querySelector('[data-size="' + id + '"]').value) || undefined,
+      packStart: document.querySelector('[data-start="' + id + '"]').value || undefined}}).then(load).catch(function(){ b.disabled = false; b.textContent = "Error"; }); }; });
+  document.querySelectorAll("[data-auto]").forEach(function(b){ b.onclick = function(){
+    b.disabled = true; post({student_id: b.dataset.auto, action: "profile", patch: {autoPayment: true}}).then(load); }; });
   document.querySelectorAll("[data-markpaid]").forEach(function(b){ b.onclick = function(){
-    b.disabled = true; post({student_id: b.dataset.markpaid, action: "mark-paid"}).then(load).catch(function(){ b.disabled = false; b.textContent = "Error — try again"; }); }; });
+    var id = b.dataset.markpaid, n = Number((document.querySelector('[data-size="' + id + '"]') || {}).value) || undefined;
+    b.disabled = true; post({student_id: id, action: "mark-paid", patch: {lessons: n}}).then(load).catch(function(){ b.disabled = false; b.textContent = "Error — try again"; }); }; });
   document.querySelectorAll("[data-remind]").forEach(function(b){ b.onclick = function(){
     b.disabled = true; post({student_id: b.dataset.remind, action: "profile", patch: {remindersOff: b.dataset.off === "1"}}).then(load).catch(function(){ b.disabled = false; }); }; });
   document.querySelectorAll("[data-test]").forEach(function(b){ b.onclick = function(){

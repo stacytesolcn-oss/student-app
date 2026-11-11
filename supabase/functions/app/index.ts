@@ -317,6 +317,43 @@ const tzOf = (s: any) => s.profile?.tzName || s.tz || "Europe/Moscow";
 const prettyDate = (iso: string) => new Date(iso + "T12:00:00Z").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" });
 const daysBetween = (a: string, b: string) => Math.round((Date.parse(b + "T00:00:00Z") - Date.parse(a + "T00:00:00Z")) / DAY);
 
+// ---------- packages: lesson dates and automatic next payment ----------
+const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+// Lesson dates from a start date, following the weekly schedule; skips cancelled dates, includes extra ones.
+function lessonDates(P: any, start: string, count: number) {
+  const out: string[] = [];
+  if (!start) return out;
+  const skip = new Set([...(P.pack?.skip || []), ...(P.cancel || [])]);
+  const add = new Set(P.pack?.add || []);
+  const days = new Set((P.lessons || []).map((l: any) => l.day));
+  let t = Date.parse(start + "T12:00:00Z");
+  for (let i = 0; i < 400 && out.length < count; i++, t += DAY) {
+    const d = new Date(t), iso = d.toISOString().slice(0, 10);
+    if ((days.has(WEEKDAYS[d.getUTCDay()]) && !skip.has(iso)) || add.has(iso)) out.push(iso);
+  }
+  return out;
+}
+// Unpaid package → due at its first lesson. Paid package → due at the first lesson after it ends.
+function autoNextPayment(P: any): string | null {
+  const K = P.pack;
+  if (!K?.start) return P.nextPayment || null;
+  const size = Number(K.size) || 8;
+  if (!K.paid) return lessonDates(P, K.start, 1)[0] || K.start;
+  return lessonDates(P, K.start, size + 1)[size] || null;
+}
+function withAutoPayment(P: any) {
+  if (!P.nextPaymentManual) P.nextPayment = autoNextPayment(P);
+  return P;
+}
+// A new package starts at the first lesson after the previous one (or today if there's no schedule).
+function startNewPack(P: any, today: string, size?: number) {
+  const old = P.pack || { size: 8 };
+  const n = Number(size) || Number(old.size) || 8;
+  const after = old.start ? lessonDates(P, old.start, (Number(old.size) || 8) + 1)[Number(old.size) || 8] : null;
+  P.prevPacks = [...(P.prevPacks || []), old].slice(-6);
+  P.pack = { size: n, start: after || today, paid: today, skip: [], add: [] };
+}
+
 // ---------- progress summaries ----------
 function cardCounts(s: any, st: Record<string, any>) {
   const store = st.cards || { s: {}, log: {} }, meta = st.cards_meta || {};
@@ -508,16 +545,11 @@ async function testReminders(req: Request) {
 async function markPaid(s: any) {
   const P = { ...(s.profile || {}) }, today = tzParts(tzOf(s)).date;
   if (P.paidClaimed === today) return P; // double tap
-  const old = P.pack || { size: 8 };
-  if (P.pack && !P.pack.paid) {
-    // paying for the package she's already in (e.g. November started on the 10th)
-    P.pack = { ...P.pack, paid: today };
-  } else {
-    // current package already paid → this payment starts a new one today
-    P.prevPacks = [...(P.prevPacks || []), old].slice(-6);
-    P.pack = { size: old.size || 8, start: today, paid: today, skip: [], add: [] };
-  }
+  if (P.pack && !P.pack.paid) P.pack = { ...P.pack, paid: today }; // paying for the package she's in
+  else startNewPack(P, today);                                     // next package
   P.paidClaimed = today;
+  P.nextPaymentManual = false;
+  withAutoPayment(P);
   await db.from("students").update({ profile: P, pay_check_at: new Date().toISOString() }).eq("id", s.id);
   const t = (await cfg()).TEACHER_TG_ID;
   if (t) await tg("sendMessage", { chat_id: t, text: `💳 ${s.name} says she has paid — please check the payment.`,
@@ -562,20 +594,25 @@ async function teacherEdit(req: Request) {
     // - current package already paid → this payment starts a new package today
     const { data: full } = await db.from("students").select("id,profile,pay_check_at,tz").eq("id", s.id).maybeSingle();
     const P = { ...((full || s).profile || {}) }, today = tzParts(tzOf(full || s)).date;
+    const lessons = Number(patch?.lessons) || 0;
     if (!full?.pay_check_at) {
-      const old = P.pack || { size: 8 };
-      if (P.pack && !P.pack.paid) P.pack = { ...P.pack, paid: today };
-      else { P.prevPacks = [...(P.prevPacks || []), old].slice(-6); P.pack = { size: old.size || 8, start: today, paid: today, skip: [], add: [] }; }
+      if (P.pack && !P.pack.paid) P.pack = { ...P.pack, paid: today, ...(lessons ? { size: lessons } : {}) };
+      else startNewPack(P, today, lessons);
       P.paidClaimed = today;
-    }
+    } else if (lessons && P.pack) P.pack = { ...P.pack, size: lessons };
+    P.nextPaymentManual = false;
+    withAutoPayment(P);
     await db.from("students").update({ profile: P, pay_check_at: null }).eq("id", s.id);
   }
   if (action === "profile" && patch && typeof patch === "object") {
     const allowed = ["nextPayment", "price", "stripe", "package", "note", "remindersOff"];
     const P = { ...(s.profile || {}) };
     for (const k of allowed) if (k in patch) P[k] = patch[k];
+    if ("nextPayment" in patch) P.nextPaymentManual = !!patch.nextPayment;
+    if (patch.autoPayment) P.nextPaymentManual = false;
     if (patch.packSize) P.pack = { ...(P.pack || {}), size: Number(patch.packSize) };
     if (patch.packStart) P.pack = { ...(P.pack || {}), start: patch.packStart };
+    withAutoPayment(P);
     await db.from("students").update({ profile: P }).eq("id", s.id);
   }
   return send(200, { ok: true });
