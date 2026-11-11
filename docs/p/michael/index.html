@@ -923,7 +923,7 @@ html,body{overflow-x:clip}
     var paidNow = P.paidClaimed && P.paidClaimed === todayIn(P.tzName);
     [["payBar", true], ["planPay", false]].forEach(function(x){
       var el = document.getElementById(x[0]); if (!el || el.hidden) return;
-      if (x[1] && el.classList.contains("pkgbar")) return;
+      if (x[1] && el.classList.contains("pkgbar") && !el.querySelector(":scope > a")) return; // package bar with a Pay link (payment due) gets the buttons too
       var old = el.querySelector(".payrow"); if (old) old.remove();
       if (!P.nextPayment && !paidNow) return;
       if (x[1] && P.package){
