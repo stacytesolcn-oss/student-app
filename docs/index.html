@@ -88,7 +88,7 @@ var AUTH = null;
   if (init){ try{ sessionStorage.setItem("tgInit", init); }catch(e){} AUTH = "tg " + init; return; }
   try{ var s = sessionStorage.getItem("tgInit"); if (s){ AUTH = "tg " + s; return; } }catch(e){}
   var k = h.get("k");
-  if (k){ try{ localStorage.setItem("myKey", k); }catch(e){} AUTH = "key " + k; return; }
+  if (k){ if (!/[?&]preview=1/.test(location.search)) { try{ localStorage.setItem("myKey", k); }catch(e){} } AUTH = "key " + k; return; }
   try{ var saved = localStorage.getItem("myKey"); if (saved) AUTH = "key " + saved; }catch(e){}
 })();
 tgPost("web_app_ready"); tgPost("web_app_expand");

@@ -67,7 +67,8 @@ function render(d){
     var hws = d.homework.filter(function(h){ return h.student_id === s.id; });
     html += '<h2>' + esc(s.name) + '</h2><div class="muted">' + (s.tg_user_id ? "Telegram linked ✓" : "Telegram not linked yet") + ' · ' + esc(s.tz) + '</div>' +
       '<div class="links">' + (s.telegramLink ? '<button data-copy="' + esc(s.telegramLink) + '">Copy Telegram link</button>' : '') +
-      '<button data-copy="' + esc(s.link) + '">Copy web link</button></div>';
+      '<button data-copy="' + esc(s.link) + '">Copy web link</button>' +
+      '<a href="' + esc(s.link.replace('#k=', '?preview=1#k=')) + '" target="_blank" rel="noopener"><button>Open her page</button></a></div>';
     if (!hws.length) html += '<div class="card muted">No homework yet.</div>';
     hws.forEach(function(h){
       var ans = d.answers.filter(function(a){ return a.homework_id === h.id; });
