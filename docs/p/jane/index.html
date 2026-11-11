@@ -817,8 +817,13 @@ body{touch-action:pan-y pinch-zoom;overscroll-behavior-x:none}
 <style>
 .bootmsg{position:fixed;inset:0;display:grid;place-items:center;background:#F6F1E7;z-index:99;font:500 16px/1.5 Raleway,system-ui,sans-serif;color:#231815;text-align:center;padding:24px}
 .syncnote{position:fixed;left:50%;transform:translateX(-50%);top:max(8px,env(safe-area-inset-top));background:#231815;color:#F6F1E7;font:600 13px Raleway,system-ui,sans-serif;padding:6px 12px;border-radius:99px;z-index:98}
-.paybtn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1.5px solid currentColor;background:transparent;color:inherit;border-radius:999px;padding:9px 16px;font:600 .9rem Raleway,system-ui,sans-serif;margin-top:10px;cursor:pointer}
-.paydone{display:block;margin-top:10px;font-size:.9rem;opacity:.85}
+html,body{overflow-x:clip}
+.paybar{flex-wrap:wrap}
+.payrow{flex-basis:100%;display:flex;gap:10px;margin-top:12px}
+.payrow > a,.payrow > button{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:center;text-align:center;border-radius:999px;padding:12px 10px;font-family:var(--caps);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;text-decoration:none;border:1.5px solid var(--brown);cursor:pointer;line-height:1.2;width:auto}
+.payrow .pr-pay{background:var(--brown);color:var(--on-brown)}
+.payrow .pr-paid{background:transparent;color:var(--brown)}
+.payrow .paydone{font-weight:600;font-size:.9rem;color:var(--muted)}
 </style>
 <div class="bootmsg" id="bootmsg">Загружаю…</div>
 <script>
@@ -851,29 +856,33 @@ body{touch-action:pan-y pinch-zoom;overscroll-behavior-x:none}
   document.addEventListener("visibilitychange", function(){ if (document.visibilityState === "hidden") Object.keys(pending).forEach(flush); });
   setInterval(function(){ Object.keys(pending).forEach(flush); }, 30000);
 
-  // ---- "I've paid" ----
+  // ---- payment row: [Оплатить] [Я оплатила] under the payment text ----
   function todayIn(tz){ try{ return new Intl.DateTimeFormat("en-CA",{timeZone:tz||"Europe/Moscow"}).format(new Date()); }catch(e){ return new Date().toISOString().slice(0,10); } }
   window.__payUI = function(P){
-    var targets = [document.getElementById("planPay")], bar = document.getElementById("payBar");
-    if (bar && !bar.hidden && !bar.classList.contains("pkgbar")) targets.push(bar);
-    targets.forEach(function(el){
-      if (!el || el.hidden) return;
-      var old = el.querySelector(".paybtn,.paydone"); if (old) old.remove();
-      if (P.paidClaimed && P.paidClaimed === todayIn(P.tzName)){
-        var d = document.createElement("span"); d.className = "paydone"; d.textContent = "Оплата отмечена ✓ Stacy проверит."; el.appendChild(d); return;
+    var paidNow = P.paidClaimed && P.paidClaimed === todayIn(P.tzName);
+    [["payBar", true], ["planPay", false]].forEach(function(x){
+      var el = document.getElementById(x[0]); if (!el || el.hidden) return;
+      if (x[1] && el.classList.contains("pkgbar")) return;
+      var old = el.querySelector(".payrow"); if (old) old.remove();
+      if (!P.nextPayment && !paidNow) return;
+      var link = x[1] ? el.querySelector(":scope > a") : el.querySelector("a.btn");
+      var row = document.createElement("div"); row.className = "payrow";
+      if (paidNow){
+        if (link) link.remove();
+        row.innerHTML = '<span class="paydone">Оплата отмечена ✓ Stacy проверит.</span>'; el.appendChild(row); return;
       }
-      if (!P.nextPayment) return;
-      var b = document.createElement("button"); b.type = "button"; b.className = "paybtn"; b.textContent = "Я оплатила ✓";
+      if (link){ link.textContent = "Оплатить"; link.className = "pr-pay"; row.appendChild(link); }
+      var b = document.createElement("button"); b.type = "button"; b.className = "pr-paid"; b.textContent = "Я оплатила";
       var armed = false;
       b.onclick = function(){
-        if (preview){ b.textContent = "В предпросмотре не работает"; return; }
-        if (!armed){ armed = true; b.textContent = "Нажми ещё раз, чтобы подтвердить"; setTimeout(function(){ armed = false; b.textContent = "Я оплатила ✓"; }, 4000); return; }
-        b.disabled = true; b.textContent = "Отправляю…";
+        if (preview){ b.textContent = "Предпросмотр"; return; }
+        if (!armed){ armed = true; b.textContent = "Подтвердить?"; setTimeout(function(){ armed = false; b.textContent = "Я оплатила"; }, 4000); return; }
+        b.disabled = true; b.textContent = "…";
         fetch(API + "/paid", { method: "POST", headers: { "x-auth": AUTH } }).then(function(r){ if (!r.ok) throw 0; return r.json(); })
           .then(function(j){ Object.assign(PROFILE, j.profile || {}); try{ renderProfile(); }catch(e){} })
-          .catch(function(){ b.disabled = false; b.textContent = "Нет связи — попробуй ещё раз"; });
+          .catch(function(){ b.disabled = false; b.textContent = "Ещё раз"; });
       };
-      el.appendChild(b);
+      row.appendChild(b); el.appendChild(row);
     });
   };
 

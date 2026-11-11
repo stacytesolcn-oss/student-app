@@ -389,16 +389,34 @@ async function lessonSoon(s: any, force = false): Promise<Msg> {
   return { kind: "lesson", key: `${n?.date}:${time}`,
     text: `Hi ${s.name}! 👋 Your English lesson starts in 1 hour, at ${time} (Moscow time). See you soon!`, reply_markup: buttons };
 }
+function lessonsOn(s: any, when: Date) {
+  const P = s.profile || {}, t = tzParts(tzOf(s), when);
+  const skip = new Set([...(P.pack?.skip || []), ...(P.cancel || [])]);
+  if (skip.has(t.date)) return [];
+  return (P.lessons || []).filter((l: any) => l.day === t.weekday && !(l.from && t.date < l.from) && !(l.until && t.date > l.until))
+    .map((l: any) => ({ ...l, date: t.date, weekday: t.weekday }));
+}
+async function lessonTomorrow(s: any, force = false): Promise<Msg> {
+  let ls = lessonsOn(s, new Date(Date.now() + DAY));
+  if (!ls.length && force) ls = (s.profile?.lessons || []).slice(0, 1).map((l: any) => ({ ...l, date: "test", weekday: l.day }));
+  if (!ls.length) return null;
+  const l = ls.sort((a: any, b: any) => String(a.time).localeCompare(String(b.time)))[0];
+  return { kind: "lesson-eve", key: `${l.date}:${l.time}`,
+    text: `Hi ${s.name}! 📅 Just a reminder: your English lesson is tomorrow (${l.weekday}) at ${l.time}, Moscow time. See you there!` };
+}
 async function paymentDue(s: any, force = false): Promise<Msg> {
   const P = s.profile || {}, due = P.nextPayment;
   if (!due) return null;
   const today = tzParts(tzOf(s)).date, d = daysBetween(today, due);
   if (P.paidClaimed && daysBetween(P.paidClaimed, due) <= 14) return null; // already said she paid for this one
-  if (!force && d !== 2 && d !== 0) return null;
-  const price = P.payAmount ? ` (${P.payAmount})` : "";
+  // 2 days before, on the day, and — while overdue — on each lesson day
+  const overdueLessonDay = d < 0 && lessonsOn(s, new Date()).length > 0;
+  if (!force && d !== 2 && d !== 0 && !overdueLessonDay) return null;
   const text = d === 0
-    ? `Hi ${s.name}! 💳 Friendly reminder: your payment for the next lesson package${price} is due today.`
-    : `Hi ${s.name}! 💳 Friendly reminder: your next payment${price} is due on ${prettyDate(due)}.`;
+    ? `Hi ${s.name}! 💳 Friendly reminder: your lesson payment is due today.`
+    : d < 0
+    ? `Hi ${s.name}! 💳 Friendly reminder: your lesson payment (due ${prettyDate(due)}) is still open.`
+    : `Hi ${s.name}! 💳 Friendly reminder: your next lesson payment is due on ${prettyDate(due)}.`;
   const row: any[] = [];
   if (P.stripe) row.push({ text: "Pay", url: P.stripe });
   row.push({ text: "I've paid ✓", callback_data: "paid" });
@@ -439,6 +457,7 @@ async function cron(req: Request) {
     if (inWindow(t.minutes, 20 * 60)) sent += +(await sendOnce(s, await evening(s, st)));
     if (inWindow(t.minutes, 10 * 60)) sent += +(await sendOnce(s, await paymentDue(s)));
     if (inWindow(t.minutes, 17 * 60)) for (const m of await homeworkDue(s)) sent += +(await sendOnce(s, m));
+    if (inWindow(t.minutes, 18 * 60)) sent += +(await sendOnce(s, await lessonTomorrow(s)));
     const n = nextLessonToday(s);
     if (n && n.until > 45 && n.until <= 60) sent += +(await sendOnce(s, await lessonSoon(s)));
   }
@@ -454,7 +473,7 @@ async function testReminders(req: Request) {
   const { data: s } = await (id ? q.eq("id", id) : q.order("created_at")).limit(1).maybeSingle();
   if (!s || !c.TEACHER_TG_ID) return send(400, { error: "no student or teacher not linked" });
   const st = await loadState(s.id);
-  const msgs = [await morningCards(s, st), await evening(s, st), await lessonSoon(s, true), await paymentDue(s, true), ...(await homeworkDue(s))];
+  const msgs = [await morningCards(s, st), await evening(s, st), await lessonTomorrow(s, true), await lessonSoon(s, true), await paymentDue(s, true), ...(await homeworkDue(s))];
   const labels: string[] = [];
   for (const m of msgs) {
     if (!m) continue;
