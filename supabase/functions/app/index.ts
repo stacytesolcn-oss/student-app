@@ -521,10 +521,13 @@ async function paymentDue(s: any, force = false): Promise<Msg> {
   if (!due) return null;
   const today = tzParts(tzOf(s)).date, d = daysBetween(today, due);
   if (P.paidClaimed && daysBetween(P.paidClaimed, due) <= 0) return null; // already paid on/after this due date
-  // 2 days before, on the day, and — while overdue — the day BEFORE each lesson (morning lessons start before 10:00)
-  const overdueLessonDay = d < 0 && lessonsOn(s, new Date(Date.now() + DAY)).length > 0;
-  if (!force && d !== 2 && d !== 0 && !overdueLessonDay) return null;
-  const text = d === 0
+  // Only the evening before a lesson, right after the "lesson tomorrow" message (18:00), when the payment is due
+  // by that lesson or overdue (Stacy, Nov 12). No other payment messages.
+  const lessonTmr = lessonsOn(s, new Date(Date.now() + DAY)).length > 0;
+  if (!force && !(lessonTmr && d <= 1)) return null;
+  const text = d === 1
+    ? `Hi ${s.name}! 💳 Friendly reminder: your lesson payment is due tomorrow.`
+    : d === 0
     ? `Hi ${s.name}! 💳 Friendly reminder: your lesson payment is due today.`
     : d < 0
     ? `Hi ${s.name}! 💳 Friendly reminder: your lesson payment (due ${prettyDate(due)}) is still open.`
@@ -584,9 +587,11 @@ async function cron(req: Request) {
     const t = tzParts(tzOf(s));
     const st = await loadState(s.id);
     if (inWindow(t.minutes, practiceTime(st).at)) sent += +(await sendOnce(s, await practice(s, st)));
-    if (inWindow(t.minutes, 10 * 60)) sent += +(await sendOnce(s, await paymentDue(s)));
     if (inWindow(t.minutes, 17 * 60)) for (const m of await homeworkDue(s)) sent += +(await sendOnce(s, m));
-    if (inWindow(t.minutes, 18 * 60)) sent += +(await sendOnce(s, await lessonTomorrow(s, false, st)));
+    if (inWindow(t.minutes, 18 * 60)) {
+      sent += +(await sendOnce(s, await lessonTomorrow(s, false, st)));
+      sent += +(await sendOnce(s, await paymentDue(s)));
+    }
     const n = nextLessonToday(s);
     if (n && n.until > 45 && n.until <= 60) sent += +(await sendOnce(s, await lessonSoon(s)));
   }
