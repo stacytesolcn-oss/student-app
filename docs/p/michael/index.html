@@ -1650,11 +1650,15 @@ function renderHomework(){
       : '<span class="hwt"><span class="pill">Homework</span><b>Всё сделано ✓</b><span>Новая домашка появится после следующего урока.</span></span><i aria-hidden="true">✓</i>';
   }
   $("hwEmpty").hidden = !!hw.length;
-  $("hwList").innerHTML = hw.map(h=>{ const d = hwDone(h.id);
+  const hwItem = h=>{ const d = hwDone(h.id);
     return '<div class="hwitem'+(d?' done':'')+'">'+(h.due?'<span class="due">'+esc(dueLabel(h.due))+(h.mins?' · '+esc(h.mins):'')+'</span>':'')+
       '<h3>'+esc(h.title)+'</h3>'+(h.note?'<p>'+esc(h.note)+'</p>':'')+
       '<div class="foot">'+(h.url?'<a class="open" href="'+esc(h.url)+'" target="_blank" rel="noopener">Открыть</a>':'<span></span>')+
-      (h.done||(hwInApp(h)&&d)?'<span class="due">✓ Сделано</span>':hwInApp(h)?'<span></span>':'<button class="donebtn" data-hw="'+esc(h.id)+'" aria-pressed="'+d+'">'+(d?'✓ Сделано':'Отметить как сделанное')+'</button>')+'</div></div>'; }).join("");
+      (h.done||(hwInApp(h)&&d)?'<span class="due">✓ Сделано</span>':hwInApp(h)?'<span></span>':'<button class="donebtn" data-hw="'+esc(h.id)+'" aria-pressed="'+d+'">'+(d?'✓ Сделано':'Отметить как сделанное')+'</button>')+'</div></div>'; };
+  /* open homework on top; finished homework folded under "Прошлые домашки" */
+  const pastHw = hw.filter(h=>hwDone(h.id));
+  $("hwList").innerHTML = (open.length ? open.map(hwItem).join("") : '<div class="hwitem done"><h3>Всё сделано ✓</h3><p>Новая домашка появится после следующего урока.</p></div>') +
+    (pastHw.length ? '<details class="pasthw" style="margin-top:14px"><summary style="cursor:pointer;padding:10px 2px;font-weight:600">Прошлые домашки ('+pastHw.length+')</summary>'+pastHw.map(hwItem).join("")+'</details>' : '');
   document.querySelectorAll("[data-hw]").forEach(b=>b.addEventListener("click",()=>{
     store.hw = store.hw || {}; const id = b.dataset.hw;
     if(hwDone(id)) delete store.hw[id]; else { store.hw[id] = today(); markDone("homework", true); }
