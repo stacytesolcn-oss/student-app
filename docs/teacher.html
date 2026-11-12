@@ -162,8 +162,13 @@ function studentView(d, s){
   var taught = taughtCount(P);
   h += '<h2>Package & payment</h2><div class="card"><div class="head"><b>' + (taught !== null ? taught + ' of ' + (K.size || "?") + ' lessons taught' : 'No package set') + '</b>' + payPill(s) + '</div>' +
        '<div style="margin-top:6px">Next payment: <b>' + esc(shortDate(P.nextPayment)) + '</b> <span class="muted">· ' + (P.nextPaymentManual ? 'set by you' : 'automatic') + '</span></div>' +
-       '<div class="links"><button class="primary" data-markpaid="' + s.id + '">✓ Payment received</button></div><div class="hint">' +
-       (s.pay_check_at ? W.He + ' tapped “I’ve paid”. Check Stripe, then tap this.' : K.paid ? 'Tap when the next payment arrives. A new package starts after this one ends.' : 'Tap when the money arrives. Payment reminders stop and the next date is set automatically.') + '</div>' +
+       // A paid package needs nothing. Starting the NEXT package by hand takes two taps (Nov 12: extra taps made extra packages).
+       ((s.pay_check_at || !K.paid)
+         ? '<div class="links"><button class="primary" data-markpaid="' + s.id + '">✓ Payment received</button></div><div class="hint">' +
+           (s.pay_check_at ? W.He + ' tapped “I’ve paid”. Check Stripe, then tap this — once.' : 'Tap when the money arrives. Payment reminders stop and the next date is set automatically.') + '</div>'
+         : '<div class="hint" style="margin-top:8px">This package is paid ✓ Nothing to do until the next payment date.</div>' +
+           '<div class="links"><button data-markpaid="' + s.id + '" data-twice="1">Next package paid already?</button></div>' +
+           '<div class="hint">Only if ' + esc(s.name) + ' paid for the next package without tapping “I’ve paid”.</div>') +
        '<details style="margin-top:12px"><summary><b>Change package or date</b> <span class="muted">· tap to show</span></summary>' +
        '<div class="links" style="align-items:center"><label class="muted">Lessons <input type="number" min="1" max="60" class="num" data-size="' + s.id + '" value="' + esc(K.size || "") + '"></label>' +
        '<label class="muted">from <input type="date" data-start="' + s.id + '" value="' + esc(K.start || "") + '"></label><button data-save-pack="' + s.id + '">Save package</button></div>' +
@@ -215,6 +220,7 @@ function wireActions(){
   document.querySelectorAll("[data-auto]").forEach(function(b){ b.onclick = function(){
     b.disabled = true; post({student_id: b.dataset.auto, action: "profile", patch: {autoPayment: true}}).then(load); }; });
   document.querySelectorAll("[data-markpaid]").forEach(function(b){ b.onclick = function(){
+    if (b.dataset.twice && !b.dataset.armed) { b.dataset.armed = "1"; b.textContent = "Tap again: start a new paid package"; b.classList.add("primary"); return; }
     var id = b.dataset.markpaid, n = Number((document.querySelector('[data-size="' + id + '"]') || {}).value) || undefined;
     b.disabled = true; post({student_id: id, action: "mark-paid", patch: {lessons: n}}).then(load).catch(function(){ b.disabled = false; b.textContent = "Error — try again"; }); }; });
   document.querySelectorAll("[data-remind]").forEach(function(b){ b.onclick = function(){

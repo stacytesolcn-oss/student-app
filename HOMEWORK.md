@@ -51,6 +51,15 @@ Anything in the page's `PROFILE` → the database, never the page file (the data
 `select app_profile_patch('<slug>', '{"note":"Focus of the week text"}'::jsonb);`
 Fields: `note` (Focus of the week), `ideas` (Watch & listen), `lessons`, `price`, `minutes`, `zoom`, `stripe`, `miro`, `goals`,
 `cardsNote`, `welcome`, `remindersOff`, `noDiary`, `pronReminder`, `pronDays`.
+Payment rules (keep them when moving a student or touching `pack`):
+- One payment = one package. A student's "I've paid" marks the CURRENT package paid if it is unpaid; only when the current
+  package is already paid does it start the next one. Stacy's "✓ Payment received" after that only confirms.
+- Moving a student whose current package is not paid yet: `pack.paid` must be absent (never a guessed date), `pack.start` =
+  first lesson of that package. Then the page shows "Payment due" and the first payment lands on this package.
+- Never add `prevPacks` by hand. To repair a wrong package: set `pack` back (`start`, `size`, `paid`), set `prevPacks` to `[]`
+  (or remove the wrong entries), `nextPaymentManual` false, and `nextPayment` = first lesson after the package ends.
+- After any payment change, read the row back and check: lessons taught, paid date, next payment date.
+
 Payment and package: Stacy does it in Teacher view ("✓ Payment received", "Change package or date"). If she asks Claude:
 `app_profile_patch` with `{"nextPayment":"YYYY-MM-DD","nextPaymentManual":true}` and/or `pack` `{size,start,paid,skip,add}`.
 A cancelled lesson: add its date to `pack.skip`. Lesson times must match Google Calendar.
