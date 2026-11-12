@@ -1,0 +1,308 @@
+<!doctype html><html lang="en"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Gives me, helps, gets</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Raleway:wght@600;700&display=swap">
+<style>
+:root{
+  --bg:#F6F1E7; --card:#FCFAF5; --ink:#231815; --muted:#6E5C52; --line:#E3D9C8;
+  --brown:#643A24; --on-brown:#F6F1E7;
+  --butter:#F4DC96; --butter-soft:#FAF0CF;
+  --blue-soft:#E3EEF4; --blue-ink:#2F4C5E;
+  --good:#2E6B45; --good-soft:#E2F0E5; --warn:#8A4B12; --warn-soft:#F6E6D3;
+  --display:"Cormorant Garamond","Iowan Old Style",Georgia,serif;
+  --body:"DM Sans","Helvetica Neue",Arial,sans-serif;
+  --caps:"Raleway","Avenir Next","Helvetica Neue",Arial,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){ :root{
+  --bg:#231815; --card:#2E211C; --ink:#F3ECDF; --muted:#BCA995; --line:#46352C;
+  --brown:#F4DC96; --on-brown:#231815;
+  --butter:#F4DC96; --butter-soft:#3F3422;
+  --blue-soft:#253743; --blue-ink:#C1DBE8;
+  --good:#9FD3AE; --good-soft:#1F3426; --warn:#F0C08E; --warn-soft:#3E2B1B;
+  color-scheme:dark }}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.55;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+.wrap{max-width:560px;margin:0 auto;padding-block:20px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:18px}
+.back{color:var(--muted);font-size:.9rem;text-decoration:none}
+h1,h2{font-family:var(--display);font-weight:600;line-height:1.05;margin:0;text-wrap:balance}
+h1{font-size:2.5rem} h2{font-size:1.8rem}
+p{margin:0}
+.eyebrow{font-family:var(--caps);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.muted{color:var(--muted)}
+.part{display:grid;gap:12px;padding-top:6px}
+.how{background:var(--butter-soft);border-radius:20px;padding:14px 16px;display:grid;gap:6px;font-size:.95rem}
+.how ol{margin:0;padding-left:1.2em;display:grid;gap:3px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px;display:grid;gap:10px;min-width:0}
+.card.ok{border-color:var(--good)}
+.top{display:flex;align-items:flex-start;gap:10px}
+.num{width:28px;height:28px;border-radius:50%;background:var(--brown);color:var(--on-brown);display:grid;place-items:center;font-weight:700;font-size:.85rem;flex:none;margin-top:2px}
+.card.ok .num{background:var(--good);color:var(--card)}
+.sent{font-family:var(--display);font-size:1.35rem;line-height:1.3;font-weight:600}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;cursor:pointer;border-radius:999px;padding:10px 16px;font-weight:600;font-size:.92rem;border:1.5px solid var(--brown);background:var(--brown);color:var(--on-brown);min-height:44px}
+button.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+button.picked{outline:2px solid var(--brown);outline-offset:2px}
+button[disabled]{opacity:.45;cursor:default}
+button:focus-visible,textarea:focus-visible{outline:2px solid var(--brown);outline-offset:2px}
+textarea{width:100%;min-height:64px;resize:vertical;font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:14px;padding:10px 12px}
+.fb{font-size:.93rem;border-radius:12px;padding:8px 12px}
+.fb.good{background:var(--good-soft);color:var(--good)}
+.fb.bad{background:var(--warn-soft);color:var(--warn)}
+.model{font-size:1rem;border-left:3px solid var(--butter);padding-left:10px}
+.model span{display:block;font-family:var(--caps);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.grid{display:grid;gap:8px}
+.line3{display:grid;grid-template-columns:1fr;gap:2px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 12px}
+.line3 .c{display:flex;flex-wrap:wrap;gap:6px;align-items:baseline;font-size:1.02rem}
+.c1{background:var(--blue-soft);color:var(--blue-ink);border-radius:8px;padding:1px 7px}
+.c2{background:var(--butter-soft);border-radius:8px;padding:1px 7px;font-weight:700}
+.labels{display:flex;gap:6px;flex-wrap:wrap;font-size:.8rem}
+.q{display:grid;gap:8px}
+.q p.qt{font-weight:600}
+.opts{display:grid;gap:8px}
+.opts button{text-align:left;border-radius:14px;background:var(--card);color:var(--ink);border-color:var(--line);font-weight:500}
+.opts button.right{border-color:var(--good);background:var(--good-soft);color:var(--good)}
+.opts button.wrong{border-color:var(--warn);background:var(--warn-soft);color:var(--warn)}
+.act{display:grid;gap:8px;padding:10px 0;border-bottom:1px solid var(--line)}
+.act:last-child{border-bottom:0}
+.act b{font-weight:600}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.seg button{padding:8px 6px;font-size:.82rem;border-radius:12px;background:var(--card);color:var(--ink);border-color:var(--line);font-weight:600}
+.seg button[aria-pressed="true"]{background:var(--brown);color:var(--on-brown);border-color:var(--brown)}
+.groups{display:grid;gap:8px}
+.grp{background:var(--blue-soft);color:var(--blue-ink);border-radius:14px;padding:10px 12px;font-size:.93rem}
+.grp b{display:block;font-family:var(--caps);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase}
+.stem{font-family:var(--display);font-size:1.2rem;font-weight:600}
+#copyOut{min-height:160px;font-size:.9rem}
+.status{font-size:.9rem;color:var(--good);min-height:1.3em}
+</style></head><body>
+<div class="wrap">
+  <a class="back" href="../index.html">← Back to my page</a>
+  <header style="display:grid;gap:8px">
+    <span class="eyebrow">Homework · from our lesson on 7 November</span>
+    <h1>Gives me, helps, gets</h1>
+    <p class="muted">All these sentences are yours from Saturday. Some are correct, some need a small fix. You are the teacher today!</p>
+  </header>
+
+  <!-- PART 1 -->
+  <section class="part" aria-labelledby="p1">
+    <span class="eyebrow">Part 1 of 4</span>
+    <h2 id="p1">Good or needs work?</h2>
+    <div class="how"><ol>
+      <li>Read the sentence. Is it correct?</li>
+      <li>Tap <b>Good</b> or <b>Needs work</b>.</li>
+      <li>If it needs work, write it correctly. Then tap <b>Check my sentence</b>.</li>
+    </ol></div>
+    <p class="muted" id="p1prog" style="font-size:.9rem"></p>
+    <div class="grid" id="sortList" style="gap:12px"></div>
+  </section>
+
+  <!-- PART 2 -->
+  <section class="part" aria-labelledby="p2">
+    <span class="eyebrow">Part 2 of 4</span>
+    <h2 id="p2">Spot the pattern</h2>
+    <p class="muted">Look at these four correct sentences. Then answer the questions.</p>
+    <div class="labels"><span class="c1">the thing</span><span class="c2">verb</span><span class="muted">the rest</span></div>
+    <div class="grid" id="lines"></div>
+    <div class="grid" id="qs" style="gap:16px"></div>
+  </section>
+
+  <!-- PART 3 -->
+  <section class="part" aria-labelledby="p3">
+    <span class="eyebrow">Part 3 of 4</span>
+    <h2 id="p3">Sort my week</h2>
+    <div class="how"><ol>
+      <li>When do you do these things? Tap one answer for each.</li>
+      <li>Then finish the three sentences below about your life. Use the pattern from Part 2.</li>
+    </ol></div>
+    <div class="card" id="acts"></div>
+    <div class="groups" id="groups"></div>
+    <div class="card" id="stems"></div>
+  </section>
+
+  <!-- PART 4 -->
+  <section class="part" aria-labelledby="p4">
+    <span class="eyebrow">Part 4 of 4</span>
+    <h2 id="p4">A message for HOLI guests</h2>
+    <div class="how"><ol>
+      <li>Imagine a short post for HOLI guests: <b>how to take a pause before New Year.</b></li>
+      <li>Write 3–4 sentences. You can use these starters. Use any phrases from our lessons.</li>
+    </ol></div>
+    <div class="card">
+      <p class="stem">December is a busy time for everyone, so …</p>
+      <p class="stem">Here is what we recommend: …</p>
+      <p class="stem">We hope … See you at HOLI!</p>
+      <div class="row"><button type="button" class="ghost" id="addStarters">Put the starters in my text</button></div>
+      <textarea id="free" style="min-height:160px" autocapitalize="sentences" aria-label="Your post for HOLI guests" placeholder="Write your post here"></textarea>
+    </div>
+  </section>
+
+  <section class="card" style="padding:18px">
+    <span class="eyebrow">Last step</span>
+    <h2>Send me your answers</h2>
+    <p class="muted" style="font-size:.95rem">Copy your answers and paste them into our Telegram chat. I'll check them before our next lesson.</p>
+    <button type="button" id="copyBtn">Copy my answers</button>
+    <p class="status" id="copyStatus" role="status"></p>
+    <textarea id="copyOut" hidden readonly aria-label="Your answers"></textarea>
+  </section>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const KEY = "sabina-gives-helps-gets-v1";
+let S = {};
+try{ S = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; }catch(e){ S = {}; }
+const save = () => { try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} };
+const norm = s => s.toLowerCase().replace(/[’‘]/g,"'").replace(/[.!]+$/,"").replace(/\s+/g," ").trim();
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---------- Part 1 ---------- */
+const SENT = [
+  {s:"Book a new trip gives me something to look forward to.", ok:false, fix:"Booking a new trip gives me something to look forward to.", why:"Start with an -ing word: booking.", re:/^booking (a )?(new )?trip gives me something to look forward to$/},
+  {s:"A walk in the park gives my mind a break.", ok:true},
+  {s:"A new trip helps me helps life feel lighter again.", ok:false, fix:"A new trip helps life feel lighter again.", why:"One helps, and no me.", re:/^a new trip helps life feel lighter( again)?$/},
+  {s:"This gets my creative juices flowing.", ok:true},
+  {s:"Bought a ticket, give me something to look forward to.", ok:false, fix:"Buying a ticket gives me something to look forward to.", why:"Start with an -ing word (buying), and gives with -s.", re:/^buying (a |the )?tickets? gives me something to look forward to$/},
+  {s:"Exploring new places gives my flowing creative juices.", ok:false, fix:"Exploring new places gets my creative juices flowing.", why:"The phrase is: gets my creative juices flowing.", re:/^exploring new places gets my creative juices flowing$/},
+  {s:"It helps life feel lighter again.", ok:true},
+  {s:"Meeting my friends helps me life feel lighter.", ok:false, fix:"Meeting my friends helps life feel lighter again.", why:"helps life feel lighter, with no me.", re:/^meeting (with )?my friends helps life feel lighter( again)?$/}
+];
+S.p1 = S.p1 || {};
+function p1Progress(){
+  const n = SENT.filter((_,i)=>S.p1[i] && S.p1[i].done).length;
+  $("p1prog").textContent = n + " of " + SENT.length + " done";
+}
+SENT.forEach((it,i) => {
+  const st = S.p1[i] = S.p1[i] || {};
+  const el = document.createElement("article");
+  el.className = "card";
+  el.innerHTML =
+    '<div class="top"><span class="num">'+(i+1)+'</span><p class="sent">'+esc(it.s)+'</p></div>'+
+    '<div class="row"><button type="button" class="ghost bGood">Good</button><button type="button" class="ghost bNeed">Needs work</button></div>'+
+    '<p class="fb" hidden role="status"></p>'+
+    '<div class="fixbox" hidden style="display:grid;gap:8px"><textarea aria-label="Your corrected sentence '+(i+1)+'" autocapitalize="sentences" spellcheck="false" placeholder="Write the sentence correctly"></textarea>'+
+    '<div class="row"><button type="button" class="bCheck">Check my sentence</button></div>'+
+    '<p class="fb fb2" hidden role="status"></p><p class="model" hidden><span>Correct version</span><i></i></p></div>';
+  const fb = el.querySelector(".fb"), box = el.querySelector(".fixbox"), ta = el.querySelector("textarea"), fb2 = el.querySelector(".fb2"), model = el.querySelector(".model");
+  ta.value = st.fix || "";
+  ta.addEventListener("input", () => { st.fix = ta.value; save(); });
+  const finish = () => { st.done = 1; el.classList.add("ok"); save(); p1Progress(); };
+  const showModel = () => { model.querySelector("i").textContent = it.fix + " (" + it.why + ")"; model.hidden = false; };
+  const pick = good => {
+    st.pick = good ? "good" : "need"; save();
+    el.querySelector(".bGood").classList.toggle("picked", good);
+    el.querySelector(".bNeed").classList.toggle("picked", !good);
+    fb.hidden = false;
+    if(good === it.ok){
+      fb.className = "fb good";
+      if(it.ok){ fb.textContent = "Yes, this one is correct. Well spotted!"; box.hidden = true; finish(); }
+      else { fb.textContent = "Yes, something is wrong here. Write it correctly below."; box.hidden = false; }
+    } else {
+      fb.className = "fb bad";
+      fb.textContent = it.ok ? "Look again. Read it slowly: this one is fine." : "Look again. Read it slowly and check every word.";
+      box.hidden = true;
+    }
+  };
+  el.querySelector(".bGood").addEventListener("click", () => pick(true));
+  el.querySelector(".bNeed").addEventListener("click", () => pick(false));
+  el.querySelector(".bCheck").addEventListener("click", () => {
+    const v = norm(ta.value);
+    fb2.hidden = false;
+    if(!v){ fb2.className = "fb fb2 bad"; fb2.textContent = "Write your sentence first."; return; }
+    const good = it.re.test(v);
+    fb2.className = "fb fb2 " + (good ? "good" : "bad");
+    fb2.textContent = good ? "Perfect!" : "Compare your sentence with the correct version.";
+    showModel(); finish();
+  });
+  if(st.pick) pick(st.pick === "good");
+  if(st.done && !it.ok){ box.hidden = false; showModel(); }
+  $("sortList").appendChild(el);
+});
+p1Progress();
+
+/* ---------- Part 2 ---------- */
+const LINES = [
+  ["Booking a trip","gives me","something to look forward to."],
+  ["A walk in the park","gives","my mind a break."],
+  ["Meeting my friends","helps","life feel lighter again."],
+  ["Exploring new places","gets","my creative juices flowing."]
+];
+$("lines").innerHTML = LINES.map(l => '<div class="line3"><div class="c"><span class="c1">'+esc(l[0])+'</span><span class="c2">'+esc(l[1])+'</span><span>'+esc(l[2])+'</span></div></div>').join("");
+const QS = [
+  {q:"1. Which one can start the sentence?", o:["Book a trip","Booking a trip","Bought a ticket"], a:1, ex:"We start with a thing or an -ing word: booking a trip, a walk, meeting my friends."},
+  {q:"2. Why gives, helps, gets, with -s?", o:["Because it's the past","Because the first part is one thing, like it","Because of me"], a:1, ex:"Booking a trip = it. It gives, it helps, it gets."},
+  {q:"3. Which is correct?", o:["It helps me life feel lighter again.","It helps life feel lighter again."], a:1, ex:"helps + life + feel lighter. No me."},
+  {q:"4. Choose the rule.", o:["A person (I, she) + give / help / get + …","A thing or an -ing word + gives / helps / gets + …","A verb (book, buy) + gives / helps / gets + …"], a:1, ex:"Yes! A thing or an -ing word + gives / helps / gets."}
+];
+S.p2 = S.p2 || {};
+QS.forEach((q,qi) => {
+  const d = document.createElement("div");
+  d.className = "q card";
+  d.innerHTML = '<p class="qt">'+esc(q.q)+'</p><div class="opts">'+q.o.map((o,oi)=>'<button type="button" data-o="'+oi+'">'+esc(o)+'</button>').join("")+'</div><p class="fb" hidden role="status"></p>';
+  const fb = d.querySelector(".fb");
+  const answer = (oi, restoring) => {
+    const b = d.querySelector('[data-o="'+oi+'"]');
+    fb.hidden = false;
+    if(oi === q.a){
+      b.classList.add("right"); fb.className = "fb good"; fb.textContent = q.ex;
+      d.querySelectorAll("button").forEach(x => x.disabled = x !== b);
+      d.classList.add("ok"); S.p2[qi] = S.p2[qi] || oi; if(!restoring) save();
+    } else {
+      b.classList.add("wrong"); fb.className = "fb bad"; fb.textContent = "Not quite. Look at the four sentences again and try another answer.";
+      if(S.p2["w"+qi] === undefined){ S.p2["w"+qi] = oi; if(!restoring) save(); }
+    }
+  };
+  d.querySelectorAll("button").forEach(b => b.addEventListener("click", () => answer(+b.dataset.o)));
+  if(S.p2[qi] !== undefined) answer(q.a, true);
+  $("qs").appendChild(d);
+});
+
+/* ---------- Part 3 ---------- */
+const ACTS = ["my yoga practice","meditating","putting my phone away in the evening","a walk in the park","meeting my friends","my Sunday off","exploring new places","looking at projects in London and Berlin","booking my winter trip"];
+const GROUPS = ["Every day","Every week","Before New Year"];
+S.sort = S.sort || {};
+function renderGroups(){
+  $("groups").innerHTML = GROUPS.map((g,gi) => {
+    const items = ACTS.filter(a => S.sort[a] === gi);
+    return items.length ? '<div class="grp"><b>'+esc(g)+'</b>'+items.map(esc).join(" · ")+'</div>' : '';
+  }).join("");
+}
+$("acts").innerHTML = ACTS.map((a,ai) => '<div class="act"><b>'+esc(a)+'</b><div class="seg" role="group" aria-label="'+esc(a)+'">'+GROUPS.map((g,gi)=>'<button type="button" data-a="'+ai+'" data-g="'+gi+'" aria-pressed="'+(S.sort[a]===gi)+'">'+esc(g)+'</button>').join("")+'</div></div>').join("");
+$("acts").querySelectorAll("[data-a]").forEach(b => b.addEventListener("click", () => {
+  const a = ACTS[+b.dataset.a], g = +b.dataset.g;
+  S.sort[a] = g; save();
+  b.parentNode.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b));
+  renderGroups();
+}));
+renderGroups();
+const STEMS = [
+  "Every day, … gives my mind a break.",
+  "At weekends, … helps life feel lighter again.",
+  "Before New Year, … gives me something to look forward to."
+];
+S.stems = S.stems || {};
+$("stems").innerHTML = '<span class="eyebrow">Your sentences</span>' + STEMS.map((s,si) => '<div style="display:grid;gap:6px"><p class="stem">'+esc(s)+'</p><textarea data-s="'+si+'" autocapitalize="sentences" aria-label="Your sentence: '+esc(s)+'"></textarea></div>').join("");
+$("stems").querySelectorAll("textarea").forEach(t => { t.value = S.stems[t.dataset.s] || ""; t.addEventListener("input", () => { S.stems[t.dataset.s] = t.value; save(); }); });
+
+$("free").value = S.free || "";
+$("free").addEventListener("input", () => { S.free = $("free").value; save(); });
+$("addStarters").addEventListener("click", () => {
+  const f = $("free"), st = "December is a busy time for everyone, so …\nHere is what we recommend: …\nWe hope … See you at HOLI!";
+  f.value = f.value.trim() ? f.value.trimEnd() + "\n" + st : st; S.free = f.value; save(); f.focus();
+});
+
+/* ---------- Copy ---------- */
+$("copyBtn").addEventListener("click", () => {
+  const p1 = SENT.map((it,i) => { const st = S.p1[i] || {}; return (i+1)+". " + (st.pick ? (st.pick==="good" ? "Good" : "Needs work") : "—") + (st.fix && st.fix.trim() ? " → " + st.fix.trim() : ""); }).join("\n");
+  const p2 = QS.map((q,qi) => (qi+1) + ". first try: " + (S.p2["w"+qi] !== undefined ? q.o[S.p2["w"+qi]] + " ✗" : (S.p2[qi] !== undefined ? "✓" : "—"))).join("\n");
+  const p3 = GROUPS.map((g,gi) => g + ": " + (ACTS.filter(a=>S.sort[a]===gi).join(", ") || "—")).join("\n");
+  const p4 = STEMS.map((s,si) => "• " + ((S.stems[si]||"").trim() || "—")).join("\n");
+  const text = "Gives me, helps, gets\n\nPart 1\n" + p1 + "\n\nPart 2\n" + p2 + "\n\nPart 3\n" + p3 + "\n\nMy sentences\n" + p4 + "\n\nMy message for HOLI guests\n" + ((S.free||"").trim() || "—");
+  const out = $("copyOut");
+  const fallback = () => { out.hidden = false; out.value = text; out.focus(); out.select(); $("copyStatus").textContent = "Select the text below, copy it and send it to me in Telegram."; };
+  try{ navigator.clipboard.writeText(text).then(() => { $("copyStatus").textContent = "Copied. Now paste it into our Telegram chat."; }, fallback); }catch(e){ fallback(); }
+});
+</script>
+</body></html>

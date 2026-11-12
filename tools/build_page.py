@@ -31,26 +31,29 @@ rep('const save = () => { try{ localStorage.setItem(KEY, JSON.stringify(store));
     'const save = () => { try{ localStorage.setItem(KEY, JSON.stringify(store)); }catch(e){} try{ window.__sync && __sync("cards", store); }catch(e){} };')
 # 3) diary: same
 rep('try{ var r = JSON.parse(localStorage.getItem(DK)||"null"); if(r && r.e) D = {e:r.e||{}, sent:r.sent||{}}; }catch(e){}',
-    'try{ var r = (window.__STATE && window.__STATE.diary) || JSON.parse(localStorage.getItem(DK)||"null"); if(r && r.e) D = {e:r.e||{}, sent:r.sent||{}}; }catch(e){}')
+    'try{ var r = (window.__STATE && window.__STATE.diary) || JSON.parse(localStorage.getItem(DK)||"null"); if(r && r.e) D = {e:r.e||{}, sent:r.sent||{}}; }catch(e){}', optional=True)
 rep('function dsave(){ try{ localStorage.setItem(DK, JSON.stringify(D)); }catch(e){} }',
-    'function dsave(){ try{ localStorage.setItem(DK, JSON.stringify(D)); }catch(e){} try{ window.__sync && __sync("diary", D); }catch(e){} }')
+    'function dsave(){ try{ localStorage.setItem(DK, JSON.stringify(D)); }catch(e){} try{ window.__sync && __sync("diary", D); }catch(e){} }', optional=True)
 # 4) "I've paid" button after the payment/package blocks render
 rep('  $("schedPh").hidden = true; $("zoomLink2").href = P.zoom || "#"; $("zoomLink2").hidden = !P.zoom;',
-    '  $("schedPh").hidden = true; $("zoomLink2").href = P.zoom || "#"; $("zoomLink2").hidden = !P.zoom;\n  try{ window.__payUI && __payUI(P); }catch(e){}')
+    '  $("schedPh").hidden = true; $("zoomLink2").href = P.zoom || "#"; $("zoomLink2").hidden = !P.zoom;\n  try{ window.__payUI && __payUI(P); }catch(e){}', optional=True)
 # 4b) only call the package "paid" when it is
 rep("<b>Оплачен пакет: '+K.size+' уроков</b>'", "<b>'+(K.paid ? 'Оплачен пакет: ' : 'Пакет: ')+K.size+' уроков</b>'", optional=True)
 # 4c) Progress tab: look back at past weeks + week summary
 rep("function renderProgress(){\n  const t = today(), wd = (new Date(t*DAY).getUTCDay()+6)%7, mon = t - wd;",
-    "var progWeek = 0;\nfunction renderProgress(){\n  const t = today(), wd = (new Date(t*DAY).getUTCDay()+6)%7, mon = t - wd - 7*progWeek;")
+    "var progWeek = 0;\nfunction renderProgress(){\n  const t = today(), wd = (new Date(t*DAY).getUTCDay()+6)%7, mon = t - wd - 7*progWeek;", optional=True)
 rep('  $("tcount").textContent = n+" из 7 дней";',
-    '  $("tcount").textContent = n+" из 7 дней";\n  try{ window.__progWeek && __progWeek(mon, t); }catch(e){}')
+    '  $("tcount").textContent = n+" из 7 дней";\n  try{ window.__progWeek && __progWeek(mon, t); }catch(e){}', optional=True)
 # 4d) Diary: "My pages" list under a toggle
 rep("""Первая запись — сегодня?</p>';\n  }""",
-    """Первая запись — сегодня?</p>';\n    try{ window.__pagesToggle && __pagesToggle(p.length); }catch(e){}\n  }""")
+    """Первая запись — сегодня?</p>';\n    try{ window.__pagesToggle && __pagesToggle(p.length); }catch(e){}\n  }""", optional=True)
 # 5) page scripts wait for the saved progress to load
+rep('  $("tcount").textContent = n+" of 7 days";',
+    '  $("tcount").textContent = n+" of 7 days";\n  try{ window.__progWeek && __progWeek(mon, t); }catch(e){}', optional=True)
+EN = '" of 7 days"' in s   # English-interface page
 n = s.count("<script>")
 s = s.replace("<script>", '<script type="text/plain" data-boot>')
-if n not in (2, 3): raise SystemExit(f"expected 2-3 page scripts, found {n}")
+if n not in (1, 2, 3): raise SystemExit(f"expected 1-3 page scripts, found {n}")
 
 BOOT = r'''
 <style>
@@ -77,6 +80,7 @@ html,body{overflow-x:clip}
   function tgPost(type){ try{ if (window.TelegramWebviewProxy) TelegramWebviewProxy.postEvent(type, "{}"); else if (window.parent !== window) window.parent.postMessage(JSON.stringify({eventType:type, eventData:{}}), "*"); }catch(e){} }
   tgPost("web_app_ready"); tgPost("web_app_expand");
 
+  var EN = __EN__; // English-interface page
   var preview = /[?&]preview=1/.test(location.search), AUTH = null;
   var h = new URLSearchParams(location.hash.slice(1)), q = new URLSearchParams(location.search), init = h.get("tgWebAppData"), k = h.get("k") || q.get("k");
   if (preview && k) init = null; // teacher preview: always show the student in the link
@@ -108,7 +112,7 @@ html,body{overflow-x:clip}
     var paidNow = P.paidClaimed && P.paidClaimed === todayIn(P.tzName);
     [["payBar", true], ["planPay", false]].forEach(function(x){
       var el = document.getElementById(x[0]); if (!el || el.hidden) return;
-      if (x[1] && el.classList.contains("pkgbar") && !el.querySelector(":scope > a")) return; // package bar with a Pay link (payment due) gets the buttons too
+      if (x[1] && el.classList.contains("pkgbar") && !el.querySelector(":scope > a, .paydue a")) return; // package bar with a Pay link (payment due) gets the buttons too
       var old = el.querySelector(".payrow"); if (old) old.remove();
       if (!P.nextPayment && !paidNow) return;
       if (x[1] && P.package){
@@ -116,48 +120,48 @@ html,body{overflow-x:clip}
         var tb = el.querySelector(".t b"), ts = el.querySelector(".t span");
         if (tb && ts){ var dateLine = tb.textContent; tb.textContent = P.package; ts.textContent = dateLine; }
       }
-      var link = x[1] ? el.querySelector(":scope > a") : el.querySelector("a.btn");
+      var link = x[1] ? el.querySelector(":scope > a, .paydue a") : el.querySelector("a.btn");
       var row = document.createElement("div"); row.className = "payrow";
       if (paidNow){
         if (link) link.remove();
-        row.innerHTML = '<span class="paydone">Оплата отмечена ✓ Stacy проверит.</span>'; el.appendChild(row); return;
+        row.innerHTML = '<span class="paydone">' + (EN ? "Payment noted ✓ Stacy will check it." : "Оплата отмечена ✓ Stacy проверит.") + '</span>'; el.appendChild(row); return;
       }
-      if (link){ link.textContent = "Оплатить"; link.className = "pr-pay"; row.appendChild(link); }
-      var b = document.createElement("button"); b.type = "button"; b.className = "pr-paid"; var PAID = P.paidBtn || "Я оплатила"; b.textContent = PAID;
+      if (link){ link.textContent = EN ? "Pay" : "Оплатить"; link.className = "pr-pay"; row.appendChild(link); }
+      var b = document.createElement("button"); b.type = "button"; b.className = "pr-paid"; var PAID = P.paidBtn || (EN ? "I've paid" : "Я оплатила"); b.textContent = PAID;
       var armed = false;
       b.onclick = function(){
-        if (preview){ b.textContent = "Предпросмотр"; return; }
-        if (!armed){ armed = true; b.textContent = "Подтвердить?"; setTimeout(function(){ armed = false; b.textContent = PAID; }, 4000); return; }
+        if (preview){ b.textContent = EN ? "Preview" : "Предпросмотр"; return; }
+        if (!armed){ armed = true; b.textContent = EN ? "Confirm?" : "Подтвердить?"; setTimeout(function(){ armed = false; b.textContent = PAID; }, 4000); return; }
         b.disabled = true; b.textContent = "…";
         fetch(API + "/paid", { method: "POST", headers: { "x-auth": AUTH } }).then(function(r){ if (!r.ok) throw 0; return r.json(); })
           .then(function(j){ Object.assign(PROFILE, j.profile || {}); try{ renderProfile(); }catch(e){} })
-          .catch(function(){ b.disabled = false; b.textContent = "Ещё раз"; });
+          .catch(function(){ b.disabled = false; b.textContent = EN ? "Try again" : "Ещё раз"; });
       };
       row.appendChild(b); el.appendChild(row);
     });
   };
 
   // ---- Progress: week navigation + what she did that week ----
-  var MONTHS = ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
+  var MONTHS = EN ? ["January","February","March","April","May","June","July","August","September","October","November","December"] : ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
   window.__progWeek = function(mon, t){
     var days = document.getElementById("days"); if (!days) return;
     var nav = document.getElementById("progNav");
     if (!nav){
       nav = document.createElement("div"); nav.id = "progNav"; nav.className = "prognav";
-      nav.innerHTML = '<button type="button" data-w="1" aria-label="Прошлая неделя">‹</button><span></span><button type="button" data-w="-1" aria-label="Следующая неделя">›</button>';
+      nav.innerHTML = '<button type="button" data-w="1" aria-label="' + (EN ? "Last week" : "Прошлая неделя") + '">‹</button><span></span><button type="button" data-w="-1" aria-label="' + (EN ? "Next week" : "Следующая неделя") + '">›</button>';
       days.parentNode.insertBefore(nav, days);
       nav.querySelectorAll("button").forEach(function(b){ b.onclick = function(){ progWeek = Math.max(0, progWeek + Number(b.dataset.w)); renderProgress(); }; });
     }
     var a = new Date(mon*DAY), b = new Date((mon+6)*DAY);
-    nav.querySelector("span").textContent = progWeek === 0 ? "Эта неделя" :
+    nav.querySelector("span").textContent = progWeek === 0 ? (EN ? "This week" : "Эта неделя") :
       (a.getUTCMonth() === b.getUTCMonth() ? a.getUTCDate() + "–" + b.getUTCDate() + " " + MONTHS[b.getUTCMonth()]
         : a.getUTCDate() + " " + MONTHS[a.getUTCMonth()] + " – " + b.getUTCDate() + " " + MONTHS[b.getUTCMonth()]);
     nav.querySelector('[data-w="-1"]').disabled = progWeek === 0;
     var sum = document.getElementById("progSum");
     if (!sum){ sum = document.createElement("p"); sum.id = "progSum"; sum.className = "progsum"; days.parentNode.insertBefore(sum, days.nextSibling); }
     var act = (store && store.act) || {}, parts = [];
-    LOGS.forEach(function(L){ var c = 0; for (var d = mon; d < mon + 7; d++) if ((act[d] || []).indexOf(L[0]) >= 0) c++; if (c) parts.push(L[1] + ": " + c + " дн."); });
-    sum.textContent = parts.length ? parts.join(" · ") : (progWeek === 0 ? "" : "На этой неделе ничего не отмечено");
+    LOGS.forEach(function(L){ var c = 0; for (var d = mon; d < mon + 7; d++) if ((act[d] || []).indexOf(L[0]) >= 0) c++; if (c) parts.push(L[1] + ": " + c + (EN ? (c === 1 ? " day" : " days") : " дн.")); });
+    sum.textContent = parts.length ? parts.join(" · ") : (progWeek === 0 ? "" : (EN ? "Nothing ticked this week" : "На этой неделе ничего не отмечено"));
     var logs = document.getElementById("logs"); if (logs) logs.style.display = progWeek === 0 ? "" : "none";
   };
   // ---- Diary: "My pages" under a toggle ----
@@ -183,7 +187,7 @@ html,body{overflow-x:clip}
       var n = document.createElement("script"); n.text = sc.textContent; document.body.appendChild(n);
     });
     var m = document.getElementById("bootmsg"); if (m) m.remove();
-    if (preview) note("Предпросмотр: изменения не сохраняются");
+    if (preview) note(EN ? "Preview: changes are not saved" : "Предпросмотр: изменения не сохраняются");
     try{
       if (!preview && AUTH){
         __sync("cards_meta", { cap: typeof DAILY_CAP !== "undefined" ? DAILY_CAP : 12, words: ALL,
@@ -193,8 +197,8 @@ html,body{overflow-x:clip}
     }catch(e){}
   }
 
-  if (!AUTH){ document.getElementById("bootmsg").textContent = "Открой эту страницу по личной ссылке от Stacy 🙂"; return; }
-  var done = false, timer = setTimeout(function(){ if (!done){ done = true; run(false); note("Нет связи — прогресс сохранится, когда интернет вернётся"); } }, 9000);
+  if (!AUTH){ document.getElementById("bootmsg").textContent = EN ? "Open this page with your personal link from Stacy 🙂" : "Открой эту страницу по личной ссылке от Stacy 🙂"; return; }
+  var done = false, timer = setTimeout(function(){ if (!done){ done = true; run(false); note(EN ? "No connection — your progress will save when the internet is back" : "Нет связи — прогресс сохранится, когда интернет вернётся"); } }, 9000);
   fetch(API + "/state", { headers: { "x-auth": AUTH } })
     .then(function(r){ if (r.status === 401) throw "auth"; if (!r.ok) throw "net"; return r.json(); })
     .then(function(j){
@@ -204,13 +208,14 @@ html,body{overflow-x:clip}
     })
     .catch(function(e){
       if (done) return; done = true; clearTimeout(timer);
-      if (e === "auth"){ document.getElementById("bootmsg").textContent = "Не узнаю эту ссылку. Попроси у Stacy личную ссылку 🙂"; return; }
-      run(false); note("Нет связи — прогресс сохранится, когда интернет вернётся");
+      if (e === "auth"){ document.getElementById("bootmsg").textContent = EN ? "I don't recognise this link. Ask Stacy for your personal link 🙂" : "Не узнаю эту ссылку. Попроси у Stacy личную ссылку 🙂"; return; }
+      run(false); note(EN ? "No connection — your progress will save when the internet is back" : "Нет связи — прогресс сохранится, когда интернет вернётся");
     });
 })();
 </script>
 '''
 i = s.index('<script type="text/plain" data-boot>')
-s = s[:i] + BOOT + s[i:]
+s = s[:i] + BOOT.replace("__EN__", "true" if EN else "false") + s[i:]
+if EN: s = s.replace('id="bootmsg">Загружаю…', 'id="bootmsg">Loading…')
 open(out, "w", encoding="utf-8").write(s)
 print("ok", len(s))

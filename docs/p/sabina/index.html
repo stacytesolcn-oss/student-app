@@ -1,0 +1,1351 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Sabina's English</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Raleway:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Caveat:wght@500&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=Noto+Sans:wght@400&display=swap">
+<style>
+:root{
+  --bg:#F6F1E7; --card:#FCFAF5; --ink:#231815; --muted:#6E5C52; --line:#E3D9C8;
+  --brown:#643A24; --on-brown:#F6F1E7;
+  --butter:#F4DC96; --butter-soft:#FAF0CF;
+  --blue:#C1DBE8; --blue-soft:#E3EEF4; --blue-ink:#2F4C5E;
+  --sand:#CCBB9F; --sand-soft:#EDE4D4;
+  --red:#4D0E12; --red-soft:#F1DEDA;
+  --hl:#F4DC96;
+  --back:#C1DBE8; --back-ink:#1F3342; --ul:#E2B84A; --soft:0 1px 2px rgba(35,24,21,.06),0 6px 16px rgba(35,24,21,.07);
+  --phrase:"Source Serif 4","Iowan Old Style",Georgia,serif;
+  --shadow:0 10px 30px rgba(35,24,21,.07); --bar:rgba(246,241,231,.94);
+  /* topic colours */
+  --gold:#8A6A1F; --gold-soft:var(--butter-soft);
+  --coral:#7A2E24; --coral-soft:var(--red-soft);
+  --plum:var(--blue-ink); --plum-soft:var(--blue-soft);
+  --teal:var(--brown); --teal-soft:var(--sand-soft);
+  --display:"Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  --caps:"Raleway", "Avenir Next", "Helvetica Neue", Arial, sans-serif;
+  --body:"DM Sans", "Helvetica Neue", Arial, sans-serif;
+  --hand:"Caveat", "Segoe Print", "Bradley Hand", cursive;
+  --ipa:"Noto Sans", "Lucida Sans Unicode", "Segoe UI", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#231815; --card:#2E211C; --ink:#F3ECDF; --muted:#BCA995; --line:#46352C;
+    --brown:#F4DC96; --on-brown:#231815;
+    --butter:#F4DC96; --butter-soft:#3F3422;
+    --blue:#C1DBE8; --blue-soft:#253743; --blue-ink:#C1DBE8;
+    --sand:#CCBB9F; --sand-soft:#3A2E25;
+    --red:#EBA69C; --red-soft:#43231F;
+    --hl:#6B5520;
+    --back:#253743; --back-ink:#DCEAF2; --ul:#C9A447; --soft:0 1px 2px rgba(0,0,0,.2),0 6px 16px rgba(0,0,0,.25);
+    --shadow:0 10px 30px rgba(0,0,0,.35); --bar:rgba(35,24,21,.94);
+    --gold:#F4DC96; --coral:#EBA69C;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#231815; --card:#2E211C; --ink:#F3ECDF; --muted:#BCA995; --line:#46352C;
+  --brown:#F4DC96; --on-brown:#231815;
+  --butter:#F4DC96; --butter-soft:#3F3422;
+  --blue:#C1DBE8; --blue-soft:#253743; --blue-ink:#C1DBE8;
+  --sand:#CCBB9F; --sand-soft:#3A2E25;
+  --red:#EBA69C; --red-soft:#43231F;
+  --hl:#6B5520;
+  --back:#253743; --back-ink:#DCEAF2; --ul:#C9A447; --soft:0 1px 2px rgba(0,0,0,.2),0 6px 16px rgba(0,0,0,.25);
+  --shadow:0 10px 30px rgba(0,0,0,.35); --bar:rgba(35,24,21,.94);
+  --gold:#F4DC96; --coral:#EBA69C;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.55;-webkit-tap-highlight-color:transparent}
+button{font-family:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible,.flash:focus-visible,.say:focus-visible,summary:focus-visible{outline:2px solid var(--brown);outline-offset:3px}
+.wrap{max-width:560px;margin:0 auto;padding-inline:20px;padding-block:28px 120px}
+h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.05;text-wrap:balance;margin:0;letter-spacing:-.01em}
+h1{font-size:2.9rem}
+h2{font-size:1.9rem}
+h3{font-size:1.5rem}
+p{margin:0}
+.muted{color:var(--muted)}
+.eyebrow{font-family:var(--caps);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.stack{display:grid;gap:18px;min-width:0}
+.head{display:grid;gap:8px;margin-bottom:6px}
+.head .sub{color:var(--muted);font-size:1rem}
+.rule{width:36px;height:2px;background:var(--sand);border-radius:2px;margin-top:4px}
+
+/* test bar */
+.testbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:-8px 0 18px;padding:10px 12px;border:1.5px dashed var(--brown);border-radius:14px;background:var(--butter-soft);font-size:.88rem}
+.testbar strong{font-family:var(--caps);letter-spacing:.12em;text-transform:uppercase;font-size:.72rem}
+.testbar span{flex:1;min-width:10em}
+.testbar button{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 12px;font-weight:600;font-size:.85rem}
+
+/* panels */
+.panel{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:20px;display:grid;gap:12px}
+.panel.hero{box-shadow:var(--shadow)}
+.big{font-family:var(--display);font-weight:600;font-size:4rem;line-height:.9;color:var(--brown);font-variant-numeric:lining-nums tabular-nums}
+.bigrow{display:flex;align-items:flex-end;gap:14px}
+.bigrow .muted{padding-bottom:6px}
+.btn{border:0;border-radius:999px;padding:15px 22px;font-family:var(--caps);font-weight:600;font-size:.82rem;letter-spacing:.18em;text-transform:uppercase;background:var(--brown);color:var(--on-brown);width:100%}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+.btn:disabled{opacity:.45;cursor:default}
+a.btn{display:block;text-align:center;text-decoration:none}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-size:.8rem;font-weight:500;border-radius:999px;padding:3px 11px;font-variant-numeric:tabular-nums}
+.chip.new{background:var(--blue-soft);color:var(--blue-ink)}
+.chip.learn{background:var(--red-soft);color:var(--coral)}
+.chip.know{background:var(--butter-soft);color:var(--gold)}
+.empty{display:grid;gap:6px;padding:20px;border:1px dashed var(--sand);border-radius:22px;color:var(--muted);text-align:center}
+.empty strong{color:var(--ink);font-family:var(--display);font-weight:600;font-size:1.35rem}
+
+/* new today */
+.hello{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.hello .sub{color:var(--muted);margin-top:8px}
+.hello{margin-bottom:14px}
+.strip{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;border:0;background:none;padding:0;width:100%;max-width:340px;justify-self:start}
+.sd{display:grid;justify-items:center;gap:4px}
+.sd small{font-family:var(--caps);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--muted)}
+.sd b{width:100%;max-width:30px;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:var(--card);border:1px solid var(--line);font-weight:500;font-size:.78rem;position:relative;font-variant-numeric:tabular-nums}
+.sd.on b{background:var(--blue);border-color:var(--blue);color:#1F3342}
+.sd.now b{background:var(--brown);border-color:var(--brown);color:var(--on-brown);font-weight:700}
+.sd.now small{color:var(--ink)}
+.sd.now.on b::after{content:"";position:absolute;bottom:3px;width:4px;height:4px;border-radius:50%;background:var(--butter)}
+.pill{display:inline-block;white-space:nowrap;font-family:var(--caps);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;background:var(--card);color:var(--ink);border-radius:999px;padding:5px 11px}
+.focus{background:var(--butter-soft);border-radius:28px;padding:20px 22px;display:grid;gap:10px}
+.focus .top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.focus blockquote{margin:0;font-family:var(--display);font-style:italic;font-size:1.3rem;line-height:1.3;display:grid;gap:8px}
+.focus blockquote b{font-style:normal;font-family:var(--body);font-size:1rem;font-weight:700;color:var(--brown)}
+.focus .sig{font-family:var(--hand);font-size:1.6rem;line-height:1;justify-self:end;color:var(--brown);margin-top:-8px}
+.sec{font-size:1.75rem;margin-top:6px}
+.secrow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:6px}
+.secrow .sec{margin-top:0}
+.see{border:0;background:none;font-family:var(--caps);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--muted);padding:6px 0}
+.plan2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:-6px}
+.pcard{border:0;border-radius:26px;padding:16px 16px 14px;text-align:left;display:flex;flex-direction:column;gap:6px;min-height:196px;color:inherit;font:inherit}
+.pcard .pill{align-self:flex-start;margin-bottom:4px}
+.pcard .num{font-family:var(--display);font-weight:600;font-size:3.1rem;line-height:.9}
+.pcard .num.long{font-size:2.2rem;line-height:1.05}
+.pcard .lbl2{font-size:.9rem;line-height:1.35}
+.pcard .go{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:8px;font-family:var(--caps);font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700}
+.pcard .go i{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:1rem;letter-spacing:0}
+.pc-cards{background:var(--blue);color:#1F3342}
+.pc-cards .go i{background:#1F3342;color:var(--blue)}
+.pc-lesson{background:#643A24;color:#F6F1E7}
+.pc-hw{grid-column:1/-1;min-height:0;background:var(--sand);color:#231815;flex-direction:row;align-items:center;gap:14px;text-decoration:none}
+.pc-hw .hwt{flex:1;min-width:0;display:grid;gap:4px}
+.pc-hw .hwt b{font-family:var(--display);font-weight:600;font-size:1.45rem;line-height:1.1}
+.pc-hw .hwt span{font-size:.88rem;line-height:1.35;color:#3A2A1C}
+.pc-hw .pill{margin-bottom:2px;background:#F6F1E7;color:#231815}
+.pc-hw i{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-style:normal;background:#231815;color:#F6F1E7;flex:none}
+.pc-hw.done{background:var(--sand-soft);color:var(--ink)}
+.pc-hw.done .hwt span{color:var(--muted)}
+.pc-hw.done i{background:var(--brown);color:var(--on-brown)}
+.hwlist{display:grid;gap:12px}
+.hwitem{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:16px;display:grid;gap:8px}
+.hwitem h3{font-size:1.35rem;line-height:1.15}
+.hwitem p{font-size:.9rem;color:var(--muted)}
+.hwitem .foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:4px}
+.hwitem a.open{font-family:var(--caps);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ink);text-decoration:none;border-bottom:1.5px solid var(--butter)}
+.hwitem.done h3{text-decoration:line-through;text-decoration-color:var(--muted)}
+.hwitem .due{font-family:var(--caps);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--muted)}
+.pc-lesson .pill{background:rgba(246,241,231,.16);color:#F6F1E7}
+.pc-lesson .go{color:#F6F1E7;text-decoration:none}
+.pc-lesson .go i{background:#F4DC96;color:#231815}
+.pc-lesson .ph{color:#E8D9C6;border-color:#E8D9C6}
+.pc-lesson .lbl2{color:#E8D9C6}
+.carousel{scroll-padding-inline:20px;display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;margin-inline:-20px;padding:2px 20px 8px;scrollbar-width:none;margin-top:-6px}
+.carousel::-webkit-scrollbar{display:none}
+.icard{flex:0 0 72%;scroll-snap-align:start;border-radius:24px;padding:16px;display:flex;flex-direction:column;gap:8px;min-height:170px;position:relative}
+.icard.k-watch{background:var(--red-soft)}
+.listen{display:grid;gap:2px}
+.lw{display:flex;gap:10px;align-items:center;text-align:left;background:none;border:0;padding:4px 0;font:inherit;font-size:.92rem;color:inherit;line-height:1.3}
+.lw b{font-family:var(--phrase);font-weight:600}
+.lw .lh{color:var(--muted);font-size:.85rem}
+.lw .lbox{flex:none;width:22px;height:22px;border-radius:6px;border:1.5px solid var(--sand);background:var(--card);display:grid;place-items:center;color:var(--on-brown)}
+.lw .lbox svg{width:72%;height:72%}
+.lw.on .lbox{background:var(--brown);border-color:var(--brown)}
+.icard .qhead{font-family:var(--caps);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--muted);margin-top:4px}
+.vqs{margin:0;padding-left:18px;display:grid;gap:3px;font-size:.88rem;line-height:1.35}
+.icard.k-listen{background:var(--blue-soft)}
+.icard.k-read{background:var(--sand-soft)}
+.icard .pill{align-self:flex-start}
+.icard .ph,.pcard .ph{align-self:flex-start}
+.icard h3{font-size:1.35rem;line-height:1.15}
+.icard p{font-size:.86rem;color:var(--muted);line-height:1.4}
+.icard .foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.icard a.open{font-family:var(--caps);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ink);text-decoration:none;border-bottom:1.5px solid var(--butter)}
+.icard.done h3{text-decoration:line-through;text-decoration-color:var(--muted)}
+.donebtn{border:1px solid var(--ink);background:transparent;border-radius:999px;padding:8px 14px;font-size:.85rem;font-weight:600}
+.donebtn[aria-pressed="true"]{background:var(--brown);border-color:var(--brown);color:var(--on-brown)}
+.icard.done .tick{background:var(--brown);border-color:var(--brown);color:var(--on-brown)}
+.icard.done .tick svg{opacity:1}
+.ideas-list{display:grid;gap:12px}
+.ideas-list .icard{flex:none;min-height:0}
+.paybar{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:12px 14px}
+.paybar .ic{width:40px;height:40px;border-radius:13px;background:#643A24;color:#F6F1E7;display:grid;place-items:center;flex:none}
+.paybar .ic svg{width:20px;height:20px}
+.paybar .t{flex:1;min-width:0;display:grid;line-height:1.3}
+.paybar .t b{font-weight:600}
+.paybar .t span{font-size:.84rem;color:var(--muted)}
+.paybar a{font-family:var(--caps);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--on-brown);background:var(--brown);border-radius:999px;padding:9px 14px;text-decoration:none;flex:none}
+
+/* this week */
+.week{background:var(--butter-soft);border-radius:28px;padding:24px 22px;display:grid;gap:14px}
+.week .top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.week blockquote{margin:0;font-family:var(--display);font-style:italic;font-size:1.6rem;line-height:1.25}
+.week .sig{font-family:var(--hand);font-size:1.7rem;line-height:1;justify-self:end;color:var(--brown);margin-top:-6px}
+.todo{display:grid;gap:10px;padding-top:14px;border-top:1px solid color-mix(in srgb, var(--brown) 18%, transparent)}
+.todo h3{font-size:1.45rem}
+.ideas{display:grid;gap:8px}
+.idea{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:16px;padding:10px 12px}
+.idea .ic{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;flex:none}
+.idea .ic svg{width:21px;height:21px}
+.idea .t{flex:1;min-width:0;display:grid;gap:1px;text-decoration:none;color:inherit;background:none;border:0;padding:0;text-align:left;font:inherit}
+.idea .t b{font-weight:600;font-size:.98rem;line-height:1.3}
+.idea .t span{color:var(--muted);font-size:.84rem;line-height:1.35}
+.idea.done .t b{text-decoration:line-through;text-decoration-color:var(--muted)}
+.idea .t .ph{margin-top:4px;font-size:.68rem;line-height:1.5;justify-self:start;color:var(--muted)}
+.tick{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--sand);background:none;display:grid;place-items:center;flex:none;padding:0}
+.tick svg{width:16px;height:16px;opacity:0}
+.idea.done .tick{background:var(--brown);border-color:var(--brown);color:var(--on-brown)}
+.idea.done .tick svg{opacity:1}
+.tracker{gap:14px}
+.tracker .top{display:flex;justify-content:space-between;align-items:baseline}
+.tcount{font-family:var(--display);font-size:1.2rem;font-weight:600}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.day{display:grid;justify-items:center;gap:6px;font-family:var(--caps);font-size:.62rem;letter-spacing:.1em;font-weight:600;color:var(--muted)}
+.day i{width:100%;max-width:38px;aspect-ratio:1;border-radius:50%;border:1.5px dashed var(--sand);display:grid;place-items:center;font-style:normal;font-size:.8rem;color:var(--on-brown)}
+.day.on i{background:var(--brown);border:1.5px solid var(--brown)}
+.day.now{color:var(--ink)}
+.day.now i{border-style:solid;border-color:var(--brown)}
+
+.logs{display:flex;flex-wrap:wrap;gap:8px}
+.log{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:9px 14px;font-weight:500;font-size:.92rem;display:inline-flex;align-items:center;gap:6px}
+.log[aria-pressed="true"]{background:var(--brown);border-color:var(--brown);color:var(--on-brown)}
+
+
+/* next lesson */
+.lesson{background:var(--card);border:1px solid var(--line);border-radius:26px;padding:22px 22px 20px;display:grid;gap:10px;box-shadow:var(--shadow)}
+.lesson .top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.lwhen{font-family:var(--display);font-weight:600;font-size:2.3rem;line-height:1;display:flex;flex-wrap:wrap;gap:0 12px}
+.lwhen span{color:var(--brown)}
+
+/* tiles */
+.tiles{display:flex;flex-wrap:wrap;justify-content:center;gap:22px 16px;padding-block:6px}
+.tile{display:grid;justify-items:center;align-content:start;gap:10px;text-decoration:none;color:var(--ink);background:none;border:0;padding:0;width:calc((100% - 32px) / 3)}
+.tile .sq{width:88%;aspect-ratio:1;max-width:100%;border-radius:26px;display:grid;place-items:center;position:relative}
+.tile .sq svg{width:34px;height:34px}
+.tile span.lbl{font-family:var(--caps);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;text-align:center;line-height:1.3}
+.tile.t1 .sq{background:var(--blue);color:#1F3342}
+.tile.t2 .sq{background:var(--butter);color:#3F2E0E}
+.tile.t3 .sq{background:var(--sand);color:#3A2A1C}
+.tile.t4 .sq{background:#643A24;color:#F6F1E7}
+.tile.t6 .sq{background:var(--blue);color:#1F3342}
+.tile.t5 .sq{background:var(--sand-soft);color:var(--ink);border:1px solid var(--line)}
+.tile .dotn{position:absolute;top:8px;right:8px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:#4D0E12;color:#F6F1E7;font-size:.7rem;font-weight:700;display:grid;place-items:center}
+.tile:active .sq{transform:scale(.97)}
+
+/* info rows */
+.rows{display:grid}
+.rowi{display:grid;gap:4px;padding:16px 0;border-top:1px solid var(--line)}
+.rowi:first-child{border-top:0;padding-top:0}
+#payRow .rowi{padding:0;border:0}
+.rowi:last-child{padding-bottom:0}
+.rowi .k{font-family:var(--caps);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.rowi .v{font-family:var(--display);font-size:1.6rem;font-weight:600;line-height:1.15}
+.rowi .n{font-size:.88rem;color:var(--muted)}
+.rowi a{justify-self:start;margin-top:6px;font-family:var(--caps);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--ink);text-decoration:none;border-bottom:1.5px solid var(--butter);padding-bottom:2px}
+
+/* note from Stacy */
+.letter{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:22px;display:grid;gap:12px}
+.letter blockquote{margin:0;font-family:var(--display);font-style:italic;font-size:1.45rem;line-height:1.3}
+.letter .sig{font-family:var(--hand);font-size:1.7rem;line-height:1;justify-self:end;color:var(--brown)}
+
+/* Miso & Nori */
+.crew{position:relative;height:124px;margin:-10px -20px 0;overflow:hidden}
+.crew .g{position:absolute}
+.crew .g.left{left:0;bottom:0;width:120px;height:124px}
+.crew .g.right{right:0;top:0;width:120px;height:110px}
+.crew .mid{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);margin:0;white-space:nowrap;pointer-events:none;font-family:var(--display);font-style:italic;font-weight:500;font-size:1rem;color:var(--muted)}
+.cat{position:absolute;border:0;background:none;padding:0;cursor:pointer;display:block}
+.cat img{display:block;width:100%;height:auto;filter:drop-shadow(0 2px 2px rgba(35,24,21,.08)) drop-shadow(0 8px 14px rgba(35,24,21,.10));transition:transform .35s cubic-bezier(.2,.9,.3,1.4)}
+.cat.nori{width:74px;left:-16px;bottom:-10px}
+.cat.nori img{transform:rotate(12deg)}
+.cat.miso{width:80px;right:-22px;top:-4px}
+.cat.miso img{transform:rotate(-20deg)}
+.cat.nori.wig img{transform:rotate(4deg) translateY(-3px)}
+.cat.miso.wig img{transform:rotate(-12deg) translateY(-3px)}
+@media (prefers-reduced-motion: reduce){ .cat img{transition:none} }
+
+/* topics */
+.topics{display:grid;gap:10px}
+.topic{display:flex;align-items:center;gap:14px;text-align:left;width:100%;border:1px solid var(--line);background:var(--card);border-radius:20px;padding:14px 16px;transition:transform .12s}
+.topic:active{transform:scale(.985)}
+.topic .dot{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:1.3rem;flex:none}
+.topic .t{flex:1;min-width:0}
+.topic .t strong{display:block;font-family:var(--display);font-weight:600;font-size:1.3rem;line-height:1.15}
+.topic .t span{color:var(--muted);font-size:.86rem}
+.topic .arr{color:var(--muted);font-size:1.3rem}
+.topic.gold{border-color:var(--butter);background:var(--butter-soft)}
+.topic.all{border-color:var(--blue);background:var(--blue-soft)}
+.sub-topics{display:grid;gap:10px;padding-left:14px;border-left:2px solid var(--line)}
+details.pasthw{border-top:1px solid var(--line);padding-top:14px}
+details.pasthw summary{font-family:var(--display);font-size:1.6rem;font-weight:600;cursor:pointer;margin-bottom:12px}
+.hwitem .qhead{font-family:var(--caps);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--muted);margin-top:4px}
+.hwitem .vqs{color:var(--ink)}
+.hwitem p.hwtip{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 12px;font-size:.86rem;line-height:1.4}
+details.how{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px 18px}
+details.how summary{font-family:var(--caps);font-size:.75rem;letter-spacing:.16em;text-transform:uppercase;font-weight:600;cursor:pointer}
+details.how ol{margin:12px 0 0;padding-left:1.2em;display:grid;gap:8px;font-size:.95rem}
+
+/* tab bar */
+.tabbar{position:fixed;left:0;right:0;bottom:0;background:var(--bar);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:4px 8px calc(4px + env(safe-area-inset-bottom,0px));z-index:5}
+.tabbar .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:2px}
+.tabbar button{border:0;background:none;padding:10px 2px 8px;display:grid;justify-items:center;gap:4px;font-family:var(--body);font-size:.76rem;font-weight:500;color:var(--muted);position:relative}
+.tabbar button svg{width:22px;height:22px}
+.tabbar button[aria-selected="true"]{color:var(--ink)}
+.tabbar button[aria-selected="true"]::after{content:"";position:absolute;left:22%;right:22%;bottom:0;height:3px;border-radius:3px;background:var(--butter)}
+.tabbar .badge{display:inline-block;min-width:1.5em;padding:0 5px;border-radius:999px;background:#4D0E12;color:#F6F1E7;font-size:.7rem;line-height:1.5em;margin-left:3px;letter-spacing:0}
+
+/* deck */
+.bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.back{border:0;background:none;padding:8px 0;font-family:var(--caps);font-size:.75rem;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--ink)}
+.count{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.9rem}
+.deck-title{font-size:1.5rem}
+.progress{height:3px;background:var(--line);border-radius:3px;overflow:hidden;margin:10px 0 14px}
+.progress i{display:block;height:100%;background:var(--brown);transition:width .25s}
+.again-tag{display:inline-block;margin-bottom:10px;font-size:.8rem;font-weight:600;color:var(--coral);background:var(--red-soft);border-radius:999px;padding:3px 11px}
+.scene{perspective:1400px}
+.flash{display:grid;grid-template-columns:minmax(0,1fr);width:100%;text-align:left;cursor:pointer;transition:transform .5s cubic-bezier(.3,.7,.3,1);transform-style:preserve-3d;border-radius:32px}
+.flash.flipped{transform:rotateY(180deg)}
+.face{grid-area:1/1;min-width:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--sand-soft);border:0;border-radius:32px;padding:24px 22px 20px;display:flex;flex-direction:column;gap:18px;min-height:360px}
+.face.b{transform:rotateY(180deg);background:var(--back);color:var(--back-ink)}
+.face.b .tap{color:inherit;opacity:.7}
+.label{font-family:var(--caps);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.def{font-family:var(--display);font-weight:600;font-size:1.3rem;line-height:1.25;margin-top:6px}
+.ex{margin:0;padding:0;list-style:none;display:grid;gap:22px}
+.ex li{font-size:.97rem;line-height:1.65}
+.frame{font-size:1.02rem;margin-top:4px;line-height:1.6}
+.ex li.own{position:relative;background:var(--card);border-radius:18px;padding:20px 14px 12px;margin-top:4px}
+.own-tag{position:absolute;top:-10px;left:12px;background:var(--red-soft);color:var(--red);font-family:var(--caps);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;padding:5px 11px;border-radius:999px;transform:rotate(-4deg)}
+.colw{font-weight:700;color:var(--ink);text-decoration:underline;text-decoration-color:var(--ul);text-decoration-thickness:2.5px;text-underline-offset:4px}
+.gap{font-weight:700;color:var(--brown);letter-spacing:.02em;background:linear-gradient(transparent 48%, var(--hl) 48%, var(--hl) 92%, transparent 92%);padding:0 3px;border-radius:2px}
+.gap .w{white-space:nowrap}
+.gap .w+.w{margin-left:.32em}
+.gap u{text-decoration:none;display:inline-block;width:.46em;border-bottom:1.5px solid var(--brown);margin:0 .5px;transform:translateY(-2px)}
+.turn{background:var(--card);color:var(--ink);border-radius:22px;padding:16px;display:grid;gap:6px}
+.turn p{font-weight:500}
+.turn-hint{font-size:.84rem;color:var(--muted)}
+.tap{margin-top:auto;color:var(--muted);font-size:.85rem;text-align:center}
+.colbox{background:var(--card);color:var(--ink);border-radius:22px;padding:14px;display:grid;gap:10px}
+.pat{display:grid;grid-template-columns:1fr auto 1fr;gap:8px 6px;align-items:center}
+.pat .hd{font-family:var(--caps);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.pat .hl{text-align:right}
+.pat .l{text-align:right;font-weight:600;line-height:1.3}
+.pat .r{text-align:left;font-weight:600;line-height:1.3}
+.pat .l:not(:empty)::after{content:" →";color:var(--muted);font-weight:400}
+.pat .r:not(:empty)::before{content:"→ ";color:var(--muted);font-weight:400}
+.pat .l:not(:empty),.pat .r:not(:empty){padding:4px 2px}
+.pat .m{background:var(--brown);color:var(--on-brown);border-radius:999px;padding:6px 12px;font-weight:600;text-align:center;line-height:1.25;max-width:9.5em}
+.ans{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding-block:6px}
+.pos{font-size:.95rem;font-style:italic;opacity:.75}
+.answer{font-family:var(--phrase);font-weight:700;font-size:2.15rem;line-height:1.1;letter-spacing:-.01em;text-wrap:balance}
+.ipa{font-family:var(--ipa);font-size:1.05rem;color:var(--muted)}
+.say{display:inline-flex;align-items:center;gap:10px;border:0;background:var(--card);color:var(--ink);border-radius:999px;padding:9px 16px;font-family:var(--ipa);font-size:1rem;box-shadow:var(--soft);cursor:pointer}
+.say svg{width:18px;height:18px;flex:none}
+.sayerr{font-size:.85rem;color:var(--muted);min-height:1.2em}
+.checkhint{display:none}
+.rate{display:grid;gap:10px;margin-top:16px}
+.rate p{text-align:center;font-family:var(--display);font-size:1.25rem;font-weight:600}
+.rate .row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.rate button{border:0;border-radius:22px;padding:12px 6px;font-weight:600;font-size:.88rem;line-height:1.25;display:grid;gap:2px;justify-items:center;background:var(--card);color:var(--ink);box-shadow:var(--soft)}
+.rate button .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.rate button small{font-weight:400;font-size:.74rem;opacity:.8}
+.rate .good .dot{background:#6E9DB6}
+.rate .almost .dot{background:#D9B24C}
+.rate .no .dot{background:#B8574B}
+#done{padding:24px;border-radius:24px;background:var(--butter-soft);text-align:center;display:grid;gap:14px}
+#done strong{font-family:var(--display);font-size:2rem;font-weight:600}
+#done .chips{justify-content:center}
+
+.ph{justify-self:start;font-family:var(--caps);font-size:.68rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);border:1px dashed var(--muted);border-radius:999px;padding:2px 9px}
+.panel .top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.when{font-family:var(--display);font-weight:600;font-size:1.5rem;line-height:1.2}
+.note{font-size:.9rem;color:var(--muted)}
+.pastm{font-size:.8rem;color:var(--muted);font-style:italic} .pastf{font-size:.95rem;color:var(--ink)} .pastf span{color:var(--muted);font-size:.85rem}
+.pkg{display:grid;gap:8px}
+.pkg .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.pkg .row b{font-weight:600}
+.pkg .row span{font-size:.84rem;color:var(--muted);white-space:nowrap}
+.boxes{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-width:220px}
+.boxes i{aspect-ratio:1;border-radius:6px;border:1.5px solid var(--sand);display:grid;place-items:center;color:var(--on-brown)}
+.boxes i svg{width:72%;height:72%}
+.boxes i.on{background:var(--brown);border-color:var(--brown)}
+.paybar.pkgbar{display:grid}
+.paydue{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:10px;border-top:1px solid var(--line);font-size:.88rem;color:var(--muted)}
+.paydue b{color:var(--ink);font-weight:600}
+.paydue a{font-family:var(--caps);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--on-brown);background:var(--brown);border-radius:999px;padding:8px 14px;text-decoration:none;flex:none}
+.linkcard{display:flex;align-items:center;gap:14px;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px 16px}
+.linkcard .ic{width:44px;height:44px;border-radius:14px;background:var(--blue);color:#1F3342;display:grid;place-items:center;flex:none}
+.linkcard .ic svg{width:22px;height:22px}
+.linkcard .t{flex:1;min-width:0}
+.linkcard strong{display:block;font-family:var(--display);font-weight:600;font-size:1.3rem}
+.linkcard span{color:var(--muted);font-size:.86rem}
+.goals p{font-family:var(--display);font-size:1.4rem;line-height:1.3;font-style:italic}
+.sched{display:grid;gap:10px}
+.sched div{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding-bottom:10px;font-variant-numeric:tabular-nums}
+.sched div:last-child{border-bottom:0;padding-bottom:0}
+.sched b{font-family:var(--display);font-size:1.25rem;font-weight:600}
+.terms{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px 18px}
+.terms summary{font-family:var(--display);font-size:1.3rem;font-weight:600;cursor:pointer}
+.terms .intro{margin:12px 0 0;padding:12px 14px;border-radius:14px;background:var(--butter-soft);font-size:.95rem}
+.terms ol{margin:12px 0 0;padding-left:1.4em;display:grid;gap:10px;font-size:.95rem}
+.peek{position:fixed;right:10px;bottom:calc(58px + env(safe-area-inset-bottom,0px));width:112px;z-index:4;pointer-events:none;transform:translateY(130%);transition:transform .7s cubic-bezier(.2,.9,.3,1.15)}
+.peek.deck{bottom:0}
+.peek.on{transform:translateY(var(--sink,22%))}
+.peek img{display:block;width:100%;height:auto;transform:rotate(-6deg);filter:drop-shadow(0 3px 6px rgba(35,24,21,.16))}
+.peek.on img{animation:tilt 2.4s ease-in-out .7s 1}
+@keyframes tilt{0%,100%{transform:rotate(-6deg)}40%{transform:rotate(3deg)}70%{transform:rotate(-3deg)}}
+.peek.flat img{transform:none}
+.peek.flat.on img{animation:bob 2.4s ease-in-out .7s 1}
+@keyframes bob{0%,100%{transform:translateY(0)}45%{transform:translateY(-5px)}}
+.peek.edge{right:0}
+.peek .bub{position:absolute;right:92%;top:-6px;white-space:nowrap;font-family:var(--display);font-style:italic;font-weight:500;font-size:1.05rem;line-height:1.2;background:var(--card);color:var(--ink);border-radius:18px 18px 4px 18px;padding:7px 13px 8px;box-shadow:var(--soft)}
+@media (prefers-reduced-motion: reduce){ .peek{transition:opacity .3s;transform:translateY(22%);opacity:0} .peek.on{opacity:1} .peek.on img,.peek.flat.on img{animation:none} }
+@media (max-width:380px){ .tiles{gap:8px} h1{font-size:2.5rem} }
+@media (prefers-reduced-motion: reduce){ .flash,.progress i{transition:none} }
+</style>
+
+<div class="wrap">
+  <div class="testbar" id="testbar" hidden>
+    <strong>Test mode</strong>
+    <span id="testday"></span>
+    <button id="tPlus">+1 day</button>
+    <button id="tReset">Reset progress</button>
+  </div>
+
+  <!-- TODAY -->
+  <section id="v-today" class="stack">
+    <div class="hello">
+      <div>
+        <h1>Hi, Sabina.</h1>
+        <p class="sub">Five minutes a day makes all the difference.</p>
+      </div>
+    </div>
+
+    <button class="strip" id="strip" data-go="progress" aria-label="Open Progress"></button>
+
+    <div class="focus">
+      <div class="top"><span class="pill">Focus of the week</span><span class="ph" id="notePh">Placeholder</span></div>
+      <blockquote id="noteText"></blockquote>
+      <span class="sig">Stacy</span>
+    </div>
+
+    <h2 class="sec">Today's plan</h2>
+    <div class="plan2">
+      <button class="pcard pc-cards" id="pcCards"></button>
+      <div class="pcard pc-lesson" id="pcLesson"></div>
+      <button class="pcard pc-hw" id="pcHw" data-go="homework" hidden></button>
+    </div>
+
+    <div class="secrow"><h2 class="sec">Watch &amp; listen</h2><button class="see" data-go="watch">See all</button></div>
+    <div class="carousel" id="ideas"></div>
+
+    <div class="paybar" id="payBar" hidden></div>
+    <div class="crew" id="crew">
+      <p class="mid">your teaching assistants</p>
+      <div class="g right">
+        <button class="cat miso" data-cat="miso" aria-label="Miso"><img src="cats/miso.webp" alt="Miso, a ginger cat, curled up asleep"></button>
+      </div>
+      <div class="g left">
+        <button class="cat nori" data-cat="nori" aria-label="Nori"><img src="cats/nori.webp" alt="Nori, a fluffy ginger cat, looking up"></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CARDS -->
+  <section id="v-cards" class="stack" hidden>
+    <div class="head">
+      <span class="eyebrow">Words and phrases from our lessons</span>
+      <h1>Word cards</h1>
+      <div class="rule"></div>
+    </div>
+    <div class="panel" id="cardsSummary"></div>
+    <details class="how">
+      <summary>Как работать с карточками</summary>
+      <ol>
+        <li>Прочитай значение и три предложения. В них пропущена одна фраза: видны только первые и последние буквы каждого слова.</li>
+        <li>Скажи фразу вслух. Потом нажми на карточку, чтобы проверить.</li>
+        <li>На обратной стороне посмотри, какие слова идут до и после фразы. Послушай и повтори. Ответь на вопрос вслух.</li>
+        <li>Будь честной: ты сказала точную фразу до проверки? Выбери <b>Сказала верно</b>, <b>Почти</b> или <b>Не знала</b>.</li>
+        <li>Карточки, которые ты знаешь, будут возвращаться всё реже. Те, что не знаешь, вернутся скоро. Достаточно нескольких минут в день.</li>
+      </ol>
+    </details>
+    <span class="eyebrow">Extra practice</span>
+    <div class="topics" id="topics"></div>
+  </section>
+
+  <!-- HOMEWORK -->
+  <section id="v-homework" class="stack" hidden>
+    <div class="head">
+      <span class="eyebrow">Your tasks after our lessons</span>
+      <h1>Homework</h1>
+      <div class="rule"></div>
+    </div>
+    <div class="hwlist" id="hwList"></div>
+    <div class="empty" id="hwEmpty"><strong>No homework yet</strong><span>After our next lesson, your homework will appear here. You'll open it from this page and mark it done.</span></div>
+  </section>
+
+  <section id="v-watch" class="stack" hidden>
+    <button class="back" data-go="today" style="justify-self:start;margin-bottom:-10px">← Today</button>
+    <div class="head">
+      <span class="eyebrow">Extra English for your ears</span>
+      <h1>Watch &amp; listen</h1>
+      <div class="rule"></div>
+    </div>
+    <p class="note">New ideas every week, on topics you like. Tick what you've watched or listened to.</p>
+    <div class="ideas-list" id="ideasAll"></div>
+  </section>
+
+  <section id="v-progress" class="stack" hidden>
+    <div class="head">
+      <span class="eyebrow">Five minutes a day makes all the difference</span>
+      <h1>Progress</h1>
+      <div class="rule"></div>
+    </div>
+    <div class="panel tracker">
+      <div class="top"><span class="eyebrow">My English this week</span><span class="tcount" id="tcount"></span></div>
+      <div class="days" id="days"></div>
+    </div>
+    <div class="panel">
+      <h3>What did you do for your English today?</h3>
+      <p class="note">Tap everything you did. Word cards are marked for you.</p>
+      <div class="logs" id="logs"></div>
+    </div>
+    <div class="panel" id="cardStats"></div>
+  </section>
+
+  <section id="v-plan" class="stack" hidden>
+    <div class="head">
+      <span class="eyebrow">Lessons, payment and terms</span>
+      <h1>My plan</h1>
+      <div class="rule"></div>
+    </div>
+    <div class="panel goals">
+      <div class="top"><span class="eyebrow">My goals</span><span class="ph" id="goalsPh">Placeholder</span></div>
+      <p id="goalsText"></p>
+    </div>
+    <div class="panel">
+      <div class="top"><span class="eyebrow">My lessons</span><span class="ph" id="schedPh">Placeholder</span></div>
+      <div class="sched" id="sched"></div>
+      <a class="btn ghost" id="zoomLink2" href="#" target="_blank" rel="noopener">Join Zoom</a>
+    </div>
+    <div class="panel" id="planPay"></div>
+    <span class="eyebrow">Lesson board</span>
+    <a class="linkcard" id="miroLink" href="#" target="_blank" rel="noopener">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M7 21h10M12 18v3M7 9h5M7 13h9"/></svg></span>
+      <span class="t"><strong>Our Miro board</strong><span>All the materials from our lessons</span></span>
+      <span class="ph" id="miroPh">Placeholder</span>
+    </a>
+    <details class="terms" lang="ru">
+      <summary>Условия сотрудничества</summary>
+      <p class="intro">Для удобства и ясности я прописала условия сотрудничества, в том числе отмены и переносов уроков. Пожалуйста, ознакомьтесь с пунктами ниже. Если у вас возникнут какие-либо вопросы, я буду рада на них ответить.</p>
+      <ol>
+        <li>Преподаватель составляет программу занятий и подбирает подходящие материалы исходя из целей и потребностей ученика. Ученику предоставляется доступ к интерактивной доске со всеми материалами уроков. По договорённости преподаватель также высылает домашнее задание и материалы для самостоятельной работы, даёт обратную связь.</li>
+        <li>Преподаватель создаёт для ученика личную страничку, где прописываются ранее обговорённые цели занятий. Также на личной страничке ученика хранится вся информация о пройденном материале, домашнем задании и т.д. Личная страничка ученика используется для того, чтобы отслеживать прогресс.</li>
+        <li>Стоимость урока <b><span id="termMin">60</span> минут</b> с предоставлением <b>доступа ко всем материалам и обратной связью — <span id="termPrice"></span></b>.</li>
+        <li>Занятия <b>оплачиваются абонементом на месяц</b>.</li>
+        <li>За учеником <b>фиксируется определённый день и время занятий</b>. Расписание на следующий месяц <b>дополнительно согласовывается</b> на последней неделе предыдущего месяца. При необходимости в него можно внести изменения по договорённости. После начала месяца расписание фиксируется.</li>
+        <li>При возникновении непредвиденных обстоятельств возможна <b>отмена не более одного занятия в месяц</b>. Об отмене необходимо сообщить за <b>2 часа</b> до занятия.</li>
+        <li>Также возможен <b>перенос двух занятий</b> (одного занятия, если ученик занимается раз в неделю) по договорённости внутри месяца или на следующий месяц. О переносе занятия необходимо сообщить за 12 часов до занятия.</li>
+        <li>Если ученик <b>пропускает занятие без предупреждения или отменяет более одного занятия в месяц</b>, это занятие проводится в формате асинхронного обучения. Учитель высылает материалы урока, адаптированные для самостоятельного изучения учеником. Ученик выполняет задания. Преподаватель предоставляет обратную связь.</li>
+        <li>В случае если ученику или преподавателю необходимо <b>взять перерыв от занятий</b> в связи с запланированным отпуском, об этом необходимо сообщить как минимум за <b>2 недели</b>.</li>
+      </ol>
+    </details>
+  </section>
+
+  <!-- DECK -->
+  <section id="v-deck" hidden>
+    <div class="bar">
+      <button class="back" id="closeDeck">← Close</button>
+      <span class="count" id="count"></span>
+    </div>
+    <h2 class="deck-title" id="deckTitle"></h2>
+    <div class="progress"><i id="prog"></i></div>
+    <div id="cardArea">
+      <span class="again-tag" id="againTag" hidden>↻ One more try</span>
+      <div class="scene">
+        <div class="flash" id="flash" role="button" tabindex="0" aria-label="Flip the card">
+          <div class="face a" id="front"></div>
+          <div class="face b" id="backFace"></div>
+        </div>
+      </div>
+      <p class="checkhint" id="checkhint">Скажи фразу вслух, потом нажми на карточку, чтобы проверить.</p>
+      <div class="rate" id="rate" hidden>
+        <p>Ты сказала точную фразу до проверки?</p>
+        <div class="row">
+          <button class="good" id="rGood"><span><span class="dot"></span>Сказала верно</span></button>
+          <button class="almost" id="rAlmost"><span><span class="dot"></span>Почти</span><small>небольшая ошибка</small></button>
+          <button class="no" id="rNo"><span><span class="dot"></span>Не знала</span></button>
+        </div>
+      </div>
+    </div>
+    <div class="done" id="done" hidden>
+      <strong id="doneTitle">Done for today!</strong>
+      <div class="chips" id="doneScore"></div>
+      <span id="doneMsg"></span>
+      <button class="btn" id="doneBack">Back to Today</button>
+    </div>
+  </section>
+</div>
+
+<div class="peek" id="peek" aria-live="polite"><span class="bub" id="peekMsg"></span><img id="peekImg" alt=""></div>
+
+<nav class="tabbar" id="tabbar" aria-label="Sections">
+  <div class="in" role="tablist">
+    <button role="tab" data-tab="today" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span>Today</span></button>
+    <button role="tab" data-tab="cards" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="14" height="14" rx="2"/><path d="M7 3h12a2 2 0 0 1 2 2v12"/></svg><span>Word cards<span class="badge" id="badge" hidden></span></span></button>
+    <button role="tab" data-tab="progress" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M8 14l2.5 2.5L16 12"/></svg><span>Progress</span></button>
+    <button role="tab" data-tab="homework" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>Homework</span></button>
+    <button role="tab" data-tab="plan" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg><span>My plan</span></button>
+  </div>
+</nav>
+
+
+<style>
+.bootmsg{position:fixed;inset:0;display:grid;place-items:center;background:#F6F1E7;z-index:99;font:500 16px/1.5 Raleway,system-ui,sans-serif;color:#231815;text-align:center;padding:24px}
+.syncnote{position:fixed;left:50%;transform:translateX(-50%);top:max(8px,env(safe-area-inset-top));background:#231815;color:#F6F1E7;font:600 13px Raleway,system-ui,sans-serif;padding:6px 12px;border-radius:99px;z-index:98}
+html,body{overflow-x:clip}
+.paybar{flex-wrap:wrap}
+.payrow{flex-basis:100%;display:flex;gap:10px;margin-top:12px}
+.payrow > a,.payrow > button{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:center;text-align:center;border-radius:999px;padding:12px 10px;font-family:var(--caps);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;text-decoration:none;border:1.5px solid var(--brown);cursor:pointer;line-height:1.2;width:auto}
+.payrow .pr-pay{background:var(--brown);color:var(--on-brown)}
+.payrow .pr-paid{background:transparent;color:var(--brown)}
+.prognav{display:flex;align-items:center;justify-content:space-between;margin:0 0 10px}
+.prognav span{font-weight:600}
+.prognav button{border:1px solid var(--line);background:var(--card);color:inherit;border-radius:999px;width:38px;height:38px;font-size:1.2rem;cursor:pointer}
+.prognav button:disabled{opacity:.3}
+.progsum{margin:10px 0 0;font-size:.9rem;color:var(--muted)}
+.ptoggle{cursor:pointer;user-select:none}
+.payrow .paydone{font-weight:600;font-size:.9rem;color:var(--muted)}
+</style>
+<div class="bootmsg" id="bootmsg">Loading…</div>
+<script>
+(function(){
+  var API = "https://nrnjubhnpaicuokidnjl.supabase.co/functions/v1/app";
+  function tgPost(type){ try{ if (window.TelegramWebviewProxy) TelegramWebviewProxy.postEvent(type, "{}"); else if (window.parent !== window) window.parent.postMessage(JSON.stringify({eventType:type, eventData:{}}), "*"); }catch(e){} }
+  tgPost("web_app_ready"); tgPost("web_app_expand");
+
+  var EN = true; // English-interface page
+  var preview = /[?&]preview=1/.test(location.search), AUTH = null;
+  var h = new URLSearchParams(location.hash.slice(1)), q = new URLSearchParams(location.search), init = h.get("tgWebAppData"), k = h.get("k") || q.get("k");
+  if (preview && k) init = null; // teacher preview: always show the student in the link
+  if (init){ try{ sessionStorage.setItem("tgInit", init); }catch(e){} AUTH = "tg " + init; }
+  else if (!(preview && k)) { try{ var si = sessionStorage.getItem("tgInit"); if (si) AUTH = "tg " + si; }catch(e){} }
+  if (!AUTH && k){ if (!preview){ try{ localStorage.setItem("myKey", k); }catch(e){} } AUTH = "key " + k; }
+  if (!AUTH){ try{ var sk = localStorage.getItem("myKey"); if (sk) AUTH = "key " + sk; }catch(e){} }
+
+  // ---- saving to the server (debounced; retried on hide and every 30 s) ----
+  var pending = {}, timers = {};
+  function flush(key){
+    var body = pending[key]; if (body == null || !AUTH || preview) return;
+    fetch(API + "/state", { method: "POST", keepalive: body.length < 60000,
+      headers: { "x-auth": AUTH, "content-type": "application/json" },
+      body: '{"key":' + JSON.stringify(key) + ',"data":' + body + '}' })
+      .then(function(r){ if (r.ok && pending[key] === body) delete pending[key]; }).catch(function(){});
+  }
+  window.__sync = function(key, data){
+    if (preview || !AUTH) return;
+    pending[key] = JSON.stringify(data); clearTimeout(timers[key]);
+    timers[key] = setTimeout(function(){ flush(key); }, 800);
+  };
+  document.addEventListener("visibilitychange", function(){ if (document.visibilityState === "hidden") Object.keys(pending).forEach(flush); });
+  setInterval(function(){ Object.keys(pending).forEach(flush); }, 30000);
+
+  // ---- payment row: [Оплатить] [Я оплатила] under the payment text ----
+  function todayIn(tz){ try{ return new Intl.DateTimeFormat("en-CA",{timeZone:tz||"Europe/Moscow"}).format(new Date()); }catch(e){ return new Date().toISOString().slice(0,10); } }
+  window.__payUI = function(P){
+    var paidNow = P.paidClaimed && P.paidClaimed === todayIn(P.tzName);
+    [["payBar", true], ["planPay", false]].forEach(function(x){
+      var el = document.getElementById(x[0]); if (!el || el.hidden) return;
+      if (x[1] && el.classList.contains("pkgbar") && !el.querySelector(":scope > a, .paydue a")) return; // package bar with a Pay link (payment due) gets the buttons too
+      var old = el.querySelector(".payrow"); if (old) old.remove();
+      if (!P.nextPayment && !paidNow) return;
+      if (x[1] && P.package){
+        // bold line = the package, small line = the payment date
+        var tb = el.querySelector(".t b"), ts = el.querySelector(".t span");
+        if (tb && ts){ var dateLine = tb.textContent; tb.textContent = P.package; ts.textContent = dateLine; }
+      }
+      var link = x[1] ? el.querySelector(":scope > a, .paydue a") : el.querySelector("a.btn");
+      var row = document.createElement("div"); row.className = "payrow";
+      if (paidNow){
+        if (link) link.remove();
+        row.innerHTML = '<span class="paydone">' + (EN ? "Payment noted ✓ Stacy will check it." : "Оплата отмечена ✓ Stacy проверит.") + '</span>'; el.appendChild(row); return;
+      }
+      if (link){ link.textContent = EN ? "Pay" : "Оплатить"; link.className = "pr-pay"; row.appendChild(link); }
+      var b = document.createElement("button"); b.type = "button"; b.className = "pr-paid"; var PAID = P.paidBtn || (EN ? "I've paid" : "Я оплатила"); b.textContent = PAID;
+      var armed = false;
+      b.onclick = function(){
+        if (preview){ b.textContent = EN ? "Preview" : "Предпросмотр"; return; }
+        if (!armed){ armed = true; b.textContent = EN ? "Confirm?" : "Подтвердить?"; setTimeout(function(){ armed = false; b.textContent = PAID; }, 4000); return; }
+        b.disabled = true; b.textContent = "…";
+        fetch(API + "/paid", { method: "POST", headers: { "x-auth": AUTH } }).then(function(r){ if (!r.ok) throw 0; return r.json(); })
+          .then(function(j){ Object.assign(PROFILE, j.profile || {}); try{ renderProfile(); }catch(e){} })
+          .catch(function(){ b.disabled = false; b.textContent = EN ? "Try again" : "Ещё раз"; });
+      };
+      row.appendChild(b); el.appendChild(row);
+    });
+  };
+
+  // ---- Progress: week navigation + what she did that week ----
+  var MONTHS = EN ? ["January","February","March","April","May","June","July","August","September","October","November","December"] : ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
+  window.__progWeek = function(mon, t){
+    var days = document.getElementById("days"); if (!days) return;
+    var nav = document.getElementById("progNav");
+    if (!nav){
+      nav = document.createElement("div"); nav.id = "progNav"; nav.className = "prognav";
+      nav.innerHTML = '<button type="button" data-w="1" aria-label="' + (EN ? "Last week" : "Прошлая неделя") + '">‹</button><span></span><button type="button" data-w="-1" aria-label="' + (EN ? "Next week" : "Следующая неделя") + '">›</button>';
+      days.parentNode.insertBefore(nav, days);
+      nav.querySelectorAll("button").forEach(function(b){ b.onclick = function(){ progWeek = Math.max(0, progWeek + Number(b.dataset.w)); renderProgress(); }; });
+    }
+    var a = new Date(mon*DAY), b = new Date((mon+6)*DAY);
+    nav.querySelector("span").textContent = progWeek === 0 ? (EN ? "This week" : "Эта неделя") :
+      (a.getUTCMonth() === b.getUTCMonth() ? a.getUTCDate() + "–" + b.getUTCDate() + " " + MONTHS[b.getUTCMonth()]
+        : a.getUTCDate() + " " + MONTHS[a.getUTCMonth()] + " – " + b.getUTCDate() + " " + MONTHS[b.getUTCMonth()]);
+    nav.querySelector('[data-w="-1"]').disabled = progWeek === 0;
+    var sum = document.getElementById("progSum");
+    if (!sum){ sum = document.createElement("p"); sum.id = "progSum"; sum.className = "progsum"; days.parentNode.insertBefore(sum, days.nextSibling); }
+    var act = (store && store.act) || {}, parts = [];
+    LOGS.forEach(function(L){ var c = 0; for (var d = mon; d < mon + 7; d++) if ((act[d] || []).indexOf(L[0]) >= 0) c++; if (c) parts.push(L[1] + ": " + c + (EN ? (c === 1 ? " day" : " days") : " дн.")); });
+    sum.textContent = parts.length ? parts.join(" · ") : (progWeek === 0 ? "" : (EN ? "Nothing ticked this week" : "На этой неделе ничего не отмечено"));
+    var logs = document.getElementById("logs"); if (logs) logs.style.display = progWeek === 0 ? "" : "none";
+  };
+  // ---- Diary: "My pages" under a toggle ----
+  var pagesOpen = false;
+  window.__pagesToggle = function(n){
+    var list = document.getElementById("dPages"); if (!list) return;
+    var h = list.previousElementSibling; if (!h || h.tagName !== "H3") return;
+    h.classList.add("ptoggle"); h.setAttribute("role", "button"); h.setAttribute("aria-expanded", String(pagesOpen));
+    h.textContent = "My pages" + (n ? " (" + n + ")" : "") + (pagesOpen ? " ▴" : " ▾");
+    list.hidden = !pagesOpen;
+    h.onclick = function(){ pagesOpen = !pagesOpen; window.__pagesToggle(n); };
+  };
+
+  document.addEventListener("click", function(e){
+    var a = e.target && e.target.closest ? e.target.closest("a[href]") : null; if (!a) return;
+    var u; try{ u = new URL(a.getAttribute("href"), location.href.split("#")[0].split("?")[0]); }catch(_){ return; }
+    if (u.origin === location.origin && /\/hw[\w-]*\/$/.test(u.pathname)){ e.preventDefault(); location.href = u.href + (preview && k ? "?preview=1&k=" + k : ""); }
+  }, true);
+
+  function note(t){ var n = document.createElement("div"); n.className = "syncnote"; n.textContent = t; document.body.appendChild(n); }
+  function run(hadServerCards){
+    document.querySelectorAll('script[type="text/plain"][data-boot]').forEach(function(sc){
+      var n = document.createElement("script"); n.text = sc.textContent; document.body.appendChild(n);
+    });
+    var m = document.getElementById("bootmsg"); if (m) m.remove();
+    if (preview) note(EN ? "Preview: changes are not saved" : "Предпросмотр: изменения не сохраняются");
+    try{
+      if (!preview && AUTH){
+        __sync("cards_meta", { cap: typeof DAILY_CAP !== "undefined" ? DAILY_CAP : 12, words: ALL,
+          topics: TOPICS.map(function(t){ return { name: t.name, words: t.words }; }) });
+        if (!hadServerCards && store && store.s && Object.keys(store.s).length) __sync("cards", store);
+      }
+    }catch(e){}
+  }
+
+  if (!AUTH){ document.getElementById("bootmsg").textContent = EN ? "Open this page with your personal link from Stacy 🙂" : "Открой эту страницу по личной ссылке от Stacy 🙂"; return; }
+  var done = false, timer = setTimeout(function(){ if (!done){ done = true; run(false); note(EN ? "No connection — your progress will save when the internet is back" : "Нет связи — прогресс сохранится, когда интернет вернётся"); } }, 9000);
+  fetch(API + "/state", { headers: { "x-auth": AUTH } })
+    .then(function(r){ if (r.status === 401) throw "auth"; if (!r.ok) throw "net"; return r.json(); })
+    .then(function(j){
+      if (done) return; done = true; clearTimeout(timer);
+      window.__STATE = j.state || {}; window.__PROFILE = j.profile || {};
+      run(!!(j.state && j.state.cards));
+    })
+    .catch(function(e){
+      if (done) return; done = true; clearTimeout(timer);
+      if (e === "auth"){ document.getElementById("bootmsg").textContent = EN ? "I don't recognise this link. Ask Stacy for your personal link 🙂" : "Не узнаю эту ссылку. Попроси у Stacy личную ссылку 🙂"; return; }
+      run(false); note(EN ? "No connection — your progress will save when the internet is back" : "Нет связи — прогресс сохранится, когда интернет вернётся");
+    });
+})();
+</script>
+<script type="text/plain" data-boot>
+/* ==== STUDENT DATA: everything between here and DAILY_CAP is per student ==== */
+
+/* ex: 3 sentences. [ ] = the gapped phrase, { } = words that go with it (bold). The 3rd sentence is from our lessons unless noOwn:true. */
+const CARDS = {
+"burn out":{"def": "become so tired from working too much that you can't work well", "ex": ["If he doesn't stop working so hard, he'll [burn] himself [out].", "Many young doctors [burn out] within five years of starting work.", "It's high season at HOLI, and I {don't want to} [burn out] {before December}."], "q": "December is very busy at HOLI. What do you do so you don't get too tired?"},
+"inspired by":{"def": "getting ideas from someone or something", "ex": ["The choice of decor {was} [inspired by] a trip to India.", "His paintings {were} clearly [inspired by] Monet's work.", "When I can't travel, I look at projects in London and Berlin. I{'m} [inspired by] them."], "q": "Which cafés or studios in other cities give you ideas for HOLI?"},
+"get someone's creative juices flowing":{"def": "help you have new creative ideas", "ex": ["{Music} always [gets] my [creative juices flowing].", "Let's go for a walk. {It} will [get] our [creative juices flowing].", "{Looking at projects in London and Berlin} [gets] my [creative juices flowing]."], "q": "What do you do when you feel stuck and need fresh ideas?"},
+"step out of my routine":{"def": "do something different from what you usually do every day", "ex": ["Once a month, I {try to} [step out of my routine] and do something new.", "A weekend trip {helps me} [step out of my routine].", "Sometimes I take a different way to work, just to [step out of my routine]."], "q": "What could you do this month that's different from your usual week?", "noOwn": true},
+"a blur":{"def": "a time you can't remember clearly", "ex": ["The days before the accident {were} [a blur].", "My first week at the new job {is all} [a blur].", "Last week {was a bit of} [a blur]. I can't remember much of it."], "q": "Think about the day of your operation. What do you remember, and what don't you remember?"},
+"brain fog":{"def": "when you can't think clearly for some time", "ex": ["I can't read emails today. I {have} terrible [brain fog].", "Too little sleep {gives me} [brain fog].", "I {had} [brain fog] {for} a few days. I kept forgetting things."], "q": "What happens to your head when you sleep badly?"},
+"admit":{"def": "let someone stay in hospital for treatment", "ex": ["What time {was} she [admitted]?", "Not everyone needed {to be} [admitted] {to hospital}.", "They [admitted](past) me {on Monday morning}."], "q": "Last time you went to hospital, what day and what time did they take you in?"},
+"discharge":{"def": "let someone leave hospital", "ex": ["She's due {to be} [discharged] {from the hospital} on Wednesday.", "Hospitals now tend to [discharge] patients earlier than in the past.", "They [discharged](past) me {the next day}."], "q": "How long did you stay in hospital? When could you go home?"},
+"intensive care":{"def": "the hospital department for very ill people", "ex": ["He is still {in} [intensive care] in Bristol General Hospital.", "After the operation, she {spent one night in} [intensive care].", "I {woke up in} [intensive care] and stayed there for a couple of hours."], "q": "Where did you wake up after the operation, and how did you feel?"},
+"general anaesthetic":{"def": "a drug that makes you sleep during an operation", "ex": ["They {gave him} a [general anaesthetic].", "I {was under} [general anaesthetic], so I don't remember anything.", "They {gave me} a [general anaesthetic]."], "q": "What do you remember from the minutes before your operation?"},
+"stitches":{"def": "pieces of thread that close a cut", "ex": ["He {had to have} ten [stitches] in his head.", "The doctor will {take out} the [stitches] next week.", "I {have} three small [stitches]."], "q": "What did the doctor tell you about the little cuts after the operation?"},
+"bloated":{"def": "your stomach feels full and big", "ex": ["I {feel really} [bloated] after that meal.", "I {felt so} [bloated] after Thanksgiving dinner.", "I {was} [bloated] {like a balloon}."], "q": "What food makes your stomach feel too full and big?"},
+"stand up straight":{"def": "stand with your back not bent", "ex": ["Keep your back absolutely [straight].", "Sit up [straight], don't slouch.", "For a week I {couldn't} [stand up straight]."], "q": "What couldn't you do in the first week after the operation?"},
+"core muscles":{"def": "the muscles of your stomach and lower back", "ex": ["Yoga is good for your [core muscles].", "In Pilates you {train} your [core muscles].", "I never realised how much we {use} our [core muscles] every day."], "q": "Which yoga poses are difficult for you now, and why?"},
+"a distraction":{"def": "something that takes your mind off problems", "ex": ["Work was [a] welcome [distraction] {from} her problems at home.", "I {need} [a distraction]. Let's watch a film.", "I worked on my phone on the first day because I {needed} [a distraction]."], "q": "When you feel bad, what helps you stop thinking about it?"},
+"need help":{"def": "can't do something alone", "ex": ["Some of the older patients [need help] {with walking}.", "My grandmother [needs help] {with} shopping.", "In the evenings I still [needed help](past)."], "q": "After the operation, what couldn't you do alone, and who did it with you?"},
+"a picky eater":{"def": "someone who eats only some foods", "ex": ["He's [a] very [picky eater].", "I'm [a picky eater], so I don't like hotel breakfasts.", "I've been [a picky eater] since childhood, so hospital food was difficult."], "q": "What food did you refuse to eat when you were a child?"},
+"appreciate":{"def": "understand how good something is", "ex": ["She [appreciates] our work.", "After my illness, I [appreciate] small things {more}.", "Now I [appreciate] my body {more}."], "q": "What can you do now that you couldn't do a month ago? How do you feel about it?"},
+"a day off":{"def": "a day when you don't go to work", "ex": ["You {deserve} [a day off].", "What are you going to do {on your} [day off]?", "Yesterday a barista {asked me for} [a day off]."], "q": "Think about the last time a barista wanted to stay at home. Why?"},
+"time off":{"def": "time when you are allowed not to work", "ex": ["Have you ever had to {take} [time off] {for} health reasons?", "You {get} [time off] from work.", "Last week my receptionist {asked for} some [time off]."], "q": "When did you last have a break from work? What was it for?"},
+"shift":{"def": "the hours a person works", "ex": ["Dave had to {work} a 12-hour [shift] yesterday.", "I {did} a 12-hour [shift] yesterday.", "Our cooks and baristas {work} 12-hour [shifts]."], "q": "How many hours do your cooks and receptionists work in one day?"},
+"a double shift":{"def": "two shifts, one after the other", "ex": ["I'm tired. I {worked} [a double shift] yesterday.", "Nobody likes [a double shift] on Saturday.", "When one receptionist is sick, the other one {works} [a double shift]."], "q": "What happens at HOLI when a receptionist is sick?"},
+"two days on, two days off":{"def": "you work two days, then rest two days", "ex": ["Nurses here {work} [two days on, two days off].", "I like {working} [two days on, two days off].", "Our cooks {work} [two days on, two days off]."], "q": "What is the work schedule for your cooks and baristas?"},
+"cover for":{"def": "do someone's job when they are not there", "ex": ["Go and get some lunch. I'll [cover for] {you}.", "I asked Narendra to [cover for] {me} and I drove back to the hotel.", "Our receptionists always [cover for] {each other}."], "q": "When you need a few days away from HOLI, who does your job?"},
+"by the hour":{"def": "paid for each hour of work", "ex": ["This was freelance work, {paid} [by the hour].", "You can {pay} [by the hour] to hire a boat.", "Our staff {get paid} [by the hour]."], "q": "How do your baristas and receptionists get their money?"},
+"a percentage":{"def": "a part of a total, for example of sales", "ex": ["Only [a] small [percentage] {of} people are interested in politics.", "Waiters often {get} [a percentage] {of} the bill.", "They {get} [a percentage] {of sales} from the kitchen, the bar and yoga memberships."], "q": "Apart from their hourly pay, what else do your staff get?"},
+"appointment":{"def": "a time you agree to see a doctor, dentist, etc.", "ex": ["I'd like to {make} an [appointment] to see the doctor.", "She {has} an [appointment] {with} the dentist {at} 5 o'clock.", "Some doctors are difficult to {book} an [appointment] {with}."], "q": "Should your staff see a doctor on a work day or on a free day? Why?"},
+"for personal reasons":{"def": "for a private reason you don't explain", "ex": ["She resigned [for personal reasons].", "He took a day off [for personal reasons].", "Sometimes my staff {ask for} a day off [for personal reasons]."], "q": "Why do your staff usually ask to stay at home?"},
+"put my phone away":{"def": "stop using your phone and put it in your bag or pocket", "ex": ["Before bed I [put my phone away] and read a book.", "At dinner with friends I always [put my phone away].", "Traveling makes me want to [put away my phone].", "On holiday I have FOMO, so it's hard to [put my phone away]."], "q": "On your last trip, did you check work messages? What did you do with your phone?"},
+"step out of my comfort zone":{"def": "do something new that feels a bit scary", "ex": ["[Stepping] outside [your comfort zone] and trying new things can be a great experience.", "Try to [step out of your comfort zone] this year.", "The more I [step out of my comfort zone], the more confident I feel.", "My first trip to India made me [step out of my comfort zone]."], "q": "Think about trekking or the night at the monastery. Was it easy for you? Why did you do it?"},
+"give something a break":{"def": "let someone or something rest for a while", "frame": "[give] someone / something [a break]", "ex": ["[Give] {your eyes} [a break] {from} contact lenses, which can dry out your eyes.", "After lunch, [give] {yourself} [a break] and go for a walk.", "But traveling [gives] {my mind} a much-needed [break].", "A walk in the park on a golden autumn day [gives] {my mind} a much-needed [break]."], "q": "What do you do after a busy week at HOLI to rest your head?"},
+"look forward to":{"def": "feel happy about something that will happen", "frame": "[look forward to] something · give someone something to [look forward to]", "ex": ["I'm really [looking forward to] {our vacation}.", "My mother says she's [looking forward to] {meeting} you.", "Traveling gives me {something positive} to [look forward to].", "After a busy season at HOLI, a trip gives me {something positive} to [look forward to]."], "q": "What's coming soon that makes you happy when you think about it?"},
+"try unusual food":{"def": "eat food that is new and different for you", "ex": ["On holiday I love to [try unusual food] at street markets.", "Some people don't like to [try unusual food] when they travel.", "Traveling makes me want to try new things, like [trying unusual food].", "In a new country I always [try unusual food]."], "q": "What was the strangest food you ate in Korea or India?"},
+"realize":{"def": "suddenly understand something", "ex": ["I never [realized](past) {how} much it meant to you.", "I didn't [realize] you were so unhappy.", "The more I travel, the more I [realize] {how} small my daily worries actually are.", "When I talk to people, I [realize] {how} small my daily worries are."], "q": "When you hear about other people's problems, what do you understand about yours?"},
+"look after":{"def": "take care of someone or something", "frame": "[look after] someone / something", "ex": ["Who's going to [look after] {the children} while you're away?", "Respecting yourself means [looking after] {yourself}.", "The more I travel, the more I realize how important it is to [look after] {your body, mind, and soul}.", "A trip reminds me to [look after] {my body, mind, and soul}."], "q": "Who takes care of HOLI when you travel? And how do you take care of yourself?"},
+"afford":{"def": "have enough money for something", "frame": "[afford] something / to do something", "ex": ["We {can't} [afford] {to go} on vacation this year.", "How {can} she [afford] {to eat out} every night?", "Traveling makes me want to work harder, just so that I {can} [afford] {to travel} again.", "Now many people in Moscow {can't} [afford] {to eat out} every day."], "q": "Why do people in Moscow eat out less now? What about your guests at HOLI?"}
+};
+
+/* part of speech, IPA (American), and what goes before / after: [before, phrase form, after] */
+const META = {
+"burn out":{"pos": "phrasal verb", "ipa": "/bɝːn ˈaʊt/", "pat": [["don't want to", "burn out", "before + time"]]},
+"inspired by":{"pos": "adjective + preposition", "ipa": "/ɪnˈspaɪrd baɪ/", "pat": [["be", "inspired by", "someone / something"]]},
+"get someone's creative juices flowing":{"pos": "idiom · informal", "ipa": "/ɡet kriˈeɪ.t̬ɪv ˈdʒuː.sɪz ˈfloʊ.ɪŋ/", "pat": [["something / doing something", "gets my creative juices flowing", ""]]},
+"step out of my routine":{"pos": "phrase", "ipa": "/step ˈaʊt̬ əv maɪ ruːˈtiːn/", "pat": [["try to / help me", "step out of my routine", ""]]},
+"a blur":{"pos": "noun · informal", "ipa": "/ə blɝː/", "pat": [["be (a bit of / all)", "a blur", ""]]},
+"brain fog":{"pos": "noun", "ipa": "/ˈbreɪn ˌfɑːɡ/", "pat": [["have / get", "brain fog", "for + time"]]},
+"admit":{"pos": "verb", "ipa": "/ədˈmɪt/", "pat": [["be", "admitted", "to hospital"]]},
+"discharge":{"pos": "verb", "ipa": "/dɪsˈtʃɑːrdʒ/", "pat": [["be", "discharged", "from (the) hospital"]]},
+"intensive care":{"pos": "noun", "ipa": "/ɪnˌten.sɪv ˈker/", "pat": [["be / wake up / spend one night in", "intensive care", ""]]},
+"general anaesthetic":{"pos": "noun", "ipa": "/ˌdʒen.ɚ.əl ˌæn.əsˈθet̬.ɪk/", "pat": [["give someone / be under", "general anaesthetic", ""]]},
+"stitches":{"pos": "noun, usually plural", "ipa": "/ˈstɪtʃ.ɪz/", "pat": [["have / take out", "stitches", ""]]},
+"bloated":{"pos": "adjective", "ipa": "/ˈbloʊ.t̬ɪd/", "pat": [["feel / be", "bloated", "after + meal"]]},
+"stand up straight":{"pos": "phrase", "ipa": "/ˌstænd ʌp ˈstreɪt/", "pat": [["can't / couldn't", "stand up straight", ""]]},
+"core muscles":{"pos": "noun", "ipa": "/ˈkɔːr ˌmʌs.əlz/", "pat": [["use / train", "core muscles", ""]]},
+"a distraction":{"pos": "noun", "ipa": "/ə dɪˈstræk.ʃən/", "pat": [["need", "a distraction", "from something"]]},
+"need help":{"pos": "verb phrase", "ipa": "/ˌniːd ˈhelp/", "pat": [["", "need help", "with something / doing something"]], "past": "needed help"},
+"a picky eater":{"pos": "noun · informal", "ipa": "/ə ˈpɪk.i ˌiː.t̬ɚ/", "pat": []},
+"appreciate":{"pos": "verb", "ipa": "/əˈpriː.ʃi.eɪt/", "pat": [["", "appreciate", "something more"]]},
+"a day off":{"pos": "noun", "ipa": "/ə ˌdeɪ ˈɑːf/", "pat": [["ask for / take / on your", "a day off", "to do / for something"]]},
+"time off":{"pos": "noun", "ipa": "/ˌtaɪm ˈɑːf/", "pat": [["take / get / ask for", "time off", "for something"]]},
+"shift":{"pos": "noun", "ipa": "/ʃɪft/", "pat": [["work / do", "a 12-hour shift", ""]]},
+"a double shift":{"pos": "noun", "ipa": "/ə ˌdʌb.əl ˈʃɪft/", "pat": [["work / do", "a double shift", ""]]},
+"two days on, two days off":{"pos": "phrase", "ipa": "/ˌtuː deɪz ˈɑːn ˌtuː deɪz ˈɑːf/", "pat": [["work", "two days on, two days off", ""]]},
+"cover for":{"pos": "phrasal verb", "ipa": "/ˈkʌv.ɚ fɔːr/", "pat": [["", "cover for", "someone"]]},
+"by the hour":{"pos": "phrase", "ipa": "/baɪ ði ˈaʊ.ɚ/", "pat": [["get paid / pay", "by the hour", ""]]},
+"a percentage":{"pos": "noun", "ipa": "/ə pɚˈsen.t̬ɪdʒ/", "pat": [["get", "a percentage", "of sales / of something"]]},
+"appointment":{"pos": "noun", "ipa": "/əˈpɔɪnt.mənt/", "pat": [["make / book / have", "an appointment", "with someone / at + time"]]},
+"for personal reasons":{"pos": "phrase", "ipa": "/fɚ ˌpɝː.sən.əl ˈriː.zənz/", "pat": [["take a day off / ask for a day off", "for personal reasons", ""]]},
+"put my phone away":{"pos": "phrasal verb", "ipa": "/ˌpʊt maɪ ˈfoʊn əˌweɪ/", "pat": [["put", "my phone", "away"], ["put away", "my phone", ""]]},
+"step out of my comfort zone":{"pos": "phrase", "ipa": "/ˌstep aʊt əv maɪ ˈkʌm.fɚt ˌzoʊn/", "pat": [["step out of / step outside", "your comfort zone", ""]]},
+"give something a break":{"pos": "phrase", "ipa": "/ˌɡɪv ˈsʌm.θɪŋ ə ˈbreɪk/", "pat": [["give", "my mind / your eyes / yourself", "a break (from something)"]], "past": "gave something a break"},
+"look forward to":{"pos": "phrasal verb", "ipa": "/lʊk ˈfɔːr.wɚd tuː/", "pat": [["", "look forward to", "something / doing something"], ["give someone something to", "look forward to", ""]]},
+"try unusual food":{"pos": "phrase", "ipa": "/ˌtraɪ ʌnˈjuː.ʒu.əl ˈfuːd/", "pat": [["love to / don't like to / always", "try unusual food", ""]]},
+"realize":{"pos": "verb", "ipa": "/ˈriː.ə.laɪz/", "pat": [["", "realize", "how … / (that) …"]]},
+"look after":{"pos": "phrasal verb", "ipa": "/lʊk ˈæf.tɚ/", "pat": [["", "look after", "someone / something / yourself"]]},
+"afford":{"pos": "verb", "ipa": "/əˈfɔːrd/", "pat": [["can / can't", "afford", "something / to do something"]]}
+};
+
+const PHOTOS = {};
+
+/* Topic decks for extra practice. New cards are introduced in deck order, then any card not in a deck. */
+const TOPICS = [
+ {"name": "Health", "sub": "Hospital, recovery and your body", "color": "coral", "words": ["a blur", "brain fog", "admit", "discharge", "intensive care", "general anaesthetic", "stitches", "bloated", "stand up straight", "core muscles", "a distraction", "need help", "a picky eater", "appreciate"]},
+ {"name": "Work", "sub": "Shifts, days off and pay at HOLI", "color": "teal", "words": ["a day off", "time off", "shift", "a double shift", "two days on, two days off", "cover for", "by the hour", "a percentage", "appointment", "for personal reasons"]},
+ {"name": "Travel", "sub": "Trips, rest and new experiences", "color": "gold", "words": ["put my phone away", "step out of my comfort zone", "give something a break", "look forward to", "try unusual food", "realize", "look after", "afford", "burn out", "inspired by", "get someone's creative juices flowing", "step out of my routine"]}
+];
+
+const ALL = Object.keys(CARDS);
+
+/* Student details. Anything left empty is hidden on the page. */
+const PROFILE = {
+  lessons: [{"day": "Saturday", "time": "08:15"}],
+  timezone: "Moscow time",
+  tzName: "Europe/Moscow",
+  zoom: "https://us06web.zoom.us/s/85281764110?pwd=J3ZGENaLJfEDHHgNsZxbpa84I4g0dH.1#success",
+  nextPayment: "2026-10-31",
+  extra: [],
+  pack: {size: 5, start: "2026-09-19", skip: ["2026-10-03"], add: []},
+  stripe: "https://buy.stripe.com/5kQ5kCam6aqy0aVbgfeUU0l",
+  price: "30 €",
+  minutes: 60,
+  miro: "https://miro.com/app/board/uXjVPGoEX5Q=/?share_link_id=115735113745",
+  goals: "",
+  note: "Your new homework is ready. Please do it before Friday.\nAnd this week, send me short messages in Telegram about how you look after yourself. Use the phrases from our lessons, and send me photos too!\n• This week I … to look after my body / mind / soul.\n• … gave my mind a break.\n• I stepped out of my routine when I …",
+  ideas: [],
+  homework: [{"id": "hw-gives-helps", "title": "Gives me, helps, gets", "note": "Your sentences from Saturday: find the good ones, fix the others, spot the pattern, sort your week and write a short message for HOLI guests.", "url": "hw/gives-helps-gets.html", "due": "2026-11-13", "mins": "25 min", "tip": "В конце нажми Copy my answers и отправь мне ответы в Telegram."}, {"id": "hw-say-it", "done": true, "title": "Say it another way", "note": "The travel phrases from our lesson: write 9 sentences again with the phrase. Hints and examples are on the page.", "url": "hw/say-it-another-way.html", "tip": "В конце нажми Copy my answers и отправь мне ответы в Telegram.", "past": true}, {"id": "hw-makes-more", "done": true, "title": "What makes you want to…?", "note": "Makes me want to and the more…, the more…: tasks from our lesson about your trip to Seoul. Collect birds from Korea!", "url": "https://claude.ai/artifact/LMZPt6tPgnD6GBdC4xmk5a", "tip": "Важно: страница может не сохранить твои ответы и птиц, если её закрыть. Поэтому не закрывай её, пока не закончишь. После заданий 1.5, 2.5 и последнего нажми Copy my answers и отправь мне в Telegram (или сделай скриншот).", "past": true}, {"id": "hw-shifts", "done": true, "title": "Shifts and days off", "note": "Days off, time off, shifts and covering for colleagues. 7 tasks and 9 birds to collect.", "url": "https://claude.ai/artifact/SXH4QQASRFDC8T3CdSZnGp", "past": true}, {"id": "hw-surgery-video", "done": true, "title": "Video about the surgery", "note": "Maya's surgery vlog: prep day, the day of surgery and her first week at home.", "url": "https://www.youtube.com/watch?v=SvMcWn_rxyI", "past": true, "listen": [{"w": "general anesthetic"}, {"w": "ask for help"}, {"w": "bloated"}, {"w": "core", "h": "which verb goes with it?"}, {"w": "be off"}, {"w": "thankful", "h": "similar to appreciate"}], "qs": ["Was Maya {admitted} overnight, or was she {discharged} the same day?", "What did she eat after the operation? When did she feel {bloated}?", "On day four she was supposed to take {time off}. What did she want to do instead?", "When did she {need help}? Who helped you after your operation?", "Is your experience similar or different? Do you both {appreciate} your bodies more now?"]}]
+};
+try{ Object.assign(PROFILE, window.__PROFILE || {}); }catch(e){}
+const DAILY_CAP = 12;
+/* Pop-ups: a random pose (never the same twice in a row) after any finished card set or all homework.
+   flat = a photo edge is cut flat (bottom, or bottom + right for edge), so it stays upright and hides that edge. */
+const POSES = [
+  {cat:"miso", img:"cats/miso.webp"},
+  {cat:"miso", img:"cats/miso-study.webp", flat:true, w:150, sink:"0%"},
+  {cat:"miso", img:"cats/miso-stretch.webp", flat:true},
+  {cat:"nori", img:"cats/nori.webp"},
+  {cat:"nori", img:"cats/nori-sleep.webp", flat:true, edge:true}
+];
+const LINES = {
+  any: ["Well done!","Good job!","Impressive."],
+  miso:["Miso approves.","Well done, says Miso."],
+  nori:["Nori is impressed!","Nori says: good job!"]
+};
+const pickLine = cat => { const l = Math.random() < .5 ? LINES[cat] : LINES.any; return l[Math.floor(Math.random()*l.length)]; };
+let peekTimer = null, lastPose = -1;
+function peek(i){
+  if(i === undefined){ do { i = Math.floor(Math.random()*POSES.length); } while(i === lastPose && POSES.length > 1); }
+  lastPose = i;
+  const p = POSES[i], el = $("peek"), img = $("peekImg");
+  clearTimeout(peekTimer); el.classList.remove("on");
+  const inDeck = !$("v-deck").hidden;
+  el.classList.toggle("deck", inDeck);
+  el.style.bottom = inDeck ? "0px" : ($("tabbar").offsetHeight - 6) + "px";
+  el.style.width = (p.w || 112) + "px"; el.style.setProperty("--sink", p.sink || "22%");
+  el.classList.toggle("flat", !!p.flat); el.classList.toggle("edge", !!p.edge);
+  img.onerror = () => { el.classList.remove("on"); };
+  img.onload = () => { requestAnimationFrame(()=>el.classList.add("on")); };
+  $("peekMsg").textContent = pickLine(p.cat);
+  if(img.getAttribute("src") === p.img && img.complete && img.naturalWidth) requestAnimationFrame(()=>el.classList.add("on"));
+  else img.src = p.img;
+  peekTimer = setTimeout(()=>el.classList.remove("on"), 3800);
+}
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---------- storage (this browser only, for the prototype) ---------- */
+const KEY = "sabina-english-v1";
+let store = {s:{}, log:{}, off:0};
+try{ const raw = (window.__STATE && window.__STATE.cards) || JSON.parse(localStorage.getItem(KEY)||"null"); if(raw && raw.s) store = Object.assign(store, raw); }catch(e){}
+const save = () => { try{ localStorage.setItem(KEY, JSON.stringify(store)); }catch(e){} try{ window.__sync && __sync("cards", store); }catch(e){} };
+
+/* ---------- days ---------- */
+const DAY = 864e5;
+const today = () => Math.floor((Date.now() - new Date().getTimezoneOffset()*6e4)/DAY) + (store.off||0);
+const dayLabel = d => new Date(d*DAY).toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",timeZone:"UTC"});
+
+/* ---------- spaced repetition ---------- */
+const st = w => store.s[w];                        // {i: interval days, due: day number, n: reviews}
+const isNew = w => !st(w);
+const isDue = w => st(w) && st(w).due <= today();
+const grow = i => i < 1 ? 1 : i < 3 ? 3 : i < 7 ? 7 : Math.min(180, Math.round(i*2));
+const doneToday = () => store.log[today()] || 0;
+const DAILY_MIN = 8;
+/* new cards from the latest lesson: shown before anything else */
+const FIRST = ["burn out", "inspired by", "get someone's creative juices flowing", "step out of my routine"];
+let early = new Set();
+function todayQueue(){
+  const room = Math.max(0, DAILY_CAP - doneToday());
+  const due = ALL.filter(isDue).sort((a,b)=>st(a).due - st(b).due);
+  const fresh = [...new Set(TOPICS.flatMap(t=>t.words).concat(ALL))].filter(isNew);
+  const first = FIRST.filter(isNew);
+  early = new Set();
+  if(first.length && room) return first.slice(0, room); /* today's plan: only the new cards; after them the usual queue comes back for extra practice */
+  let q = first.concat(due, fresh.filter(w=>!first.includes(w))).slice(0, room);
+  const want = Math.min(room, Math.max(0, DAILY_MIN - doneToday()));
+  early = new Set();
+  if(q.length < want){
+    const extra = ALL.filter(w=>st(w) && st(w).seen !== today() && !q.includes(w)).sort((a,b)=>st(a).due - st(b).due).slice(0, want - q.length);
+    extra.forEach(w=>early.add(w)); q = q.concat(extra);
+  }
+  return q;
+}
+function counts(words){
+  let n=0,l=0,k=0;
+  words.forEach(w=>{ const s=st(w); if(!s) n++; else if(s.i>=7) k++; else l++; });
+  return {n,l,k};
+}
+const chipsHTML = c => '<div class="chips"><span class="chip new">'+c.n+' new</span><span class="chip learn">'+c.l+' learning</span><span class="chip know">'+c.k+' know well</span></div>';
+
+/* ---------- gap rendering ---------- */
+function gapWord(w, verb){
+  if(w.includes("-")) return w.split("-").map(x=>gapWord(x, verb)).join("-");
+  const m = w.match(/^([^A-Za-z]*)([A-Za-z']+)([^A-Za-z]*)$/);
+  if(!m) return esc(w);
+  const core = m[2];
+  if(core.length <= 2) return esc(m[1]+core+m[3]);
+  if(verb && core.length >= 5 && /ed$/.test(core)) return esc(m[1]) + core[0] + "<u></u>".repeat(core.length-4) + core.slice(-3) + esc(m[3]);
+  if(core.length >= 6 && /ing$/.test(core)) return esc(m[1]) + core[0] + "<u></u>".repeat(core.length-4) + "ing" + esc(m[3]);
+  if(core.length >= 4 && /[^s]s$/.test(core) && !/(us|is)$/.test(core)) return esc(m[1]) + core[0] + "<u></u>".repeat(core.length-3) + core[core.length-2] + "s" + esc(m[3]);
+  return esc(m[1]) + core[0] + "<u></u>".repeat(core.length-2) + core[core.length-1] + esc(m[3]);
+}
+function sentence(s, verb){
+  return esc(s)
+    .replace(/\{(.+?)\}/g,'<b class="colw">$1</b>')
+    .replace(/\[(.+?)\](\(past\))?/g, (_,p,past) => '<span class="gap" aria-label="missing phrase">' + p.split(" ").map(w=>'<span class="w">'+gapWord(w, verb)+'</span>').join(" ") + '</span>' + (past ? ' <span class="pastm">(past)</span>' : ''));
+}
+
+/* ---------- tabs ---------- */
+let tab = "today", topicsOpen = false;
+const shuffle = a => {a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+function show(t){
+  tab = t;
+  ["today","cards","homework","plan","watch","progress"].forEach(x => $("v-"+x).hidden = x!==t);
+  $("v-deck").hidden = true; $("tabbar").hidden = false;
+  document.querySelectorAll("#tabbar [data-tab]").forEach(b=>b.setAttribute("aria-selected", b.dataset.tab===t));
+  render(); window.scrollTo(0,0);
+}
+document.querySelectorAll("#tabbar [data-tab]").forEach(b=>b.addEventListener("click",()=>show(b.dataset.tab)));
+
+const WD = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+function nextLesson(les, off){
+  const now = Date.now() + off*36e5 + (store.off||0)*DAY;
+  let best = null;
+  les.forEach(l=>{
+    const wd = WD.indexOf(l.day); if(wd<0) return;
+    const [hh,mm] = l.time.split(":").map(Number);
+    const n = new Date(now), base = Date.UTC(n.getUTCFullYear(), n.getUTCMonth(), n.getUTCDate());
+    for(let k=0;k<8;k++){
+      const d = base + k*DAY, start = d + (hh*60+(mm||0))*6e4;
+      if(new Date(d).getUTCDay()===wd && start + 60*6e4 > now){ if(!best || start < best.start) best = {start, day:k, l}; break; }
+    }
+  });
+  if(!best) return null;
+  const dd = new Date(best.start);
+  const word = best.day===0 ? "Today" : best.day===1 ? "Tomorrow" : WD[dd.getUTCDay()].slice(0,3);
+  const date = best.day<=1 ? WD[dd.getUTCDay()].slice(0,3)+" "+dd.getUTCDate() : dd.toLocaleDateString("en-GB",{day:"numeric",month:"short",timeZone:"UTC"});
+  return {word, date, time:best.l.time, live: best.start <= now};
+}
+
+function tzOff(tz){
+  try{
+    const d = new Date(), p = {};
+    new Intl.DateTimeFormat("en-US",{timeZone:tz,hourCycle:"h23",year:"numeric",month:"numeric",day:"numeric",hour:"numeric",minute:"numeric"})
+      .formatToParts(d).forEach(x=>p[x.type]=x.value);
+    return Math.round((Date.UTC(+p.year, p.month-1, +p.day, (+p.hour)%24, +p.minute) - d.getTime())/9e5)/4;
+  }catch(e){ return 1; }
+}
+function packUsed(K){
+  const off = tzOff(PROFILE.tzName), now = Date.now() + (store.off||0)*DAY, skip = new Set(K.skip||[]);
+  const ended = (date, time) => { const [hh,mm] = time.split(":").map(Number);
+    return Date.parse(date+"T00:00:00Z") + ((hh*60+(mm||0)) - off*60 + (PROFILE.minutes||60))*6e4 <= now; };
+  const iso = t => new Date(t).toISOString().slice(0,10);
+  let n = 0;
+  for(let t = Date.parse(K.start+"T00:00:00Z"); t <= now + DAY; t += DAY){
+    const d = iso(t);
+    if(skip.has(d)) continue;
+    PROFILE.lessons.forEach(l=>{ if(WD.indexOf(l.day)===new Date(t).getUTCDay() && ended(d, l.time)) n++; });
+  }
+  (PROFILE.extra||[]).forEach(x=>{ if(x.date >= K.start && !skip.has(x.date) && ended(x.date, x.time)) n++; });
+  (K.add||[]).forEach(d=>{ if(d >= K.start) n++; });
+  return Math.min(K.size, n);
+}
+function renderProfile(){
+  const P = PROFILE, les = P.lessons, tz = P.timezone;
+  const nl = les.length ? nextLesson(les, tzOff(P.tzName)) : null;
+  $("pcLesson").innerHTML = '<span class="pill">'+(nl&&nl.live?'Lesson now':'Next lesson')+'</span>'+
+    (nl ? '<span class="num'+(nl.word.length>5?' long':'')+'">'+esc(nl.word)+'</span><span class="lbl2">'+esc(nl.date)+' · '+esc(nl.time)+'<br>'+esc(tz)+'</span>' : '<span class="lbl2">Not scheduled</span>')+
+    (P.zoom ? '<a class="go" href="'+esc(P.zoom)+'" target="_blank" rel="noopener">Join Zoom <i aria-hidden="true">→</i></a>' : '');
+  const pay = P.nextPayment;
+  const payDate = pay ? new Date(pay+"T00:00:00Z").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",timeZone:"UTC"}) : "";
+  const daysToPay = pay ? Math.round((Date.parse(pay+"T00:00:00Z")/DAY) - today()) : 99;
+  const K = P.pack, used = K ? packUsed(K) : 0, left = K ? K.size - used : 0;
+  const startDate = K ? new Date(K.start+"T00:00:00Z").toLocaleDateString("en-GB",{day:"numeric",month:"long",timeZone:"UTC"}) : "";
+  const pkgHtml = K ? '<div class="pkg"><div class="row"><b>'+K.size+'-lesson package</b><span>From '+esc(startDate)+'</span></div>'+
+    '<div class="boxes" role="img" aria-label="'+used+' of '+K.size+' lessons done">'+Array.from({length:K.size},(_,i)=>'<i class="'+(i<used?'on':'')+'">'+(i<used?CHECK:'')+'</i>').join("")+'</div>'+
+    '<span class="note">'+(left>0 ? used+' of '+K.size+' done · '+left+' left' : 'All lessons done. Time for a new package.')+'</span></div>' : '';
+  $("payBar").hidden = !pay || daysToPay > 7;
+  $("payBar").innerHTML = pay ? '<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg></span>'+
+    (daysToPay < 0 ? '<span class="t"><b>Payment due: '+esc(payDate)+'</b><span>Please pay before our next lesson</span></span>' : '<span class="t"><b>Next payment: '+esc(payDate)+'</b><span>Your monthly lesson package</span></span>')+
+    (P.stripe ? '<a href="'+esc(P.stripe)+'" target="_blank" rel="noopener">Pay</a>' : '') : '';
+  const payLine = pay ? '<div class="paydue"><span>'+(daysToPay < 0 ? 'Payment due' : 'Next payment')+': <b>'+esc(payDate)+'</b></span>'+(P.stripe ? '<a href="'+esc(P.stripe)+'" target="_blank" rel="noopener">Pay</a>' : '')+'</div>' : '';
+  if(K){ $("payBar").hidden = false; $("payBar").classList.add("pkgbar");
+    $("payBar").innerHTML = pkgHtml+(pay && daysToPay <= 7 ? payLine : (!pay && left<=0 && P.stripe ? '<a href="'+esc(P.stripe)+'" target="_blank" rel="noopener" style="justify-self:start">Pay</a>' : '')); }
+  document.querySelector(".focus").hidden = !P.note;
+  $("noteText").innerHTML = (P.note||"").split("\n").map(l=>"<p>"+esc(l).replace(/\*(.+?)\*/g,"<b>$1</b>")+"</p>").join(""); $("notePh").hidden = true;
+  renderWeek();
+  renderHomework();
+  $("miroLink").hidden = !P.miro; $("miroLink").previousElementSibling.hidden = !P.miro;
+  $("miroLink").href = P.miro || "#"; $("miroPh").hidden = true;
+  $("planPay").hidden = !pay && !P.stripe && !K;
+  if(K) $("planPay").innerHTML = '<div class="top"><span class="eyebrow">My lesson package</span></div>'+pkgHtml+payLine+(!pay && left<=0 && P.stripe ? '<a class="btn" href="'+esc(P.stripe)+'" target="_blank" rel="noopener">Pay online</a>' : '');
+  else $("planPay").innerHTML = '<div class="top"><span class="eyebrow">'+(pay ? (daysToPay < 0 ? 'Payment due' : 'Next payment') : 'Payment')+'</span></div>'+
+    (pay ? '<div class="when">'+esc(payDate)+'</div>' : '')+(K ? pkgHtml : '<p class="note">Lessons are paid as a monthly package.</p>')+
+    (P.stripe && (!K || pay || left<=0) ? '<a class="btn" href="'+esc(P.stripe)+'" target="_blank" rel="noopener">Pay online</a>' : '');
+  $("termPrice").textContent = P.price; $("termMin").textContent = P.minutes || 60;
+  document.querySelector(".panel.goals").hidden = !P.goals;
+  $("goalsText").textContent = P.goals; $("goalsPh").hidden = true;
+  $("sched").innerHTML = les.map(l=>'<div><b>'+esc(l.day)+'</b><span>'+esc(l.time)+'</span></div>').join("")+'<div><span class="muted">Time zone</span><span class="muted">'+esc(tz)+'</span></div>';
+  $("schedPh").hidden = true; $("zoomLink2").href = P.zoom || "#"; $("zoomLink2").hidden = !P.zoom;
+  try{ window.__payUI && __payUI(P); }catch(e){}
+}
+document.addEventListener("click", e => { const a = e.target.closest('a[href="#"]'); if(a) e.preventDefault(); });
+document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>show(b.dataset.go)));
+$("pcCards").addEventListener("click",()=>{ const q2 = todayQueue(); if(q2.length) openDeck("Today's cards", q2, true); else show("cards"); });
+
+const ICONS = {
+  cards:'<rect x="3" y="7" width="13" height="14" rx="2"/><path d="M8 3h11a2 2 0 0 1 2 2v12"/>',
+  watch:'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/>',
+  listen:'<path d="M3 14v-2a9 9 0 0 1 18 0v2"/><rect x="3" y="14" width="4" height="7" rx="1.5"/><rect x="17" y="14" width="4" height="7" rx="1.5"/>',
+  read:'<path d="M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2zM22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z"/>'};
+const TINT = {cards:"var(--blue)", watch:"var(--sand)", listen:"var(--butter)", read:"var(--blue)"};
+const svg = k => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ICONS[k]+'</svg>';
+const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>';
+const didToday = k => ((store.act||{})[today()]||[]).includes(k);
+function markDone(k, on){
+  store.act = store.act || {};
+  const d = today(), list = store.act[d] || [];
+  const i = list.indexOf(k);
+  if(on && i<0) list.push(k); if(!on && i>=0) list.splice(i,1);
+  store.act[d] = list; save();
+}
+function ideaCard(it, i, ph, full){
+  const key = "idea"+i, done = didToday(key), verb = it.label || {watch:"Watch",listen:"Listen",read:"Read"}[it.kind] || "Try";
+  return '<div class="icard k-'+esc(it.kind)+(done?' done':'')+'"><span class="pill">'+verb+(it.mins?' · '+esc(it.mins):'')+'</span>'+
+    '<h3>'+esc(it.title)+'</h3><p>'+esc(it.note||"")+'</p>'+((it.listen||it.qs) ? listenList(it, i) : '')+(ph?'<span class="ph">Placeholder</span>':'')+
+    '<div class="foot">'+(it.url?'<a class="open" href="'+esc(it.url)+'" target="_blank" rel="noopener">Open</a>':'<span></span>')+
+    '<button class="donebtn" data-tick="'+key+'" aria-pressed="'+done+'">'+(done?'✓ Done':'Mark as done')+'</button></div></div>';
+}
+function listenList(it, i){
+  const h = store.heard || {};
+  return '<div class="listen">'+(it.listen||[]).map((x,j)=>{ const k = i+"-"+j, on = !!h[k];
+    return '<button class="lw'+(on?' on':'')+'" data-heard="'+k+'" aria-pressed="'+on+'"><span class="lbox">'+(on?CHECK:'')+'</span><span><b>'+esc(x.w)+'</b>'+(x.h?' <span class="lh">— '+esc(x.h)+'</span>':'')+'</span></button>'; }).join("")+'</div>'+
+    (it.qs ? (it.listen ? '<p class="qhead">After you '+(it.kind==='read'?'read':'watch')+'</p>' : '')+'<ol class="vqs">'+it.qs.map(q=>'<li>'+esc(q).replace(/\{(.+?)\}/g,'<b>$1</b>')+'</li>').join("")+'</ol>' : '');
+}
+function renderWeek(){
+  const P = PROFILE, ideas = P.ideas, ph = false;
+  document.querySelector("#v-today .secrow").hidden = !ideas.length; $("ideas").hidden = !ideas.length;
+  const q = todayQueue();
+  const newFirst = q.length ? q.filter(w=>FIRST.includes(w) && isNew(w)).length : 0;
+  $("pcCards").innerHTML = '<span class="pill">'+(newFirst ? 'New cards' : 'Word cards')+'</span>'+
+    (newFirst ? '<span class="num">'+newFirst+'</span><span class="lbl2">'+newFirst+' new card'+(newFirst>1?'s':'')+' to practise today</span><span class="go">Start <i aria-hidden="true">→</i></span>' :
+     (q.length && FIRST.length && FIRST.every(w=>st(w) && st(w).seen===today())) ? '<span class="num">✓</span><span class="lbl2">New cards done!<br>'+q.length+' more if you like</span><span class="go">Extra practice <i aria-hidden="true">→</i></span>' :
+     q.length ? '<span class="num">'+q.length+'</span><span class="lbl2">cards today<br>about '+Math.max(2,Math.round(q.length*0.5))+' min</span><span class="go">Start <i aria-hidden="true">→</i></span>'
+              : '<span class="num">✓</span><span class="lbl2">All done for today.<br>See you tomorrow!</span><span class="go">Extra practice <i aria-hidden="true">→</i></span>');
+  const t0 = today(), wd0 = (new Date(t0*DAY).getUTCDay()+6)%7, mon0 = t0 - wd0;
+  $("strip").innerHTML = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map((L,i)=>{
+    const d = mon0+i, on = ((store.act||{})[d]||[]).length>0;
+    return '<span class="sd'+(on?' on':'')+(d===t0?' now':'')+'"><small>'+L+'</small><b>'+new Date(d*DAY).getUTCDate()+'</b></span>';
+  }).join("");
+  $("ideas").innerHTML = ideas.map((it,i)=>ideaCard(it,i,ph)).join("");
+  $("ideasAll").innerHTML = ideas.map((it,i)=>ideaCard(it,i,ph,true)).join("");
+  document.querySelectorAll("[data-heard]").forEach(b=>b.addEventListener("click",e=>{ e.stopPropagation();
+    store.heard = store.heard || {}; const k = b.dataset.heard;
+    if(store.heard[k]) delete store.heard[k]; else store.heard[k] = 1; save(); render(); }));
+
+  document.querySelectorAll("[data-tick]").forEach(b=>b.addEventListener("click",()=>{
+    const k = b.dataset.tick, on = !didToday(k), kind = (ideas[+k.slice(4)]||{}).kind;
+    markDone(k, on); if(on && kind) markDone(kind, true); render(); if(on) peek(); }));
+  renderProgress();
+}
+/* ---------- homework: PROFILE.homework = [{id, title, note?, url?, due?:"YYYY-MM-DD", mins?}] ---------- */
+const hwDone = id => !!(store.hw||{})[id] || !!((PROFILE.homework||[]).find(h=>h.id===id)||{}).done;
+let pastOpen = false;
+const dueLabel = d => d ? "Due "+new Date(d+"T00:00:00Z").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",timeZone:"UTC"}) : "";
+function renderHomework(){
+  const all = PROFILE.homework || [], hw = all.filter(h=>!h.past), open = hw.filter(h=>!hwDone(h.id));
+  const card = $("pcHw");
+  card.hidden = !hw.length;
+  if(hw.length){
+    const next = open.slice().sort((a,b)=>(a.due||"9").localeCompare(b.due||"9"))[0];
+    card.classList.toggle("done", !open.length);
+    card.innerHTML = open.length
+      ? '<span class="hwt"><span class="pill">Homework'+(open.length>1?' · '+open.length:'')+'</span><b>'+esc(next.title)+'</b><span>'+esc([dueLabel(next.due), next.mins].filter(Boolean).join(" · "))+'</span></span><i aria-hidden="true">→</i>'
+      : '<span class="hwt"><span class="pill">Homework</span><b>All done ✓</b><span>New homework comes after our next lesson.</span></span><i aria-hidden="true">✓</i>';
+  }
+  $("hwEmpty").hidden = !!all.length;
+  const item = h=>{ const d = hwDone(h.id);
+    return '<div class="hwitem'+(d?' done':'')+'">'+(h.due?'<span class="due">'+esc(dueLabel(h.due))+(h.mins?' · '+esc(h.mins):'')+'</span>':'')+
+      '<h3>'+esc(h.title)+'</h3>'+(h.note?'<p>'+esc(h.note)+'</p>':'')+(h.tip?'<p class="hwtip" lang="ru">'+esc(h.tip)+'</p>':'')+
+      (h.listen?'<p class="qhead">Listen for these words from our lessons</p><ul class="vqs">'+h.listen.map(x=>'<li><b>'+esc(x.w)+'</b>'+(x.h?' <span class="muted">— '+esc(x.h)+'</span>':'')+'</li>').join("")+'</ul>':'')+
+      (h.qs?'<p class="qhead">After you watch</p><ol class="vqs">'+h.qs.map(q=>'<li>'+esc(q).replace(/\{(.+?)\}/g,'<b>$1</b>')+'</li>').join("")+'</ol>':'')+
+      '<div class="foot">'+(h.url?'<a class="open" href="'+esc(h.url)+'"'+(/^https?:/.test(h.url)?' target="_blank" rel="noopener"':'')+'>Open</a>':'<span></span>')+
+      '<button class="donebtn" data-hw="'+esc(h.id)+'" aria-pressed="'+d+'">'+(d?'✓ Done':'Mark as done')+'</button></div></div>'; };
+  const past = all.filter(h=>h.past);
+  $("hwList").innerHTML = (hw.length ? '<span class="eyebrow">New homework</span>'+hw.map(item).join("") : '')+
+    (past.length ? '<details class="pasthw"'+(pastOpen?' open':'')+'><summary>Past homework · '+past.length+'</summary><div class="hwlist">'+past.map(item).join("")+'</div></details>' : '');
+  const det = document.querySelector(".pasthw"); if(det) det.addEventListener("toggle",()=>{ pastOpen = det.open; });
+  document.querySelectorAll("[data-hw]").forEach(b=>b.addEventListener("click",()=>{
+    store.hw = store.hw || {}; const id = b.dataset.hw;
+    if(hwDone(id)) delete store.hw[id]; else { store.hw[id] = today(); markDone("homework", true); }
+    save(); render();
+    if(hwDone(id) && (PROFILE.homework||[]).every(h=>hwDone(h.id))) peek(); }));
+}
+const LOGS = [["cards","Word cards"],["watch","Watched something"],["listen","Listened to something"],["read","Read something"],["speak","Spoke English"],["write","Wrote in English"],["homework","Did my homework"]];
+var progWeek = 0;
+function renderProgress(){
+  const t = today(), wd = (new Date(t*DAY).getUTCDay()+6)%7, mon = t - wd - 7*progWeek;
+  let n = 0;
+  $("days").innerHTML = ["M","T","W","T","F","S","S"].map((L,i)=>{
+    const d = mon+i, on = ((store.act||{})[d]||[]).length>0; if(on) n++;
+    return '<div class="day'+(on?' on':'')+(d===t?' now':'')+'"><i>'+(on?'✓':'')+'</i>'+L+'</div>';
+  }).join("");
+  $("tcount").textContent = n+" of 7 days";
+  try{ window.__progWeek && __progWeek(mon, t); }catch(e){}
+  $("logs").innerHTML = LOGS.map(([k,l])=>'<button class="log" data-log="'+k+'" aria-pressed="'+didToday(k)+'">'+(didToday(k)?'✓ ':'')+esc(l)+'</button>').join("");
+  document.querySelectorAll("[data-log]").forEach(b=>b.addEventListener("click",()=>{ markDone(b.dataset.log, !didToday(b.dataset.log)); render(); }));
+  const c = counts(ALL);
+  $("cardStats").innerHTML = '<span class="eyebrow">My word cards</span>'+chipsHTML(c)+'<p class="note">"Know well" means you said it right several times in a row, with growing gaps.</p>';
+}
+
+function render(){
+  renderProfile();
+  const q = todayQueue(), all = counts(ALL);
+  $("badge").hidden = !q.length; $("badge").textContent = q.length;
+  const startBtn = '<button class="btn" data-start>'+("Start practice")+'</button>';
+  $("cardsSummary").innerHTML = '<span class="eyebrow">Today</span><h3>'+(q.length ? (q.every(w=>FIRST.includes(w)&&isNew(w)) ? q.length+" new card"+(q.length>1?"s":"")+" to practise today" : q.length+" cards to practise today") : "All done for today ✓")+'</h3>'+chipsHTML(all)+(q.length?startBtn:"");
+  document.querySelectorAll("[data-start]").forEach(b=>b.addEventListener("click",()=>{ const q2 = todayQueue(); if(q2.length) openDeck("Today's cards", q2, true); else show("cards"); }));
+  const tile = (attrs, cls, n, color, name, sub, arr) => '<button class="topic '+cls+'" '+attrs+'><span class="dot" style="background:var(--'+color+'-soft);color:var(--'+color+')">'+n+'</span>'+
+    '<span class="t"><strong>'+esc(name)+'</strong><span>'+esc(sub)+'</span></span><span class="arr" aria-hidden="true">'+arr+'</span></button>';
+  $("topics").innerHTML =
+    tile('data-k="all"','all',ALL.length,'teal',"All cards, mixed","Every word and phrase, in random order","›")+
+    tile('data-k="topics" aria-expanded="'+topicsOpen+'"','','<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>','plum',"Practise by topic",TOPICS.length+" topics",'<span class="rot" style="display:inline-block;transform:rotate('+(topicsOpen?90:0)+'deg)">›</span>')+
+    '<div class="sub-topics"'+(topicsOpen?'':' hidden')+'>'+TOPICS.map((t,i)=>tile('data-i="'+i+'"','',t.words.length,t.color,t.name,t.sub,"›")).join("")+'</div>';
+  document.querySelectorAll("#topics .topic").forEach(b=>b.addEventListener("click",()=>{
+    if(b.dataset.k==="topics"){ topicsOpen = !topicsOpen; render(); return; }
+    if(b.dataset.k==="all"){ openDeck("All cards, mixed", shuffle(ALL), false); return; }
+    const t=TOPICS[+b.dataset.i]; openDeck(t.name, t.words.slice(), false);
+  }));
+}
+
+/* ---------- deck ---------- */
+let queue=[], total=0, doneCount=0, scheduled=true, missed=new Set(), res={good:0,almost:0,no:0};
+function openDeck(name, words, isToday){
+  if(!words.length) return;
+  queue = words.slice(); total = words.length; doneCount = 0; scheduled = isToday; missed = new Set(); res={good:0,almost:0,no:0};
+  $("deckTitle").textContent = name;
+  ["today","cards","homework","plan","watch","progress"].forEach(x => $("v-"+x).hidden = true);
+  $("v-deck").hidden = false; $("tabbar").hidden = true;
+  $("done").hidden = true; $("cardArea").hidden = false;
+  showCard(); window.scrollTo(0,0);
+}
+function patternHTML(pat){
+  if(!pat.length) return "";
+  const hasL = pat.some(r=>r[0]), hasR = pat.some(r=>r[2]);
+  const cols = hasL && hasR ? "1fr auto 1fr" : hasL ? "minmax(0,1fr) auto" : "auto minmax(0,1fr)";
+  return '<div class="colbox"><div class="label">What goes with it</div><div class="pat" style="grid-template-columns:'+cols+'">'+
+    (hasL?'<div class="hd hl">before</div>':'')+'<div></div>'+(hasR?'<div class="hd">after</div>':'')+
+    pat.map(r=>(hasL?'<div class="l">'+esc(r[0])+'</div>':'')+'<div class="m">'+esc(r[1])+'</div>'+(hasR?'<div class="r">'+esc(r[2])+'</div>':'')).join("")+'</div></div>';
+}
+function showCard(){
+  const w = queue[0], c = CARDS[w], m = META[w];
+  $("flash").classList.remove("flipped");
+  $("againTag").hidden = !missed.has(w);
+  $("front").innerHTML =
+    '<div><div class="label">Meaning</div><div class="def">'+esc(c.def)+'</div></div>'+
+    (c.frame ? '<div><div class="label">The phrase</div><div class="frame">'+sentence(c.frame, /verb/.test(m.pos||""))+'</div></div>' : '')+
+    '<ol class="ex">'+c.ex.map((s,k)=>{ const own = k>=2 && !c.noOwn; return '<li'+(own?' class="own"':'')+'>'+(own?'<span class="own-tag">From our lesson</span>':'')+sentence(s, /verb/.test(m.pos||""))+'</li>'; }).join("")+'</ol>'+
+    '<div class="tap">Скажи фразу, потом нажми, чтобы проверить</div>';
+  $("backFace").innerHTML =
+    patternHTML(m.pat)+
+    '<div class="ans"><span class="pos">('+esc(m.pos)+')</span><div class="answer">'+esc(w)+'</div>'+(m.past?'<div class="pastf"><span>Прошедшее время:</span> '+esc(m.past)+'</div>':'')+
+        '<span class="say" role="button" tabindex="0" id="say" aria-label="Listen"><span>'+esc(m.ipa)+'</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg></span>'+
+    '<div class="sayerr" id="sayerr"></div></div>'+
+    '<div class="turn"><div class="label">Your turn</div><p>'+esc(c.q)+'</p><span class="turn-hint">Ответь или продолжи предложение вслух. Используй фразу и слова, которые идут с ней.</span></div>'+
+    '<div class="tap">Нажми, чтобы снова увидеть предложения</div>';
+  const say = $("say"), speak = e => { e.stopPropagation(); e.preventDefault(); play(w); };
+  say.addEventListener("click", speak);
+  say.addEventListener("keydown", e => { if(e.key==="Enter"||e.key===" ") speak(e); });
+  $("count").textContent = doneCount+" / "+total+" done";
+  $("prog").style.width = (doneCount/total*100)+"%";
+  $("rate").hidden = true; $("checkhint").hidden = false;
+}
+function flip(){
+  $("flash").classList.toggle("flipped");
+  if($("flash").classList.contains("flipped")){
+    $("rate").hidden = false; $("checkhint").hidden = true;
+    const calm = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setTimeout(()=>{ try{ $("rate").scrollIntoView({behavior: calm ? "auto" : "smooth", block:"nearest"}); }catch(e){} }, 350);
+  }
+}
+$("flash").addEventListener("click", flip);
+$("flash").addEventListener("keydown", e => { if((e.key==="Enter"||e.key===" ") && e.target===$("flash")){ e.preventDefault(); flip(); } });
+
+function setSched(w, i, days){
+  const s = store.s[w] || {i:0,n:0};
+  s.i = i; s.due = today()+days; s.n = (s.n||0)+1; s.seen = today(); store.s[w] = s;
+}
+function rate(r){
+  markDone("cards", true);
+  const w = queue.shift(), s = st(w), counted = scheduled || isNew(w) || isDue(w);
+  if(r==="no"){
+    if(!missed.has(w)) res.no++;
+    missed.add(w);
+    setSched(w, 1, 1);
+    queue.push(w);                                        // back at the end of this session
+  } else if(missed.has(w)){
+    if(r==="good"){ setSched(w, 1, 1); doneCount++; }       // got it after a miss: see it tomorrow
+    else queue.push(w);                                   // almost after a miss: one more try
+  } else {
+    if(r==="good"){ res.good++; if(counted){ const ni = (scheduled && early.has(w)) ? Math.max(1, s.i) : grow(s ? s.i : 0); setSched(w, ni, ni); } }
+    else { res.almost++; if(counted) setSched(w, 2, 2); }
+    doneCount++;
+  }
+  if(scheduled && r!=="no" && !queue.includes(w)) store.log[today()] = doneToday()+1;
+  save();
+  if(queue.length) showCard(); else finish();
+}
+$("rGood").addEventListener("click",()=>rate("good"));
+$("rAlmost").addEventListener("click",()=>rate("almost"));
+$("rNo").addEventListener("click",()=>rate("no"));
+
+function finish(){
+  $("cardArea").hidden = true; $("done").hidden = false;
+  $("count").textContent = total+" / "+total+" done"; $("prog").style.width = "100%";
+  $("doneTitle").textContent = scheduled ? "Done for today!" : "Topic finished!";
+  setTimeout(()=>peek(), 400);
+  $("doneScore").innerHTML = '<span class="chip know">✓ '+res.good+' said right</span><span class="chip new" style="background:var(--gold-soft);color:var(--gold)">≈ '+res.almost+' almost</span><span class="chip learn">↻ '+res.no+' needed another try</span>';
+  $("doneMsg").textContent = scheduled
+    ? "Your cards will come back on the right day. Cards you didn't know come back tomorrow."
+    : "Cards you didn't know come back in tomorrow's practice.";
+}
+$("doneBack").addEventListener("click",()=>{ $("peek").classList.remove("on"); show("today"); });
+document.querySelectorAll("[data-cat]").forEach(b=>{
+  let tm = null;
+  b.querySelector("img").addEventListener("error",()=>{ $("crew").hidden = true; });
+  b.addEventListener("click",()=>{ b.classList.add("wig"); clearTimeout(tm); tm = setTimeout(()=>b.classList.remove("wig"), 450); });
+});
+$("closeDeck").addEventListener("click",()=>show(tab));
+
+let clip = null;
+function play(text){
+  $("sayerr").textContent = "";
+  const slug = text.toLowerCase().replace(/[^a-z]+/g,"-").replace(/^-|-$/g,"");
+  try{
+    if(clip) clip.pause();
+    try{ speechSynthesis.cancel(); }catch(e){}
+    clip = new Audio("audio/"+slug+".mp3");
+    clip.play().catch(()=>speak(text));
+  }catch(e){ speak(text); }
+}
+function speak(text){
+  const err = $("sayerr");
+  if(!("speechSynthesis" in window)){ err.textContent="Sound is not available on this device."; return; }
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    const all = speechSynthesis.getVoices();
+    const odd = /Albert|Bad News|Bahh|Bells|Boing|Bubbles|Cellos|Good News|Jester|Organ|Superstar|Trinoids|Whisper|Wobble|Zarvox|Grandma|Grandpa|Rocko|Shelley|Sandy|Flo|Eddy|Reed/i;
+    const us = all.filter(x=>/^en[-_]US/i.test(x.lang) && !odd.test(x.name));
+    const pref = [/Google US English/i,/Premium/i,/Enhanced/i,/Samantha/i,/Ava/i,/Allison/i,/Nicky/i,/Tom/i,/Evan/i];
+    let v = null; for(const r of pref){ v = us.find(x=>r.test(x.name)); if(v) break; }
+    v = v || us[0] || all.find(x=>/^en[-_]/i.test(x.lang) && !odd.test(x.name));
+    if(v) u.voice = v;
+    u.lang = v ? v.lang : "en-US"; u.rate = .85;
+    speechSynthesis.speak(u);
+  }catch(e){ err.textContent="Sound is not available on this device."; }
+}
+if("speechSynthesis" in window){ try{ speechSynthesis.getVoices(); }catch(e){} }
+
+/* ---------- test mode: open the link with #test ---------- */
+function testUI(){
+  const on = location.hash === "#test";
+  $("testbar").hidden = !on;
+  $("testday").textContent = "Pretend today is "+dayLabel(today())+(store.off ? " (+"+store.off+" day"+(store.off>1?"s":"")+")" : "");
+}
+let resetArmed = false;
+$("tPlus").addEventListener("click",()=>{ store.off=(store.off||0)+1; save(); testUI(); render(); });
+$("tReset").addEventListener("click",()=>{
+  if(!resetArmed){ resetArmed = true; $("tReset").textContent = "Tap again to reset"; setTimeout(()=>{ resetArmed=false; $("tReset").textContent="Reset progress"; }, 3000); return; }
+  store = {s:{}, log:{}, off:0}; save(); resetArmed=false; $("tReset").textContent="Reset progress"; testUI(); show("today");
+});
+window.addEventListener("hashchange", testUI);
+testUI(); render();
+</script>
+
+</body></html>
