@@ -80,3 +80,25 @@ Do not edit the page. Split the weekday in `profile.lessons` with `from` / `unti
 Reminders, the "Next lesson" tile, "My lessons" and Teacher view all follow it; it goes back to normal by itself.
 A lesson moved to another DAY: put the old date in `pack.skip` and the new date in `pack.add`, plus a one-day entry
 `{"day":"<new weekday>","time":"..","from":"<date>","until":"<date>"}`. Jane's page (older template) does not read from/until yet.
+
+## State on Nov 12 (evening) — read before moving the next student
+
+Students in the app: Jane (not connected yet, older page template), Michael (connected), Sabina (connected, English page).
+Server: Edge Function `app` v24, repo file in sync.
+
+Reminders now (all students, student time):
+- One practice message a day (homework day > pronunciation day > cards). Texts rotate; they live in `app_config` key
+  `REMINDER_TEXTS` (JSON: cards / hw / pron arrays, `{name}` `{cards}`) — change texts there with SQL, no deploy.
+  Stacy's rules: no card emoji; Miso/Nori only in cards + homework lines; pronunciation, lesson, payment stay plain.
+- 18:00 the evening before a lesson: ONE message = lesson tomorrow + homework line if open + payment line and
+  Pay / I've paid buttons if a payment is due at that lesson or overdue. No other payment messages.
+- 1 hour before the lesson. Lesson texts still say "Moscow time" (fix before a non-Moscow student).
+- Welcome text: no "helper", no cats: "You'll get short, friendly reminders here about your cards, homework and lessons."
+
+Pages:
+- Homework with its own page in the app is done only when sent (cards.hwServer); no hand "mark as done" for it.
+  Finished homework is folded under "Previous homework" (Michael's page; Sabina's template has its own past list).
+- Daily cards: up to 12 (new ones first). Do not keep any "new cards only" limit when converting a page.
+- Teacher view: a paid package shows no "Payment received" button; "Next package paid already?" needs two taps.
+- Test a moved student with a temporary "<Name> TEST" row (remindersOff), then delete it and call /setup.
+- After every page or data change, run the page in jsdom with TODAY's date and read: next lesson, lessons done, payment, homework.
