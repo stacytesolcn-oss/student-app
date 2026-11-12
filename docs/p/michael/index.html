@@ -1658,7 +1658,7 @@ function renderHomework(){
   /* open homework on top; finished homework folded under "Прошлые домашки" */
   const pastHw = hw.filter(h=>hwDone(h.id));
   $("hwList").innerHTML = (open.length ? open.map(hwItem).join("") : '<div class="hwitem done"><h3>Всё сделано ✓</h3><p>Новая домашка появится после следующего урока.</p></div>') +
-    (pastHw.length ? '<details class="pasthw" style="margin-top:14px"><summary style="cursor:pointer;padding:10px 2px;font-weight:600">Прошлые домашки ('+pastHw.length+')</summary>'+pastHw.map(hwItem).join("")+'</details>' : '');
+    (pastHw.length ? '<details class="pasthw" style="margin-top:14px"><summary style="cursor:pointer;padding:10px 2px;font-weight:600">Previous homework ('+pastHw.length+')</summary>'+pastHw.map(hwItem).join("")+'</details>' : '');
   document.querySelectorAll("[data-hw]").forEach(b=>b.addEventListener("click",()=>{
     store.hw = store.hw || {}; const id = b.dataset.hw;
     if(hwDone(id)) delete store.hw[id]; else { store.hw[id] = today(); markDone("homework", true); }

@@ -521,8 +521,8 @@ async function paymentDue(s: any, force = false): Promise<Msg> {
   if (!due) return null;
   const today = tzParts(tzOf(s)).date, d = daysBetween(today, due);
   if (P.paidClaimed && daysBetween(P.paidClaimed, due) <= 0) return null; // already paid on/after this due date
-  // 2 days before, on the day, and — while overdue — on each lesson day
-  const overdueLessonDay = d < 0 && lessonsOn(s, new Date()).length > 0;
+  // 2 days before, on the day, and — while overdue — the day BEFORE each lesson (morning lessons start before 10:00)
+  const overdueLessonDay = d < 0 && lessonsOn(s, new Date(Date.now() + DAY)).length > 0;
   if (!force && d !== 2 && d !== 0 && !overdueLessonDay) return null;
   const text = d === 0
     ? `Hi ${s.name}! 💳 Friendly reminder: your lesson payment is due today.`
@@ -550,8 +550,9 @@ async function homeworkDue(s: any): Promise<Msg[]> {
 // by the student (cards.hw[id]), or open app-built homework — and no "homework" tick since the last lesson.
 async function homeworkPending(s: any, st: Record<string, any>) {
   const P = s.profile || {};
-  const ticked = (st.cards || {}).hw || {};
-  const hasHw = (P.homework || []).some((x: any) => x && !x.done && !ticked[x.id]);
+  // homework with its own page in the app (relative url) is done only when sent (hwServer); other homework by the student's tick
+  const ticked = (st.cards || {}).hw || {}, sent = (st.cards || {}).hwServer || {};
+  const hasHw = (P.homework || []).some((x: any) => x && !x.done && !(x.url && !/^https?:/.test(x.url) ? sent[x.id] : ticked[x.id]));
   const { data: open } = await db.from("homework").select("id").eq("student_id", s.id).eq("published", true).is("completed_at", null).limit(1);
   const has = hasHw || !!(open && open.length);
   const now = tzParts(tzOf(s));
