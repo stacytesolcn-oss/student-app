@@ -537,6 +537,17 @@ async function paymentDue(s: any, force = false): Promise<Msg> {
   row.push({ text: "I've paid ✓", callback_data: "paid" });
   return { kind: "pay", key: `${due}:${d}`, text, reply_markup: { inline_keyboard: [row] } };
 }
+// ONE evening message before a lesson: lesson tomorrow (+ homework line) and, if a payment is due/overdue, the payment
+// line with its Pay / I've paid buttons (Stacy, Nov 12).
+async function lessonEve(s: any, st: Record<string, any>, force = false): Promise<Msg> {
+  const lt = await lessonTomorrow(s, force, st);
+  if (!lt) return null;
+  const pay = await paymentDue(s, force);
+  if (!pay) return lt;
+  const rows = [...(((lt.reply_markup as any) || {}).inline_keyboard || []), ...(((pay.reply_markup as any) || {}).inline_keyboard || [])];
+  const line = pay.text.replace(/^Hi [^!]*! /, "").replace("Friendly reminder: your", "One more thing: your");
+  return { ...lt, text: lt.text + "\n\n" + line, reply_markup: { inline_keyboard: rows } };
+}
 async function homeworkDue(s: any): Promise<Msg[]> {
   const { data } = await db.from("homework").select("id,title,due").eq("student_id", s.id).eq("published", true).is("completed_at", null).not("due", "is", null);
   const today = tzParts(tzOf(s)).date, tomorrow = tzParts(tzOf(s), new Date(Date.now() + DAY)).date;
@@ -588,10 +599,7 @@ async function cron(req: Request) {
     const st = await loadState(s.id);
     if (inWindow(t.minutes, practiceTime(st).at)) sent += +(await sendOnce(s, await practice(s, st)));
     if (inWindow(t.minutes, 17 * 60)) for (const m of await homeworkDue(s)) sent += +(await sendOnce(s, m));
-    if (inWindow(t.minutes, 18 * 60)) {
-      sent += +(await sendOnce(s, await lessonTomorrow(s, false, st)));
-      sent += +(await sendOnce(s, await paymentDue(s)));
-    }
+    if (inWindow(t.minutes, 18 * 60)) sent += +(await sendOnce(s, await lessonEve(s, st)));
     const n = nextLessonToday(s);
     if (n && n.until > 45 && n.until <= 60) sent += +(await sendOnce(s, await lessonSoon(s)));
   }
@@ -617,7 +625,7 @@ async function testReminders(req: Request) {
     `Hi ${s.name}! 👋 This is your English page: cards, diary and homework. I'll send you friendly reminders about your cards, diary, lessons and payments.`;
   const prevUrl = `${await appUrl()}/${s.page || ""}?preview=1&k=${s.access_key}`;
   const msgs: Msg[] = [{ kind: "welcome", key: "test", text: welcome, reply_markup: { inline_keyboard: [[{ text: "Open my English", web_app: { url: prevUrl } }]] } },
-    ...(await allVariants(s, st)), await lessonTomorrow(s, true, st), await lessonSoon(s, true), await paymentDue(s, true), ...(await homeworkDue(s))];
+    ...(await allVariants(s, st)), await lessonEve(s, st, true), await lessonSoon(s, true), ...(await homeworkDue(s))];
   const pt = practiceTime(st);
   const labels: string[] = [];
   for (const m of msgs) {
