@@ -409,7 +409,38 @@ const pageButton = async (s: any, text: string, query = "") => ({ inline_keyboar
 // next lesson is tomorrow — the 18:00 "lesson tomorrow" message carries homework then; only if pending)
 // > pronunciation (profile.pronDays, if not done today) > cards (+ diary for diary students). Nothing open → nothing.
 // Sent at the student's usual practice time (see practiceTime), default 19:00.
-async function practice(s: any, st: Record<string, any>, force = false, only?: string): Promise<Msg> {
+// Practice texts rotate day by day (a plain one, then playful ones with Miso & Nori). {name}, {cards} = "5 cards".
+// Stacy can change them without a deploy: app_config key REMINDER_TEXTS = {"cards":[...],"hw":[...],"pron":[...]}.
+const TEXTS: Record<string, string[]> = {
+  cards: [
+    "Hi {name}! 🃏 You have {cards} to practise today. Just a few minutes is enough 🙂",
+    "Hi {name}! 🐾 Miso is sleeping on your cards again. Time to wake Miso up — {cards} today, five minutes.",
+    "Psst, {name}… your cards miss you 🃏 {cards} today, and then you're free!",
+    "Hi {name}! ☕ A cup of tea, five minutes and {cards}. Sounds like a plan?",
+    "Hi {name}! 🐾 Nori is watching your cards and waiting for you. {cards} today — quick and easy.",
+    "{name}, a little English today is better than a lot of English “one day” 🙂 {cards}, just a few minutes.",
+  ],
+  hw: [
+    "Hi {name}! 📚 Quick check-in: have you had a chance to do your homework? It's all on your page 🙂",
+    "Hi {name}! 📚 Your homework is waiting on your page. Miso wanted to do it for you, but Miso only speaks Meow 🐾",
+    "Hi {name}! 📚 A good moment for homework? Do a little today — you'll thank yourself before our lesson 🙂",
+  ],
+  pron: [
+    "Hi {name}! 🎬 How about a little pronunciation practice today? Pick a video, listen and repeat — a nice way to refresh what we did.",
+    "Hi {name}! 🎬 Movie time! Pick a video, listen and repeat. Nori likes to listen too 🐾",
+  ],
+};
+async function texts(topic: string): Promise<string[]> {
+  try { const o = JSON.parse((await cfg()).REMINDER_TEXTS || "{}"); if (Array.isArray(o[topic]) && o[topic].length) return o[topic]; } catch (_) { /* defaults */ }
+  return TEXTS[topic] || [];
+}
+async function say(topic: string, s: any, n: number, day: number, v?: number) {
+  const list = await texts(topic);
+  const i = v ?? (day + String(s.name || "").length);
+  return (list[((i % list.length) + list.length) % list.length] || "")
+    .replaceAll("{name}", s.name).replaceAll("{cards}", n === 1 ? "1 card" : `${n} cards`);
+}
+async function practice(s: any, st: Record<string, any>, force = false, only?: string, v?: number): Promise<Msg> {
   const c = cardCounts(s, st), d = diarySummary(s, st), now = tzParts(tzOf(s)), P = s.profile || {};
   const act: string[] = ((st.cards || {}).act || {})[c.today] || [];
   const h = await homeworkPending(s, st);
@@ -421,14 +452,14 @@ async function practice(s: any, st: Record<string, any>, force = false, only?: s
   const topic = only || (hw ? "hw" : pron ? "pron" : (cards || diary) ? "cards" : "");
   const key = now.date;
   if (topic === "hw" && hw) return { kind: "practice", key, reply_markup: await pageButton(s, "Open my English"),
-    text: `Hi ${s.name}! 📚 Quick check-in: have you had a chance to do your homework? It's all on your page 🙂` };
+    text: await say("hw", s, 0, now.dayNum, v) };
   if (topic === "pron" && pron) return { kind: "practice", key, reply_markup: await pageButton(s, "Practise pronunciation", "?open=pron"),
-    text: `Hi ${s.name}! 🎬 How about a little pronunciation practice today? Pick a video, listen and repeat — a nice way to refresh what we did.` };
+    text: await say("pron", s, 0, now.dayNum, v) };
   if (topic === "cards") {
     if (cards && diary) return { kind: "practice", key, reply_markup: await pageButton(s, "Open my English"),
-      text: `Hi ${s.name}! 🌙 Two small things: ${c.todayCount} cards are waiting, and your diary — how was your day? A couple of sentences is perfect ✍️` };
+      text: (await say("cards", s, c.todayCount, now.dayNum, v)) + " And your diary — how was your day? A couple of sentences is perfect ✍️" };
     if (cards) return { kind: "practice", key, reply_markup: await pageButton(s, "Practise my cards"),
-      text: `Hi ${s.name}! 🃏 ${c.todayCount} cards are waiting for you today. Just a few minutes is enough 🙂` };
+      text: await say("cards", s, c.todayCount, now.dayNum, v) };
     if (diary) return { kind: "practice", key, reply_markup: await pageButton(s, "Open my diary"),
       text: `Hi ${s.name}! ✍️ How was your day? Write a couple of sentences in your diary.` };
   }
@@ -561,6 +592,11 @@ async function cron(req: Request) {
   return send(200, { ok: true, sent });
 }
 
+async function allVariants(s: any, st: Record<string, any>) {
+  const out: Msg[] = [];
+  for (const topic of ["cards", "hw", "pron"]) for (let i = 0; i < (await texts(topic)).length; i++) out.push(await practice(s, st, true, topic, i));
+  return out;
+}
 // Teacher: send every reminder type for a student to Stacy's own Telegram, right now.
 async function testReminders(req: Request) {
   if (!(await isTeacher(req))) return send(401, { error: "teacher only" });
@@ -575,7 +611,7 @@ async function testReminders(req: Request) {
     `Hi ${s.name}! 👋 This is your English page: cards, diary and homework. I'll send you friendly reminders about your cards, diary, lessons and payments.`;
   const prevUrl = `${await appUrl()}/${s.page || ""}?preview=1&k=${s.access_key}`;
   const msgs: Msg[] = [{ kind: "welcome", key: "test", text: welcome, reply_markup: { inline_keyboard: [[{ text: "Open my English", web_app: { url: prevUrl } }]] } },
-    await practice(s, st, true, "cards"), await practice(s, st, true, "hw"), await practice(s, st, true, "pron"), await lessonTomorrow(s, true, st), await lessonSoon(s, true), await paymentDue(s, true), ...(await homeworkDue(s))];
+    ...(await allVariants(s, st)), await lessonTomorrow(s, true, st), await lessonSoon(s, true), await paymentDue(s, true), ...(await homeworkDue(s))];
   const pt = practiceTime(st);
   const labels: string[] = [];
   for (const m of msgs) {
