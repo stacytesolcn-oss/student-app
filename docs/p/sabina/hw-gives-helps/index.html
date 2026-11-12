@@ -77,8 +77,11 @@ textarea{width:100%;min-height:64px;resize:vertical;font:inherit;font-size:1rem;
 .stem{font-family:var(--display);font-size:1.2rem;font-weight:600}
 #copyOut{min-height:160px;font-size:.9rem}
 .status{font-size:.9rem;color:var(--good);min-height:1.3em}
+.hw-sent{background:#dff0e4;color:#2f7d4a;font-weight:700;border-radius:12px;padding:10px 14px}
+.hwback{display:inline-flex;align-items:center;min-height:36px;font-size:.9rem;color:inherit;opacity:.7;text-decoration:none}
 </style></head><body>
 <div class="wrap">
+  <a class="hwback" href="../" data-hw-back>← My English</a>
   <a class="back" href="../index.html">← Back to my page</a>
   <header style="display:grid;gap:8px">
     <span class="eyebrow">Homework · from our lesson on 7 November</span>
@@ -142,23 +145,20 @@ textarea{width:100%;min-height:64px;resize:vertical;font:inherit;font-size:1rem;
   <section class="card" style="padding:18px">
     <span class="eyebrow">Last step</span>
     <h2>Send me your answers</h2>
-    <p class="muted" style="font-size:.95rem">Copy your answers and paste them into our Telegram chat. I'll check them before our next lesson.</p>
-    <button type="button" id="copyBtn">Copy my answers</button>
-    <p class="status" id="copyStatus" role="status"></p>
-    <textarea id="copyOut" hidden readonly aria-label="Your answers"></textarea>
+    <p class="muted" style="font-size:.95rem">Your answers are saved as you go. When you finish, tap the button and I'll see them. I'll check them before our next lesson.</p>
+    <div id="sendBox"></div>
   </section>
 </div>
 
+<script src="../../../kit/hw.js"></script>
 <script>
 const $ = id => document.getElementById(id);
 const KEY = "sabina-gives-helps-gets-v1";
 let S = {};
-try{ S = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; }catch(e){ S = {}; }
-const save = () => { try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} };
+const save = () => { try{ HW.save(); }catch(e){} };
 const norm = s => s.toLowerCase().replace(/[’‘]/g,"'").replace(/[.!]+$/,"").replace(/\s+/g," ").trim();
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
-/* ---------- Part 1 ---------- */
 const SENT = [
   {s:"Book a new trip gives me something to look forward to.", ok:false, fix:"Booking a new trip gives me something to look forward to.", why:"Start with an -ing word: booking.", re:/^booking (a )?(new )?trip gives me something to look forward to$/},
   {s:"A walk in the park gives my mind a break.", ok:true},
@@ -169,6 +169,28 @@ const SENT = [
   {s:"It helps life feel lighter again.", ok:true},
   {s:"Meeting my friends helps me life feel lighter.", ok:false, fix:"Meeting my friends helps life feel lighter again.", why:"helps life feel lighter, with no me.", re:/^meeting (with )?my friends helps life feel lighter( again)?$/}
 ];
+const LINES = [
+  ["Booking a trip","gives me","something to look forward to."],
+  ["A walk in the park","gives","my mind a break."],
+  ["Meeting my friends","helps","life feel lighter again."],
+  ["Exploring new places","gets","my creative juices flowing."]
+];
+const QS = [
+  {q:"1. Which one can start the sentence?", o:["Book a trip","Booking a trip","Bought a ticket"], a:1, ex:"We start with a thing or an -ing word: booking a trip, a walk, meeting my friends."},
+  {q:"2. Why gives, helps, gets, with -s?", o:["Because it's the past","Because the first part is one thing, like it","Because of me"], a:1, ex:"Booking a trip = it. It gives, it helps, it gets."},
+  {q:"3. Which is correct?", o:["It helps me life feel lighter again.","It helps life feel lighter again."], a:1, ex:"helps + life + feel lighter. No me."},
+  {q:"4. Choose the rule.", o:["A person (I, she) + give / help / get + …","A thing or an -ing word + gives / helps / gets + …","A verb (book, buy) + gives / helps / gets + …"], a:1, ex:"Yes! A thing or an -ing word + gives / helps / gets."}
+];
+const ACTS = ["my yoga practice","meditating","putting my phone away in the evening","a walk in the park","meeting my friends","my Sunday off","exploring new places","looking at projects in London and Berlin","booking my winter trip"];
+const GROUPS = ["Every day","Every week","Before New Year"];
+const STEMS = [
+  "Every day, … gives my mind a break.",
+  "At weekends, … helps life feel lighter again.",
+  "Before New Year, … gives me something to look forward to."
+];
+let built = false;
+function build(){
+/* ---------- Part 1 ---------- */
 S.p1 = S.p1 || {};
 function p1Progress(){
   const n = SENT.filter((_,i)=>S.p1[i] && S.p1[i].done).length;
@@ -190,8 +212,8 @@ SENT.forEach((it,i) => {
   ta.addEventListener("input", () => { st.fix = ta.value; save(); });
   const finish = () => { st.done = 1; el.classList.add("ok"); save(); p1Progress(); };
   const showModel = () => { model.querySelector("i").textContent = it.fix + " (" + it.why + ")"; model.hidden = false; };
-  const pick = good => {
-    st.pick = good ? "good" : "need"; save();
+  const pick = (good, restoring) => {
+    st.pick = good ? "good" : "need"; if(!restoring){ (st.picks = st.picks || []).push(st.pick); } save();
     el.querySelector(".bGood").classList.toggle("picked", good);
     el.querySelector(".bNeed").classList.toggle("picked", !good);
     fb.hidden = false;
@@ -214,28 +236,17 @@ SENT.forEach((it,i) => {
     const good = it.re.test(v);
     fb2.className = "fb fb2 " + (good ? "good" : "bad");
     fb2.textContent = good ? "Perfect!" : "Compare your sentence with the correct version.";
+    st.right = good ? 1 : 0;
     showModel(); finish();
   });
-  if(st.pick) pick(st.pick === "good");
+  if(st.pick) pick(st.pick === "good", true);
   if(st.done && !it.ok){ box.hidden = false; showModel(); }
   $("sortList").appendChild(el);
 });
 p1Progress();
 
 /* ---------- Part 2 ---------- */
-const LINES = [
-  ["Booking a trip","gives me","something to look forward to."],
-  ["A walk in the park","gives","my mind a break."],
-  ["Meeting my friends","helps","life feel lighter again."],
-  ["Exploring new places","gets","my creative juices flowing."]
-];
 $("lines").innerHTML = LINES.map(l => '<div class="line3"><div class="c"><span class="c1">'+esc(l[0])+'</span><span class="c2">'+esc(l[1])+'</span><span>'+esc(l[2])+'</span></div></div>').join("");
-const QS = [
-  {q:"1. Which one can start the sentence?", o:["Book a trip","Booking a trip","Bought a ticket"], a:1, ex:"We start with a thing or an -ing word: booking a trip, a walk, meeting my friends."},
-  {q:"2. Why gives, helps, gets, with -s?", o:["Because it's the past","Because the first part is one thing, like it","Because of me"], a:1, ex:"Booking a trip = it. It gives, it helps, it gets."},
-  {q:"3. Which is correct?", o:["It helps me life feel lighter again.","It helps life feel lighter again."], a:1, ex:"helps + life + feel lighter. No me."},
-  {q:"4. Choose the rule.", o:["A person (I, she) + give / help / get + …","A thing or an -ing word + gives / helps / gets + …","A verb (book, buy) + gives / helps / gets + …"], a:1, ex:"Yes! A thing or an -ing word + gives / helps / gets."}
-];
 S.p2 = S.p2 || {};
 QS.forEach((q,qi) => {
   const d = document.createElement("div");
@@ -251,7 +262,8 @@ QS.forEach((q,qi) => {
       d.classList.add("ok"); S.p2[qi] = S.p2[qi] || oi; if(!restoring) save();
     } else {
       b.classList.add("wrong"); fb.className = "fb bad"; fb.textContent = "Not quite. Look at the four sentences again and try another answer.";
-      if(S.p2["w"+qi] === undefined){ S.p2["w"+qi] = oi; if(!restoring) save(); }
+      if(!restoring) S.p2["n"+qi] = (S.p2["n"+qi] || 0) + 1;
+      if(S.p2["w"+qi] === undefined){ S.p2["w"+qi] = oi; } if(!restoring) save();
     }
   };
   d.querySelectorAll("button").forEach(b => b.addEventListener("click", () => answer(+b.dataset.o)));
@@ -260,8 +272,6 @@ QS.forEach((q,qi) => {
 });
 
 /* ---------- Part 3 ---------- */
-const ACTS = ["my yoga practice","meditating","putting my phone away in the evening","a walk in the park","meeting my friends","my Sunday off","exploring new places","looking at projects in London and Berlin","booking my winter trip"];
-const GROUPS = ["Every day","Every week","Before New Year"];
 S.sort = S.sort || {};
 function renderGroups(){
   $("groups").innerHTML = GROUPS.map((g,gi) => {
@@ -277,11 +287,6 @@ $("acts").querySelectorAll("[data-a]").forEach(b => b.addEventListener("click", 
   renderGroups();
 }));
 renderGroups();
-const STEMS = [
-  "Every day, … gives my mind a break.",
-  "At weekends, … helps life feel lighter again.",
-  "Before New Year, … gives me something to look forward to."
-];
 S.stems = S.stems || {};
 $("stems").innerHTML = '<span class="eyebrow">Your sentences</span>' + STEMS.map((s,si) => '<div style="display:grid;gap:6px"><p class="stem">'+esc(s)+'</p><textarea data-s="'+si+'" autocapitalize="sentences" aria-label="Your sentence: '+esc(s)+'"></textarea></div>').join("");
 $("stems").querySelectorAll("textarea").forEach(t => { t.value = S.stems[t.dataset.s] || ""; t.addEventListener("input", () => { S.stems[t.dataset.s] = t.value; save(); }); });
@@ -293,16 +298,33 @@ $("addStarters").addEventListener("click", () => {
   f.value = f.value.trim() ? f.value.trimEnd() + "\n" + st : st; S.free = f.value; save(); f.focus();
 });
 
-/* ---------- Copy ---------- */
-$("copyBtn").addEventListener("click", () => {
-  const p1 = SENT.map((it,i) => { const st = S.p1[i] || {}; return (i+1)+". " + (st.pick ? (st.pick==="good" ? "Good" : "Needs work") : "—") + (st.fix && st.fix.trim() ? " → " + st.fix.trim() : ""); }).join("\n");
-  const p2 = QS.map((q,qi) => (qi+1) + ". first try: " + (S.p2["w"+qi] !== undefined ? q.o[S.p2["w"+qi]] + " ✗" : (S.p2[qi] !== undefined ? "✓" : "—"))).join("\n");
-  const p3 = GROUPS.map((g,gi) => g + ": " + (ACTS.filter(a=>S.sort[a]===gi).join(", ") || "—")).join("\n");
-  const p4 = STEMS.map((s,si) => "• " + ((S.stems[si]||"").trim() || "—")).join("\n");
-  const text = "Gives me, helps, gets\n\nPart 1\n" + p1 + "\n\nPart 2\n" + p2 + "\n\nPart 3\n" + p3 + "\n\nMy sentences\n" + p4 + "\n\nMy message for HOLI guests\n" + ((S.free||"").trim() || "—");
-  const out = $("copyOut");
-  const fallback = () => { out.hidden = false; out.value = text; out.focus(); out.select(); $("copyStatus").textContent = "Select the text below, copy it and send it to me in Telegram."; };
-  try{ navigator.clipboard.writeText(text).then(() => { $("copyStatus").textContent = "Copied. Now paste it into our Telegram chat."; }, fallback); }catch(e){ fallback(); }
+}
+
+/* ---------- What Stacy sees in Teacher view ---------- */
+function summary(){
+  const P1 = S.p1 || {}, P2 = S.p2 || {}, SO = S.sort || {}, ST = S.stems || {};
+  let firstRight = 0;
+  const l1 = SENT.map((it,i) => { const st = P1[i] || {}, picks = st.picks || (st.pick ? [st.pick] : []);
+    if(!picks.length) return (i+1)+". "+it.s+" → — not answered";
+    const want = it.ok ? "good" : "need", ok1 = picks[0] === want; if(ok1) firstRight++;
+    let r = (ok1 ? "✓" : "✗")+" first answer: "+(picks[0]==="good" ? "Good" : "Needs work")+(picks.length > 1 ? " ("+picks.length+" tries)" : "");
+    if(!it.ok && st.fix && st.fix.trim()) r += " · her sentence: "+st.fix.trim()+(st.right === 1 ? " ✓" : st.right === 0 ? " ✗ (not the same as the correct version)" : " (not checked yet)");
+    return (i+1)+". "+it.s+" → "+r; });
+  const l2 = QS.map((q,qi) => { const done = P2[qi] !== undefined, w = P2["w"+qi], n = P2["n"+qi] || (w !== undefined ? 1 : 0);
+    return q.q+" → "+(w !== undefined ? "✗ first answer: "+q.o[w]+" ("+n+" wrong "+(n===1?"try":"tries")+(done ? ", then right" : "")+")" : done ? "✓ right first time" : "— not answered"); });
+  const l3 = GROUPS.map((g,gi) => g+": "+(ACTS.filter(a => SO[a] === gi).join(", ") || "—"));
+  const l4 = STEMS.map((x,si) => "• "+x+" → "+((ST[si] || "").trim() || "—"));
+  return ["Task 1 · Good or needs work?", "Judged "+firstRight+" of "+SENT.length+" sentences right on her first answer"].concat(l1,
+    ["", "Task 2 · Spot the pattern"], l2, ["", "Task 3 · Sort your week"], l3, ["Her sentences:"], l4,
+    ["", "Task 4 · A message for HOLI guests", (S.free || "").trim() || "—"]).join("\n");
+}
+function sendUI(){ const box = $("sendBox"); box.innerHTML = ""; box.appendChild(HW.sendBlock({lang:"en", className:"send"})); }
+HW.start({
+  id: "hw-gives-helps", title: "Gives me, helps, gets",
+  get: () => S,
+  set: z => { if(z && typeof z === "object") S = z; },
+  summary,
+  render: () => { if(!built){ built = true; build(); } sendUI(); }
 });
 </script>
 </body></html>

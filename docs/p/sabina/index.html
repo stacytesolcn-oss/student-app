@@ -945,7 +945,6 @@ function todayQueue(){
   const fresh = [...new Set(TOPICS.flatMap(t=>t.words).concat(ALL))].filter(isNew);
   const first = FIRST.filter(isNew);
   early = new Set();
-  if(first.length && room) return first.slice(0, room); /* today's plan: only the new cards; after them the usual queue comes back for extra practice */
   let q = first.concat(due, fresh.filter(w=>!first.includes(w))).slice(0, room);
   const want = Math.min(room, Math.max(0, DAILY_MIN - doneToday()));
   early = new Set();
