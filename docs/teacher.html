@@ -131,7 +131,7 @@ function homeView(d){
       '<span class="pills">' + payPill(s) +
       (cur ? '<span class="pill' + (hwState(cur) === "finished" || hwState(cur) === "done" ? ' done' : hwState(cur) === "open" ? ' draft' : '') + '">Homework: ' +
         ({finished: "finished ✓", progress: "in progress", done: "done ✓", open: "not started"})[hwState(cur)] + '</span>' : '') +
-      '<span class="pill' + (c.doneToday ? ' done">Practised today ✓' : '">Cards: ' + (c.learned || 0) + ' / ' + (c.total || 0)) + '</span>' +
+      '<span class="pill' + (c.doneToday ? ' done">Today: ' + c.doneToday + (c.doneToday === 1 ? ' card' : ' cards') + ' ✓' : '">Cards: ' + (c.learned || 0) + ' / ' + (c.total || 0)) + '</span>' +
       (P.remindersOff ? '<span class="pill late">Reminders off</span>' : '') + '</span></button>';
   });
   return html;
