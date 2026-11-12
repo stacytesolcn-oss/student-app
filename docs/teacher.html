@@ -33,6 +33,16 @@ button{font:600 14px Karla;border:0;border-radius:10px;padding:7px 11px;backgrou
 button.primary{background:var(--java);color:var(--ivory)}
 textarea.note{width:100%;font:400 15px/1.45 Karla;border:1px solid var(--sandl);border-radius:10px;padding:8px 10px;margin-top:8px;resize:vertical;background:#fff;color:var(--java)}
 .hint{font-size:13px;color:var(--choc);opacity:.75;margin-top:4px}
+.stu{display:flex;flex-direction:column;gap:6px;width:100%;text-align:left;background:#fff;border:1px solid var(--sandl);border-radius:16px;padding:16px;margin:10px 0;font:400 16px/1.4 Karla,system-ui,sans-serif}
+.stu-top{display:flex;justify-content:space-between;align-items:center}
+.stu b{font:700 20px Bricolage,Karla,sans-serif}.chev{font-size:26px;line-height:1;color:var(--sand)}
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.back{background:none;padding:6px 0;font-size:15px;color:var(--choc);margin-bottom:6px}
+.links button{min-height:40px}
+.answers{margin-top:10px;font-size:15px;border-top:1px solid var(--sandl);padding-top:8px}
+.answers div{padding:3px 0}.answers .tt{font-weight:600;margin-top:8px}
+.ok2{color:var(--ok)}.no2{color:var(--sceptre)}
+details summary b{font-weight:600}
 </style>
 </head>
 <body>
@@ -80,49 +90,113 @@ function taughtCount(P){
   }
   return Math.min(n, Number(K.size) || n);
 }
-function studentPanel(s, sm){
-  sm = sm || {}; var c = sm.cards || {}, dy = sm.diary || {}, P = s.profile || {}, K = P.pack || {};
-  var h = '<div class="card">';
-  h += '<div class="head"><h3>Cards</h3><span class="pill">' + (c.learned || 0) + ' / ' + (c.total || 0) + ' practised</span></div>';
-  h += '<div class="muted">Today: ' + (c.doneToday || 0) + ' done · ' + (c.dueToday || 0) + ' waiting · last practice: ' + esc(c.lastPractice || "—") + '</div>';
-  var LBL = {cards:"Cards", watch:"Watched", listen:"Listened", read:"Read", speak:"Spoke English", write:"Wrote", homework:"Homework"};
-  var wk = c.week || {}, wkParts = Object.keys(wk).map(function(k){ return (LBL[k] || k) + " " + wk[k]; });
-  h += '<div style="margin-top:6px"><b>This week:</b> ' + (c.activeDays || 0) + ' active days' + (wkParts.length ? ' · ' + esc(wkParts.join(" · ")) : '') + '</div>';
-  if (c.struggling && c.struggling.length) h += '<div style="margin-top:6px"><b>Struggling:</b> ' + c.struggling.map(esc).join(", ") + '</div>';
-  (sm.hw || []).forEach(function(w){
-    h += '</div><details class="card"' + (w.submitted ? '' : ' open') + '><summary><div class="head"><h3>Homework: ' + esc(w.title) + '</h3>' +
-      (w.submitted ? '<span class="pill done">Finished ✓</span>' : '<span class="pill">In progress</span>') + '</div>' +
-      '<div class="muted">Last saved: ' + esc(String(w.updated || "").slice(0, 16).replace("T", " ")) + ' UTC · tap to open</div></summary>' +
-      '<div class="resp" style="margin-top:8px;white-space:pre-wrap">' + esc(w.summary || "No answers yet.") + '</div></details><div style="display:none">';
+var CUR = null, DATA = null;   // CUR = id of the student that is open (null = list of students)
+function who(P){ var he = P.paidBtn === "Я оплатил"; return {his: he ? "his" : "her", he: he ? "he" : "she", He: he ? "He" : "She", him: he ? "him" : "her"}; }
+function shortDate(iso){ return iso ? new Date(iso + "T12:00:00Z").toLocaleDateString("en-GB", {weekday: "short", day: "numeric", month: "short", timeZone: "UTC"}) : "—"; }
+function payPill(s){ var K = (s.profile || {}).pack || {};
+  return s.pay_check_at ? '<span class="pill late">Says paid — check</span>' : K.paid ? '<span class="pill done">Paid ✓</span>' : '<span class="pill late">Not paid</span>'; }
+// homework list for a student: items on the page (profile.homework) joined with saved answers (summary.hw)
+function hwList(s, sm){
+  var P = s.profile || {}, saved = {}, ticked = ((sm || {}).hwTicked) || {};
+  ((sm || {}).hw || []).forEach(function(w){ saved[w.id] = w; });
+  var out = (P.homework || []).map(function(h){ var w = saved[h.id]; delete saved[h.id];
+    return {id: h.id, title: h.title, due: h.due, url: h.url, w: w, done: !!h.done || !!(w && w.submitted) || !!ticked[h.id], old: !!h.done && !w}; });
+  Object.keys(saved).forEach(function(id){ out.push({id: id, title: saved[id].title, w: saved[id], done: saved[id].submitted}); });
+  return out;
+}
+function hwState(x){ return x.w && x.w.submitted ? "finished" : x.w ? "progress" : x.done ? "done" : "open"; }
+function hwPill(x){ var st = hwState(x);
+  return st === "finished" ? '<span class="pill done">Finished ✓</span>' : st === "progress" ? '<span class="pill">In progress</span>'
+    : st === "done" ? '<span class="pill done">Done ✓</span>' : '<span class="pill draft">Not started</span>'; }
+
+function homeView(d){
+  var html = '<h1>My students</h1><div class="muted">Tap a student to open everything about them.</div>';
+  d.students.forEach(function(s){
+    var sm = (d.summary || {})[s.id] || {}, P = s.profile || {}, c = sm.cards || {};
+    var hw = hwList(s, sm).filter(function(x){ return !x.old; }), cur = hw[0];
+    var lessons = (P.lessons || []).map(function(l){ return l.day.slice(0, 3) + " " + l.time; }).join(" · ");
+    html += '<button class="stu" data-open="' + s.id + '"><span class="stu-top"><b>' + esc(s.name) + '</b><span class="chev">›</span></span>' +
+      '<span class="muted">' + esc(lessons || "No lessons set") + (s.tg_user_id ? '' : ' · not connected yet') + '</span>' +
+      '<span class="pills">' + payPill(s) +
+      (cur ? '<span class="pill' + (hwState(cur) === "finished" || hwState(cur) === "done" ? ' done' : hwState(cur) === "open" ? ' draft' : '') + '">Homework: ' +
+        ({finished: "finished ✓", progress: "in progress", done: "done ✓", open: "not started"})[hwState(cur)] + '</span>' : '') +
+      '<span class="pill' + (c.doneToday ? ' done">Practised today ✓' : '">Cards: ' + (c.learned || 0) + ' / ' + (c.total || 0)) + '</span>' +
+      (P.remindersOff ? '<span class="pill late">Reminders off</span>' : '') + '</span></button>';
   });
-  if (!P.noDiary) {
-  h += '</div><div class="card"><div class="head"><h3>Diary</h3><span class="pill">' + (dy.entries || 0) + ' entries</span></div>';
-  h += dy.last ? '<div class="muted">' + esc(dy.last.date) + (dy.wroteToday ? ' · wrote today ✓' : '') + '</div><div class="resp" style="margin-top:6px">' + esc(dy.last.text) + '</div>' : '<div class="muted">No entries yet.</div>';
-  }
-  h += '</div><div class="card"><div class="head"><h3>Focus of the week</h3>' + (P.note ? '<span class="pill done">On her page</span>' : '<span class="pill">Empty</span>') + '</div>' +
-       '<textarea class="note" data-note="' + s.id + '" rows="3" placeholder="What to focus on this week, or a short message for her…">' + esc(P.note || "") + '</textarea>' +
-       '<div class="links"><button data-save-note="' + s.id + '">Save</button>' + (P.note ? '<button data-clear-note="' + s.id + '">Remove</button>' : '') + '</div>' +
-       '<div class="hint">Shows at the top of her page. On your phone, tap the 🎤 on the keyboard to dictate.</div>';
-  h += '</div><div class="card"><div class="head"><h3>Package & payment</h3>' +
-    (s.pay_check_at ? '<span class="pill late">Says she paid — check</span>' : K.paid ? '<span class="pill done">Paid ✓</span>' : '<span class="pill late">Not paid yet</span>') + '</div>';
+  return html;
+}
+
+function studentView(d, s){
+  var sm = (d.summary || {})[s.id] || {}, c = sm.cards || {}, dy = sm.diary || {}, P = s.profile || {}, K = P.pack || {}, W = who(P);
+  var base = s.link.split("#")[0], key = s.link.split("#k=")[1] || "";
+  var h = '<button class="back" data-back="1">‹ All students</button><h1>' + esc(s.name) + '</h1>' +
+    '<div class="muted">' + esc((P.lessons || []).map(function(l){ return l.day + " " + l.time; }).join(" · ")) + ' · ' + esc(s.tz) + ' · ' + (s.tg_user_id ? "Telegram connected ✓" : "Telegram not connected yet") + '</div>' +
+    '<div class="links"><a href="' + esc(s.link.replace('#k=', '?preview=1#k=')) + '" target="_blank" rel="noopener"><button class="primary">Open ' + W.his + ' page</button></a>' +
+    (s.telegramLink ? '<button data-copy="' + esc(s.telegramLink) + '">Copy Telegram link</button>' : '') + '<button data-copy="' + esc(s.link) + '">Copy web link</button></div>';
+
+  // ---- Homework
+  var hw = hwList(s, sm), cur = hw.filter(function(x){ return !x.old; }), old = hw.filter(function(x){ return x.old; });
+  h += '<h2>Homework</h2>';
+  if (!cur.length) h += '<div class="card muted">No homework on ' + W.his + ' page right now.</div>';
+  cur.forEach(function(x){
+    var open = x.url && !/^https?:/.test(x.url) ? base + x.url + '?preview=1&k=' + key : null;
+    h += '<div class="card"><div class="head"><h3>' + esc(x.title) + '</h3>' + hwPill(x) + '</div>' +
+      '<div class="muted">' + (x.due ? 'Due ' + esc(shortDate(x.due)) : '') + (x.w ? (x.due ? ' · ' : '') + 'last saved ' + esc(when(x.w.updated)) : '') + '</div>';
+    if (x.w) {
+      h += '<div class="resp answers">' + fmtSummary(x.w.summary) + '</div>';
+      if (open) h += '<div class="links"><a href="' + esc(open) + '" target="_blank" rel="noopener"><button class="primary">Open it the way ' + W.he + ' did it</button></a></div>' +
+        '<div class="hint">Opens the homework with ' + W.his + ' answers filled in. Nothing you tap there is saved.</div>';
+    } else h += '<div class="hint">' + (open ? W.He + ' hasn’t opened it yet. Answers will show here as soon as ' + W.he + ' starts.' : 'This one opens outside the app, so answers aren’t saved here.') + '</div>';
+    h += '</div>';
+  });
+  if (old.length) h += '<details class="card"><summary><b>Earlier homework (' + old.length + ')</b> <span class="muted">· tap to show</span></summary>' +
+    old.map(function(x){ return '<div style="margin-top:8px">' + esc(x.title) + ' <span class="pill done">Done ✓</span></div>'; }).join("") + '</details>';
+
+  // ---- Focus of the week
+  h += '<h2>Focus of the week</h2><div class="card"><div class="head"><span class="muted">Shows at the top of ' + W.his + ' page</span>' + (P.note ? '<span class="pill done">On ' + W.his + ' page</span>' : '<span class="pill draft">Empty</span>') + '</div>' +
+       '<textarea class="note" data-note="' + s.id + '" rows="5" placeholder="What to focus on this week, or a short message…">' + esc(P.note || "") + '</textarea>' +
+       '<div class="links"><button class="primary" data-save-note="' + s.id + '">Save</button>' + (P.note ? '<button data-clear-note="' + s.id + '">Remove</button>' : '') + '</div>' +
+       '<div class="hint">On your phone, tap the 🎤 on the keyboard to dictate.</div></div>';
+
+  // ---- Payment
   var taught = taughtCount(P);
-  if (taught !== null) h += '<div style="margin:2px 0 6px"><b>' + taught + ' of ' + (K.size || "?") + ' lessons taught</b> <span class="muted">· ' + Math.max(0, (Number(K.size) || 0) - taught) + ' left</span></div>';
-  var np = P.nextPayment ? new Date(P.nextPayment + "T12:00:00Z").toLocaleDateString("en-GB", {weekday: "short", day: "numeric", month: "short", timeZone: "UTC"}) : "—";
-  h += '<div class="links" style="align-items:center"><label class="muted">Lessons <input type="number" min="1" max="60" class="num" data-size="' + s.id + '" value="' + esc(K.size || "") + '"></label>' +
-       '<label class="muted">from <input type="date" data-start="' + s.id + '" value="' + esc(K.start || "") + '"></label>' +
-       '<button data-save-pack="' + s.id + '">Save package</button></div>' +
-       '<div class="hint">' + (K.paid ? 'Paid ' + esc(K.paid) + '. ' : '') + 'Paying per lesson? Put the number of lessons she paid for.</div>';
-  h += '<div style="margin-top:14px"><b>Next payment: ' + esc(np) + '</b> <span class="muted">· ' + (P.nextPaymentManual ? 'set by you' : 'automatic') + '</span></div>';
-  h += '<div class="links" style="align-items:center"><input type="date" data-np="' + s.id + '" value="' + esc(P.nextPayment || "") + '"><button data-save-np="' + s.id + '">Change date</button>' +
+  h += '<h2>Package & payment</h2><div class="card"><div class="head"><b>' + (taught !== null ? taught + ' of ' + (K.size || "?") + ' lessons taught' : 'No package set') + '</b>' + payPill(s) + '</div>' +
+       '<div style="margin-top:6px">Next payment: <b>' + esc(shortDate(P.nextPayment)) + '</b> <span class="muted">· ' + (P.nextPaymentManual ? 'set by you' : 'automatic') + '</span></div>' +
+       '<div class="links"><button class="primary" data-markpaid="' + s.id + '">✓ Payment received</button></div><div class="hint">' +
+       (s.pay_check_at ? W.He + ' tapped “I’ve paid”. Check Stripe, then tap this.' : K.paid ? 'Tap when the next payment arrives. A new package starts after this one ends.' : 'Tap when the money arrives. Payment reminders stop and the next date is set automatically.') + '</div>' +
+       '<details style="margin-top:12px"><summary><b>Change package or date</b> <span class="muted">· tap to show</span></summary>' +
+       '<div class="links" style="align-items:center"><label class="muted">Lessons <input type="number" min="1" max="60" class="num" data-size="' + s.id + '" value="' + esc(K.size || "") + '"></label>' +
+       '<label class="muted">from <input type="date" data-start="' + s.id + '" value="' + esc(K.start || "") + '"></label><button data-save-pack="' + s.id + '">Save package</button></div>' +
+       '<div class="hint">' + (K.paid ? 'Paid ' + esc(K.paid) + '. ' : '') + 'Paying per lesson? Put the number of lessons paid for.</div>' +
+       '<div class="links" style="align-items:center;margin-top:12px"><label class="muted">Next payment <input type="date" data-np="' + s.id + '" value="' + esc(P.nextPayment || "") + '"></label><button data-save-np="' + s.id + '">Change date</button>' +
        (P.nextPaymentManual ? '<button data-auto="' + s.id + '">Use automatic</button>' : '') + '</div>' +
-       '<div class="hint">Automatic: an unpaid package is due at its first lesson; a paid one at the first lesson after it ends.</div>';
-  h += '<div class="links" style="margin-top:14px"><button class="primary" data-markpaid="' + s.id + '">✓ Payment received</button></div><div class="hint">' +
-    (s.pay_check_at ? 'She tapped “I’ve paid”. Check Stripe, then tap this.' : K.paid ? 'Tap when her next payment arrives. A new package starts after this one ends, with the number of lessons above.' : 'Tap when the money arrives. Reminders stop and the next payment date is set automatically.') + '</div>';
-  h += '</div><div class="card"><div class="head"><h3>Reminders</h3><span class="pill' + (P.remindersOff ? ' late">Off' : ' done">On') + '</span></div>';
-  h += '<div class="links"><button data-remind="' + s.id + '" data-off="' + (P.remindersOff ? '0' : '1') + '">' + (P.remindersOff ? 'Turn reminders on' : 'Pause reminders') + '</button>' +
-       '<button data-test="' + s.id + '">Show me her reminders</button></div>' +
-       '<div class="hint">Pause when she’s on holiday. “Show me her reminders” sends you a copy of each message she would get, so you can check the wording.</div>';
-  return h + '</div>';
+       '<div class="hint">Automatic: an unpaid package is due at its first lesson; a paid one at the first lesson after it ends.</div></details></div>';
+
+  // ---- Practice
+  var LBL = {cards:"Cards", watch:"Watched", listen:"Listened", read:"Read", speak:"Spoke English", write:"Wrote", homework:"Homework", pron:"Pronunciation"};
+  var wk = c.week || {}, wkParts = Object.keys(wk).map(function(k){ return (LBL[k] || k) + " " + wk[k]; });
+  h += '<h2>Practice</h2><div class="card"><div class="head"><b>Cards</b><span class="pill">' + (c.learned || 0) + ' / ' + (c.total || 0) + ' practised</span></div>' +
+       '<div class="muted">Today: ' + (c.doneToday || 0) + ' done · ' + (c.dueToday || 0) + ' waiting · last practice: ' + esc(c.lastPractice ? shortDate(c.lastPractice) : "—") + '</div>' +
+       '<div style="margin-top:6px"><b>This week:</b> ' + (c.activeDays || 0) + ' active days' + (wkParts.length ? ' · ' + esc(wkParts.join(" · ")) : '') + '</div>' +
+       (c.struggling && c.struggling.length ? '<div style="margin-top:6px"><b>Struggling with:</b> ' + c.struggling.map(esc).join(", ") + '</div>' : '') + '</div>';
+  if (!P.noDiary) h += '<div class="card"><div class="head"><b>Diary</b><span class="pill">' + (dy.entries || 0) + ' entries</span></div>' +
+       (dy.last ? '<div class="muted">' + esc(shortDate(dy.last.date)) + (dy.wroteToday ? ' · wrote today ✓' : '') + '</div><div class="resp" style="margin-top:6px">' + esc(dy.last.text) + '</div>' : '<div class="muted">No entries yet.</div>') + '</div>';
+
+  // ---- Reminders
+  h += '<h2>Reminders</h2><div class="card"><div class="head"><span class="muted">Cards, homework, lessons, payment</span><span class="pill' + (P.remindersOff ? ' late">Off' : ' done">On') + '</span></div>' +
+       '<div class="links"><button data-remind="' + s.id + '" data-off="' + (P.remindersOff ? '0' : '1') + '">' + (P.remindersOff ? 'Turn reminders on' : 'Pause reminders') + '</button>' +
+       '<button data-test="' + s.id + '">Show me ' + W.his + ' reminders</button></div>' +
+       '<div class="hint">Pause for holidays. “Show me” sends you a copy of each message, so you can check the wording.</div></div>';
+  return h;
+}
+// answers text → readable lines (✓ green, ✗ red, task titles bold)
+function fmtSummary(t){
+  return esc(t || "No answers yet.").split("\n").map(function(l){
+    if (/^Task \d/.test(l)) return '<div class="tt">' + l + '</div>';
+    if (!l.trim()) return '';
+    var cls = /✗|not fixed|missed|answer shown/.test(l) ? ' class="no2"' : /✓/.test(l) ? ' class="ok2"' : '';
+    return '<div' + cls + '>' + l + '</div>';
+  }).join("");
 }
 function post(body){ return fetch(API + "/teacher", {method: "POST", headers: {"x-auth": AUTH, "content-type": "application/json"}, body: JSON.stringify(body)}).then(function(r){ if (!r.ok) throw r.status; }); }
 function wireActions(){
@@ -153,44 +227,17 @@ function wireActions(){
 }
 
 function render(d){
-  var today = new Date().toISOString().slice(0, 10);
-  var html = '<h1>Students</h1>';
-  d.students.forEach(function(s){
-    var hws = d.homework.filter(function(h){ return h.student_id === s.id; });
-    html += '<h2>' + esc(s.name) + '</h2><div class="muted">' + (s.tg_user_id ? "Telegram linked ✓" : "Telegram not linked yet") + ' · ' + esc(s.tz) + '</div>' +
-      '<div class="links">' + (s.telegramLink ? '<button data-copy="' + esc(s.telegramLink) + '">Copy Telegram link</button>' : '') +
-      '<button data-copy="' + esc(s.link) + '">Copy web link</button>' +
-      '<a href="' + esc(s.link.replace('#k=', '?preview=1#k=')) + '" target="_blank" rel="noopener"><button>Open her page</button></a></div>';
-    html += studentPanel(s, d.summary && d.summary[s.id]);
-    if (!hws.length) html += '<div class="card muted">No homework yet.</div>';
-    hws.forEach(function(h){
-      var ans = d.answers.filter(function(a){ return a.homework_id === h.id; });
-      var pill = !h.published ? '<span class="pill draft">Draft</span>' : h.completed_at ? '<span class="pill done">Done ' + esc(when(h.completed_at)) + '</span>'
-        : h.started_at ? '<span class="pill">Started ' + esc(when(h.started_at)) + '</span>'
-        : '<span class="pill' + (h.due && h.due < today ? ' late' : '') + '">Not started' + (h.due ? " · due " + esc(h.due) : "") + '</span>';
-      var firstWrong = 0, attempted = 0;
-      html += '<details class="card"' + (h.completed_at && !h._seen ? ' open' : '') + '><summary><div class="head"><h3>' + esc(h.title) + '</h3>' + pill + '</div>';
-      var body = '';
-      (h.tasks || []).forEach(function(t){
-        body += '<div style="margin-top:12px;font-weight:600">' + esc(t.title || t.type) + '</div><table>';
-        (t.items || []).forEach(function(it){
-          var a = ans.filter(function(x){ return x.task_id === t.id && x.item_id === it.id; });
-          if (a.length){ attempted++; if (a[0].correct === false) firstWrong++; }
-          var cells = a.length ? a.map(function(x){
-            var mark = x.correct === true ? '<span class="ok">✓</span>' : x.correct === false ? '<span class="no">✗</span>' : '';
-            return mark + ' <span class="resp">' + esc(showResp(t, it, x.response)) + '</span>';
-          }).join("<br>") : '<span class="muted">—</span>';
-          body += '<tr><td style="width:45%">' + esc(itemText(t, it)) + '</td><td>' + cells + '</td></tr>';
-        });
-        body += '</table>';
-      });
-      html += '<div class="muted">' + attempted + ' items answered · ' + firstWrong + ' wrong on first try</div></summary>' + body + '</details>';
-    });
-  });
-  document.getElementById("app").innerHTML = html;
+  DATA = d;
+  var s = CUR && d.students.filter(function(x){ return x.id === CUR; })[0];
+  var y = window.scrollY;
+  document.getElementById("app").innerHTML = s ? studentView(d, s) : homeView(d);
   document.querySelectorAll("[data-copy]").forEach(function(b){ b.onclick = function(){ copy(b.dataset.copy, b); }; });
+  document.querySelectorAll("[data-open]").forEach(function(b){ b.onclick = function(){ CUR = b.dataset.open; try{ sessionStorage.setItem("teacherCur", CUR); }catch(e){} render(DATA); window.scrollTo(0, 0); }; });
+  document.querySelectorAll("[data-back]").forEach(function(b){ b.onclick = function(){ CUR = null; try{ sessionStorage.removeItem("teacherCur"); }catch(e){} render(DATA); window.scrollTo(0, 0); }; });
   wireActions();
+  if (s) window.scrollTo(0, y);
 }
+try{ CUR = sessionStorage.getItem("teacherCur") || null; }catch(e){}
 
 if (!AUTH) document.getElementById("app").innerHTML = '<p>Open this from the bot, or with your private teacher link.</p>';
 else load();

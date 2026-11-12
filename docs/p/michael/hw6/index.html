@@ -343,6 +343,7 @@ function r1(){
         if(!norm(st.val))return;
         const ok=it.fix.some(f=>norm(f)===norm(st.val));
         st.tries++;
+        if(!ok){st.wrong=st.wrong||[];st.wrong.push(st.val.trim());}
         if(ok){st.state="fixed";st.answer=st.val.trim();st.msg=null;}
         else if(st.tries>=2){st.state="shown";st.answer=it.fix[0];st.msg="Правильно: "+it.fix.join(" / ")+". "+it.hint;}
         else st.msg=it.hint;
@@ -458,11 +459,27 @@ function r5(){
 }
 
 /* ================= saving (answers go to the app, Stacy sees them) ================= */
+/* what Stacy sees: found / missed, every try */
+function t1Teacher(){
+  const lines=["Task 1 · Find the mistake"];let found=0,total=0,falseAlarm=0;
+  S.t1.order.forEach((idx,n)=>{const it=T1[idx],st=S.t1.st[idx];let r;
+    const tries=st.wrong&&st.wrong.length?` · wrong tries: ${st.wrong.join(", ")}`:"";
+    if(it.ok){ if(st.state==="good"){falseAlarm++;r="✗ thought it had a mistake (it is correct)";} else r=S.t1.finished?"✓ left it as correct":"— not checked yet"; }
+    else{ total++;
+      const how=st.missed?"missed it at first":"found the mistake";
+      if(st.state==="fixed"){ if(!st.missed)found++; r=`${st.missed?"✗":"✓"} ${how}, fixed: ${st.answer}${st.tries>1?` (try ${st.tries})`:""}${tries}`; }
+      else if(st.state==="shown"){ if(!st.missed)found++; r=`✗ ${how}, couldn't fix it — answer shown (${it.fix[0]})${tries}`; }
+      else if(st.state==="fix"){ if(!st.missed)found++; r=`${how}, not fixed yet${tries}`; }
+      else r="— not checked yet"; }
+    lines.push(`${n+1}. ${it.s} → ${r}`);});
+  lines.splice(1,0,`Found ${found} of ${total} mistakes on his own`+(falseAlarm?` · ${falseAlarm} correct sentence${falseAlarm>1?"s":""} marked as wrong`:""));
+  return lines.join("\n");
+}
 function t2Text(){return "Task 2 · Who has done what? (voice in Telegram) — answers opened: "+PEOPLE.map((p,i)=>p.name+(S.t2.revealed[i]?" ✓":" —")).join(", ");}
 let hwLoaded=false;
 function hwPush(){
   if(!hwLoaded)return;
-  try{window.__hwSave({title:HW_TITLE,submitted:!!S.submitted,summary:[t1Text(),t2Text(),t4Text()].join("\n\n"),
+  try{window.__hwSave({title:HW_TITLE,submitted:!!S.submitted,summary:[t1Teacher(),t2Text(),t4Text()].join("\n\n"),
     s:{stage:S.stage,t1:S.t1,t2:S.t2,t4:S.t4,submitted:!!S.submitted}});}catch(e){}
 }
 app.append(el("p",{class:"rubric",style:"padding-top:22px"},"Загружаю…"));
@@ -473,6 +490,7 @@ window.__hwLoad(function(d){
       if(z.t4)S.t4={text:String(z.t4.text||"")};
       S.submitted=!!z.submitted; S.stage=Math.min(STAGES.length-1,Math.max(0,z.stage|0)); } }catch(e){}
   hwLoaded=true; render();
+  if(/[?&]preview=1/.test(location.search)){ const b=el("p",{class:"tip",style:"margin:10px 0 0"},"Preview for Stacy: these are the student's answers. Nothing you tap here is saved."); document.querySelector(".top").append(b); const bl=document.querySelector(".backlink"); if(bl) bl.remove(); }
 });
 </script>
 </body>
