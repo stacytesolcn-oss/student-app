@@ -1504,6 +1504,8 @@ function nextLesson(les, off){
     const n = new Date(now), base = Date.UTC(n.getUTCFullYear(), n.getUTCMonth(), n.getUTCDate());
     for(let k=0;k<8;k++){
       const d = base + k*DAY, start = d + (hh*60+(mm||0))*6e4;
+      const iso = new Date(d).toISOString().slice(0,10);
+      if((l.from && iso < l.from) || (l.until && iso > l.until)) continue; /* one-week changes: {from, until} */
       if(new Date(d).getUTCDay()===wd && start + 60*6e4 > now){ if(!best || start < best.start) best = {start, day:k, l}; break; }
     }
   });
@@ -1575,7 +1577,11 @@ function renderProfile(){
   $("termPrice").textContent = P.price; $("termMin").textContent = P.minutes || 60;
   document.querySelector(".panel.goals").hidden = !P.goals;
   $("goalsText").textContent = P.goals; $("goalsPh").hidden = true;
-  $("sched").innerHTML = les.map(l=>'<div><b>'+esc(l.day)+'</b><span>'+esc(l.time)+'</span></div>').join("")+'<div><span class="muted">Time zone</span><span class="muted">'+esc(tz)+'</span></div>';
+  const tISO = new Date(Date.now() + tzOff(P.tzName)*36e5).toISOString().slice(0,10), seenL = {};
+  const oneOff = les.filter(l=>l.from && l.from===l.until && l.until >= tISO);
+  const regular = les.filter(l=>!(l.from && l.from===l.until) && !(l.until && l.until < tISO) && !seenL[l.day+l.time] && (seenL[l.day+l.time]=1));
+  $("sched").innerHTML = oneOff.map(l=>'<div><b>'+esc(new Date(l.from+"T12:00:00Z").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"short",timeZone:"UTC"}))+'</b><span><b>'+esc(l.time)+'</b> · new time</span></div>').join("")+
+    regular.map(l=>'<div><b>'+esc(l.day)+'</b><span>'+esc(l.time)+'</span></div>').join("")+'<div><span class="muted">Time zone</span><span class="muted">'+esc(tz)+'</span></div>';
   $("schedPh").hidden = true; $("zoomLink2").href = P.zoom || "#"; $("zoomLink2").hidden = !P.zoom;
   try{ window.__payUI && __payUI(P); }catch(e){}
 }

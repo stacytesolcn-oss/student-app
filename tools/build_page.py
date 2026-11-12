@@ -35,6 +35,11 @@ rep('try{ var r = JSON.parse(localStorage.getItem(DK)||"null"); if(r && r.e) D =
 rep('function dsave(){ try{ localStorage.setItem(DK, JSON.stringify(D)); }catch(e){} }',
     'function dsave(){ try{ localStorage.setItem(DK, JSON.stringify(D)); }catch(e){} try{ window.__sync && __sync("diary", D); }catch(e){} }', optional=True)
 # 4) "I've paid" button after the payment/package blocks render
+# lesson time changed for one week: profile.lessons entries may carry {from, until}
+rep('      if(new Date(d).getUTCDay()===wd && start + 60*6e4 > now){ if(!best || start < best.start) best = {start, day:k, l}; break; }',
+    '      const iso = new Date(d).toISOString().slice(0,10);\n      if((l.from && iso < l.from) || (l.until && iso > l.until)) continue; /* one-week changes: {from, until} */\n      if(new Date(d).getUTCDay()===wd && start + 60*6e4 > now){ if(!best || start < best.start) best = {start, day:k, l}; break; }', optional=True)
+rep('  $("sched").innerHTML = les.map(l=>\'<div><b>\'+esc(l.day)+\'</b><span>\'+esc(l.time)+\'</span></div>\').join("")+',
+    '  const tISO = new Date(Date.now() + tzOff(P.tzName)*36e5).toISOString().slice(0,10), seenL = {};\n  const oneOff = les.filter(l=>l.from && l.from===l.until && l.until >= tISO);\n  const regular = les.filter(l=>!(l.from && l.from===l.until) && !(l.until && l.until < tISO) && !seenL[l.day+l.time] && (seenL[l.day+l.time]=1));\n  $("sched").innerHTML = oneOff.map(l=>\'<div><b>\'+esc(new Date(l.from+"T12:00:00Z").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"short",timeZone:"UTC"}))+\'</b><span><b>\'+esc(l.time)+\'</b> · new time</span></div>\').join("")+\n    regular.map(l=>\'<div><b>\'+esc(l.day)+\'</b><span>\'+esc(l.time)+\'</span></div>\').join("")+', optional=True)
 rep('  $("schedPh").hidden = true; $("zoomLink2").href = P.zoom || "#"; $("zoomLink2").hidden = !P.zoom;',
     '  $("schedPh").hidden = true; $("zoomLink2").href = P.zoom || "#"; $("zoomLink2").hidden = !P.zoom;\n  try{ window.__payUI && __payUI(P); }catch(e){}', optional=True)
 # 4b) only call the package "paid" when it is

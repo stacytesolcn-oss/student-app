@@ -77,6 +77,17 @@ function showResp(t, it, r){
 
 
 
+// "Sat 08:15" list; a one-week change ({from, until} on the same day) shows as "Sat 14 Nov 10:40 (this week only)"
+function lessonLabel(P, short){
+  var today = new Date().toISOString().slice(0, 10), seen = {}, out = [];
+  (P.lessons || []).forEach(function(l){
+    if (l.until && l.until < today) return;
+    var one = l.from && l.from === l.until, day = short ? l.day.slice(0, 3) : l.day;
+    var txt = one ? day.slice(0, 3) + " " + new Date(l.from + "T12:00:00Z").toLocaleDateString("en-GB", {day: "numeric", month: "short", timeZone: "UTC"}) + " " + l.time + " (this week only)" : day + " " + l.time;
+    if (!seen[txt]) { seen[txt] = 1; one ? out.unshift(txt) : out.push(txt); }
+  });
+  return out.join(" · ");
+}
 // lessons taught so far in the current package (same rule as her page: weekly schedule from the start date, minus cancelled, plus extra dates)
 function taughtCount(P){
   var K = P.pack || {}; if (!K.start) return null;
@@ -114,7 +125,7 @@ function homeView(d){
   d.students.forEach(function(s){
     var sm = (d.summary || {})[s.id] || {}, P = s.profile || {}, c = sm.cards || {};
     var hw = hwList(s, sm).filter(function(x){ return !x.old; }), cur = hw[0];
-    var lessons = (P.lessons || []).map(function(l){ return l.day.slice(0, 3) + " " + l.time; }).join(" · ");
+    var lessons = lessonLabel(P, true);
     html += '<button class="stu" data-open="' + s.id + '"><span class="stu-top"><b>' + esc(s.name) + '</b><span class="chev">›</span></span>' +
       '<span class="muted">' + esc(lessons || "No lessons set") + (s.tg_user_id ? '' : ' · not connected yet') + '</span>' +
       '<span class="pills">' + payPill(s) +
@@ -130,7 +141,7 @@ function studentView(d, s){
   var sm = (d.summary || {})[s.id] || {}, c = sm.cards || {}, dy = sm.diary || {}, P = s.profile || {}, K = P.pack || {}, W = who(P);
   var base = s.link.split("#")[0], key = s.link.split("#k=")[1] || "";
   var h = '<button class="back" data-back="1">‹ All students</button><h1>' + esc(s.name) + '</h1>' +
-    '<div class="muted">' + esc((P.lessons || []).map(function(l){ return l.day + " " + l.time; }).join(" · ")) + ' · ' + esc(s.tz) + ' · ' + (s.tg_user_id ? "Telegram connected ✓" : "Telegram not connected yet") + '</div>' +
+    '<div class="muted">' + esc(lessonLabel(P, false)) + ' · ' + esc(s.tz) + ' · ' + (s.tg_user_id ? "Telegram connected ✓" : "Telegram not connected yet") + '</div>' +
     '<div class="links"><a href="' + esc(s.link.replace('#k=', '?preview=1#k=')) + '" target="_blank" rel="noopener"><button class="primary">Open ' + W.his + ' page</button></a>' +
     (s.telegramLink ? '<button data-copy="' + esc(s.telegramLink) + '">Copy Telegram link</button>' : '') + '<button data-copy="' + esc(s.link) + '">Copy web link</button></div>';
 

@@ -72,3 +72,11 @@ Do not touch the boot/sync scripts at the top and bottom of the page file, and n
 See `claude/Student-app-spec.md` and `claude/Student-app-homework.md` in the "My Dashboard" project: download the artifact page and its files,
 `python3 tools/build_page.py old.html docs/p/<slug>/index.html`, copy assets, insert the `students` row (profile from the page,
 lessons from Google Calendar, Russian `welcome`), test with a temporary copy, then Stacy sends the two links.
+
+## Lesson time changed for one week
+
+Do not edit the page. Split the weekday in `profile.lessons` with `from` / `until` (dates in the student's time zone):
+`[{"day":"Saturday","time":"08:15","until":"<day before>"},{"day":"Saturday","time":"10:40","from":"<date>","until":"<date>"},{"day":"Saturday","time":"08:15","from":"<day after>"}]`.
+Reminders, the "Next lesson" tile, "My lessons" and Teacher view all follow it; it goes back to normal by itself.
+A lesson moved to another DAY: put the old date in `pack.skip` and the new date in `pack.add`, plus a one-day entry
+`{"day":"<new weekday>","time":"..","from":"<date>","until":"<date>"}`. Jane's page (older template) does not read from/until yet.
