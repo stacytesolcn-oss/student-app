@@ -1632,7 +1632,10 @@ function renderWeek(){
   renderProgress();
 }
 /* ---------- homework: PROFILE.homework = [{id, title, note?, url?, due?:"YYYY-MM-DD", mins?}] ---------- */
-const hwDone = id => !!(store.hw||{})[id] || !!((PROFILE.homework||[]).find(h=>h.id===id)||{}).done;
+/* Homework that saves on its own page (url inside the app) is done only when it was SENT there (store.hwServer, set by the server).
+   Other homework (links to other sites) can be ticked by hand. */
+const hwInApp = h => !!(h && h.url && !/^https?:/.test(h.url));
+const hwDone = id => { const h = (PROFILE.homework||[]).find(h=>h.id===id)||{}; return !!h.done || (hwInApp(h) ? !!(store.hwServer||{})[id] : !!(store.hw||{})[id]); };
 const dueLabel = d => d ? "Сделать до: "+new Date(d+"T00:00:00Z").toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long",timeZone:"UTC"}) : "";
 function renderHomework(){
   const hw = PROFILE.homework || [], open = hw.filter(h=>!hwDone(h.id));
@@ -1651,7 +1654,7 @@ function renderHomework(){
     return '<div class="hwitem'+(d?' done':'')+'">'+(h.due?'<span class="due">'+esc(dueLabel(h.due))+(h.mins?' · '+esc(h.mins):'')+'</span>':'')+
       '<h3>'+esc(h.title)+'</h3>'+(h.note?'<p>'+esc(h.note)+'</p>':'')+
       '<div class="foot">'+(h.url?'<a class="open" href="'+esc(h.url)+'" target="_blank" rel="noopener">Открыть</a>':'<span></span>')+
-      (h.done?'<span class="due">✓ Сделано</span>':'<button class="donebtn" data-hw="'+esc(h.id)+'" aria-pressed="'+d+'">'+(d?'✓ Сделано':'Отметить как сделанное')+'</button>')+'</div></div>'; }).join("");
+      (h.done||(hwInApp(h)&&d)?'<span class="due">✓ Сделано</span>':hwInApp(h)?'<span></span>':'<button class="donebtn" data-hw="'+esc(h.id)+'" aria-pressed="'+d+'">'+(d?'✓ Сделано':'Отметить как сделанное')+'</button>')+'</div></div>'; }).join("");
   document.querySelectorAll("[data-hw]").forEach(b=>b.addEventListener("click",()=>{
     store.hw = store.hw || {}; const id = b.dataset.hw;
     if(hwDone(id)) delete store.hw[id]; else { store.hw[id] = today(); markDone("homework", true); }

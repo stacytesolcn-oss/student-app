@@ -1139,7 +1139,10 @@ function renderWeek(){
   renderProgress();
 }
 /* ---------- homework: PROFILE.homework = [{id, title, note?, url?, due?:"YYYY-MM-DD", mins?}] ---------- */
-const hwDone = id => !!(store.hw||{})[id] || !!((PROFILE.homework||[]).find(h=>h.id===id)||{}).done;
+/* Homework that saves on its own page (url inside the app) is done only when it was SENT there (store.hwServer, set by the server).
+   Other homework (links to other sites) can be ticked by hand. */
+const hwInApp = h => !!(h && h.url && !/^https?:/.test(h.url));
+const hwDone = id => { const h = (PROFILE.homework||[]).find(h=>h.id===id)||{}; return !!h.done || (hwInApp(h) ? !!(store.hwServer||{})[id] : !!(store.hw||{})[id]); };
 let pastOpen = false;
 const dueLabel = d => d ? "Due "+new Date(d+"T00:00:00Z").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",timeZone:"UTC"}) : "";
 function renderHomework(){
@@ -1160,7 +1163,7 @@ function renderHomework(){
       (h.listen?'<p class="qhead">Listen for these words from our lessons</p><ul class="vqs">'+h.listen.map(x=>'<li><b>'+esc(x.w)+'</b>'+(x.h?' <span class="muted">— '+esc(x.h)+'</span>':'')+'</li>').join("")+'</ul>':'')+
       (h.qs?'<p class="qhead">After you watch</p><ol class="vqs">'+h.qs.map(q=>'<li>'+esc(q).replace(/\{(.+?)\}/g,'<b>$1</b>')+'</li>').join("")+'</ol>':'')+
       '<div class="foot">'+(h.url?'<a class="open" href="'+esc(h.url)+'"'+(/^https?:/.test(h.url)?' target="_blank" rel="noopener"':'')+'>Open</a>':'<span></span>')+
-      '<button class="donebtn" data-hw="'+esc(h.id)+'" aria-pressed="'+d+'">'+(d?'✓ Done':'Mark as done')+'</button></div></div>'; };
+      (hwInApp(h) ? (d?'<span class="due">✓ Done</span>':'<span></span>') : '<button class="donebtn" data-hw="'+esc(h.id)+'" aria-pressed="'+d+'">'+(d?'✓ Done':'Mark as done')+'</button>')+'</div></div>'; };
   const past = all.filter(h=>h.past);
   $("hwList").innerHTML = (hw.length ? '<span class="eyebrow">New homework</span>'+hw.map(item).join("") : '')+
     (past.length ? '<details class="pasthw"'+(pastOpen?' open':'')+'><summary>Past homework · '+past.length+'</summary><div class="hwlist">'+past.map(item).join("")+'</div></details>' : '');

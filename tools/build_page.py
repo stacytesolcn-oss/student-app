@@ -37,6 +37,13 @@ rep('function dsave(){ try{ localStorage.setItem(DK, JSON.stringify(D)); }catch(
 # 4) "I've paid" button after the payment/package blocks render
 rep('    PROFILE.lessons.forEach(l=>{ if(WD.indexOf(l.day)===new Date(t).getUTCDay() && ended(d, l.time)) n++; });',
     '    PROFILE.lessons.forEach(l=>{ if((l.from && d < l.from) || (l.until && d > l.until)) return; if(WD.indexOf(l.day)===new Date(t).getUTCDay() && ended(d, l.time)) n++; });', optional=True)
+# app homework is done only when sent from its own page; no hand tick for it
+rep('const hwDone = id => !!(store.hw||{})[id] || !!((PROFILE.homework||[]).find(h=>h.id===id)||{}).done;',
+    '/* Homework that saves on its own page (url inside the app) is done only when it was SENT there (store.hwServer, set by the server).\n   Other homework (links to other sites) can be ticked by hand. */\nconst hwInApp = h => !!(h && h.url && !/^https?:/.test(h.url));\nconst hwDone = id => { const h = (PROFILE.homework||[]).find(h=>h.id===id)||{}; return !!h.done || (hwInApp(h) ? !!(store.hwServer||{})[id] : !!(store.hw||{})[id]); };', optional=True)
+rep('(h.done?\'<span class="due">✓ Сделано</span>\':\'<button class="donebtn" data-hw="\'+esc(h.id)+\'" aria-pressed="\'+d+\'">\'+(d?\'✓ Сделано\':\'Отметить как сделанное\')+\'</button>\')',
+    '(h.done||(hwInApp(h)&&d)?\'<span class="due">✓ Сделано</span>\':hwInApp(h)?\'<span></span>\':\'<button class="donebtn" data-hw="\'+esc(h.id)+\'" aria-pressed="\'+d+\'">\'+(d?\'✓ Сделано\':\'Отметить как сделанное\')+\'</button>\')', optional=True)
+rep('\'<button class="donebtn" data-hw="\'+esc(h.id)+\'" aria-pressed="\'+d+\'">\'+(d?\'✓ Done\':\'Mark as done\')+\'</button></div></div>\'; };',
+    '(hwInApp(h) ? (d?\'<span class="due">✓ Done</span>\':\'<span></span>\') : \'<button class="donebtn" data-hw="\'+esc(h.id)+\'" aria-pressed="\'+d+\'">\'+(d?\'✓ Done\':\'Mark as done\')+\'</button>\')+\'</div></div>\'; };', optional=True)
 # lesson time changed for one week: profile.lessons entries may carry {from, until}
 rep('      if(new Date(d).getUTCDay()===wd && start + 60*6e4 > now){ if(!best || start < best.start) best = {start, day:k, l}; break; }',
     '      const iso = new Date(d).toISOString().slice(0,10);\n      if((l.from && iso < l.from) || (l.until && iso > l.until)) continue; /* one-week changes: {from, until} */\n      if(new Date(d).getUTCDay()===wd && start + 60*6e4 > now){ if(!best || start < best.start) best = {start, day:k, l}; break; }', optional=True)
