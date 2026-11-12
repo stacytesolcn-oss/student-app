@@ -1533,7 +1533,7 @@ function packUsed(K){
   for(let t = Date.parse(K.start+"T00:00:00Z"); t <= now + DAY; t += DAY){
     const d = iso(t);
     if(skip.has(d)) continue;
-    PROFILE.lessons.forEach(l=>{ if(WD.indexOf(l.day)===new Date(t).getUTCDay() && ended(d, l.time)) n++; });
+    PROFILE.lessons.forEach(l=>{ if((l.from && d < l.from) || (l.until && d > l.until)) return; if(WD.indexOf(l.day)===new Date(t).getUTCDay() && ended(d, l.time)) n++; });
   }
   (K.add||[]).forEach(d=>{ if(d >= K.start) n++; });
   return Math.min(K.size, n);

@@ -35,6 +35,8 @@ rep('try{ var r = JSON.parse(localStorage.getItem(DK)||"null"); if(r && r.e) D =
 rep('function dsave(){ try{ localStorage.setItem(DK, JSON.stringify(D)); }catch(e){} }',
     'function dsave(){ try{ localStorage.setItem(DK, JSON.stringify(D)); }catch(e){} try{ window.__sync && __sync("diary", D); }catch(e){} }', optional=True)
 # 4) "I've paid" button after the payment/package blocks render
+rep('    PROFILE.lessons.forEach(l=>{ if(WD.indexOf(l.day)===new Date(t).getUTCDay() && ended(d, l.time)) n++; });',
+    '    PROFILE.lessons.forEach(l=>{ if((l.from && d < l.from) || (l.until && d > l.until)) return; if(WD.indexOf(l.day)===new Date(t).getUTCDay() && ended(d, l.time)) n++; });', optional=True)
 # lesson time changed for one week: profile.lessons entries may carry {from, until}
 rep('      if(new Date(d).getUTCDay()===wd && start + 60*6e4 > now){ if(!best || start < best.start) best = {start, day:k, l}; break; }',
     '      const iso = new Date(d).toISOString().slice(0,10);\n      if((l.from && iso < l.from) || (l.until && iso > l.until)) continue; /* one-week changes: {from, until} */\n      if(new Date(d).getUTCDay()===wd && start + 60*6e4 > now){ if(!best || start < best.start) best = {start, day:k, l}; break; }', optional=True)
