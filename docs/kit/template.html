@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Homework template</title>
+<style>
+body{margin:0;font:18px/1.6 system-ui,sans-serif;background:#f1f4f1;color:#1b2624}
+.wrap{max-width:720px;margin:0 auto;padding:16px 16px 60px}
+.btn{font:inherit;border:1px solid #d5dfdb;background:#fff;border-radius:10px;padding:10px 16px;min-height:44px}
+.btn.primary{background:#1f5f5b;color:#fff;border-color:#1f5f5b}
+.hw-sent{background:#dff0e4;color:#2f7d4a;font-weight:700;border-radius:10px;padding:10px 14px}
+input,textarea{font:inherit;width:100%;border:1.5px solid #d5dfdb;border-radius:10px;padding:8px 10px;min-height:44px;box-sizing:border-box}
+.ok{color:#2f7d4a}.no{color:#b2402f}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a href="../" data-hw-back>← My English</a>
+  <h1>Homework title</h1>
+  <main id="app"></main>
+</div>
+<script src="../../../kit/hw.js"></script>
+<script>
+/* Smallest working example: one gap-fill item with tries, one free-text box, send button. Replace with the real tasks. */
+const ITEMS=[{q:"She ___ (go) to Dubai many times.",a:["has been","has gone"]}];
+const S={items:ITEMS.map(()=>({val:"",tries:[],ok:false})),text:""};
+function render(){
+  const app=document.getElementById("app");app.innerHTML="";
+  ITEMS.forEach((it,i)=>{const st=S.items[i];
+    const p=document.createElement("p");p.textContent=it.q;app.append(p);
+    const inp=document.createElement("input");inp.value=st.val;inp.disabled=st.ok;inp.oninput=()=>{st.val=inp.value;HW.save();};app.append(inp);
+    if(!st.ok){const b=document.createElement("button");b.className="btn";b.textContent="Check";b.onclick=()=>{
+      const v=st.val.trim().toLowerCase();if(!v)return;st.tries.push(st.val.trim());st.ok=it.a.includes(v);render();};app.append(b);}
+    if(st.tries.length){const f=document.createElement("p");f.className=st.ok?"ok":"no";f.textContent=st.ok?"✓ Correct":"Not quite — try again";app.append(f);}
+  });
+  const ta=document.createElement("textarea");ta.placeholder="Write here";ta.value=S.text;ta.oninput=()=>{S.text=ta.value;HW.save();};app.append(ta);
+  app.append(HW.sendBlock());
+  HW.save();
+}
+HW.start({
+  id:"hwN", title:"Homework title",
+  get:()=>S,
+  set:(z)=>{ if(z.items&&z.items.length===ITEMS.length)S.items=z.items; S.text=String(z.text||""); },
+  /* What Stacy reads in Teacher view. "Task N · name" lines become headings; lines with ✓ show green, lines with ✗ red. */
+  summary:()=>["Task 1 · Gap fill"].concat(ITEMS.map((it,i)=>{const st=S.items[i];
+      return `${i+1}. ${it.q} → ${st.ok?"✓":st.tries.length?"✗":"—"} ${st.tries.length?st.tries.join(" → ")+` (${st.tries.length} ${st.tries.length===1?"try":"tries"})`:"not answered"}`;}))
+    .concat(["","Task 2 · Writing",S.text.trim()||"—"]).join("\n"),
+  render
+});
+</script>
+</body>
+</html>

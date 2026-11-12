@@ -932,6 +932,12 @@ html,body{overflow-x:clip}
     h.onclick = function(){ pagesOpen = !pagesOpen; window.__pagesToggle(n); };
   };
 
+  document.addEventListener("click", function(e){
+    var a = e.target && e.target.closest ? e.target.closest("a[href]") : null; if (!a) return;
+    var u; try{ u = new URL(a.getAttribute("href"), location.href.split("#")[0].split("?")[0]); }catch(_){ return; }
+    if (u.origin === location.origin && /\/hw[\w-]*\/$/.test(u.pathname)){ e.preventDefault(); location.href = u.href + (preview && k ? "?preview=1&k=" + k : ""); }
+  }, true);
+
   function note(t){ var n = document.createElement("div"); n.className = "syncnote"; n.textContent = t; document.body.appendChild(n); }
   function run(hadServerCards){
     document.querySelectorAll('script[type="text/plain"][data-boot]').forEach(function(sc){
