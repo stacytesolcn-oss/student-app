@@ -83,8 +83,9 @@ A lesson moved to another DAY: put the old date in `pack.skip` and the new date 
 
 ## State on Nov 12 (evening) — read before moving the next student
 
-Students in the app: Jane (not connected yet, older page template), Michael (connected), Sabina (connected, English page).
-Server: Edge Function `app` v24, repo file in sync.
+Students in the app: Jane (not connected yet, older page template), Michael (connected), Sabina (connected, English page),
+Lilia (moved Nov 13, Belgrade time, English page, older template; test row "Lilia TEST" until Stacy's OK).
+Server: Edge Function `app` v25, repo file in sync.
 
 Reminders now (all students, student time):
 - One practice message a day (homework day > pronunciation day > cards). Texts rotate; they live in `app_config` key
@@ -92,7 +93,7 @@ Reminders now (all students, student time):
   Stacy's rules: no card emoji; Miso/Nori only in cards + homework lines; pronunciation, lesson, payment stay plain.
 - 18:00 the evening before a lesson: ONE message = lesson tomorrow + homework line if open + payment line and
   Pay / I've paid buttons if a payment is due at that lesson or overdue. No other payment messages.
-- 1 hour before the lesson. Lesson texts still say "Moscow time" (fix before a non-Moscow student).
+- 1 hour before the lesson. Lesson texts name the city of the student's `tzName` ("Moscow time", "Belgrade time"; v25).
 - Welcome text: no "helper", no cats: "You'll get short, friendly reminders here about your cards, homework and lessons."
 
 Pages:

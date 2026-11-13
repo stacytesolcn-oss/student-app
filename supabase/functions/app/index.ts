@@ -317,6 +317,8 @@ function tzParts(tz: string, d = new Date()) {
   return { date, minutes: (+p.hour % 24) * 60 + +p.minute, weekday: p.weekday, dayNum: Math.floor((d.getTime() + offMs) / DAY) };
 }
 const tzOf = (s: any) => s.profile?.tzName || s.tz || "Europe/Moscow";
+/* "Moscow time", "Belgrade time": the city of the student's time zone, for lesson reminders. */
+const tzLabel = (s: any) => (tzOf(s).split("/").pop() || "Moscow").replace(/_/g, " ") + " time";
 const prettyDate = (iso: string) => new Date(iso + "T12:00:00Z").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" });
 const daysBetween = (a: string, b: string) => Math.round((Date.parse(b + "T00:00:00Z") - Date.parse(a + "T00:00:00Z")) / DAY);
 
@@ -496,7 +498,7 @@ async function lessonSoon(s: any, force = false): Promise<Msg> {
   const P = s.profile || {}, time = n?.time || (P.lessons?.[0]?.time ?? "");
   const buttons = P.zoom ? { inline_keyboard: [[{ text: "Join Zoom", url: P.zoom }]] } : undefined;
   return { kind: "lesson", key: `${n?.date}:${time}`,
-    text: `Hi ${s.name}! 👋 Your English lesson starts in 1 hour, at ${time} (Moscow time). See you soon!`, reply_markup: buttons };
+    text: `Hi ${s.name}! 👋 Your English lesson starts in 1 hour, at ${time} (${tzLabel(s)}). See you soon!`, reply_markup: buttons };
 }
 function lessonsOn(s: any, when: Date) {
   const P = s.profile || {}, t = tzParts(tzOf(s), when);
@@ -513,7 +515,7 @@ async function lessonTomorrow(s: any, force = false, st?: Record<string, any>): 
   const h = st ? await homeworkPending(s, st) : null;
   const hw = h && (h.pending || (force && h.has)) ? " And if you haven't done your homework yet, there's still time today 📚" : "";
   return { kind: "lesson-eve", key: `${l.date}:${l.time}`,
-    text: `Hi ${s.name}! 📅 Just a reminder: your English lesson is tomorrow (${l.weekday}) at ${l.time}, Moscow time. See you there!` + hw,
+    text: `Hi ${s.name}! 📅 Just a reminder: your English lesson is tomorrow (${l.weekday}) at ${l.time}, ${tzLabel(s)}. See you there!` + hw,
     reply_markup: hw ? await pageButton(s, "Open my English") : undefined };
 }
 async function paymentDue(s: any, force = false): Promise<Msg> {

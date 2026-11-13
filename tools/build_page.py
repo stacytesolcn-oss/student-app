@@ -18,8 +18,12 @@ if "const K = P.package, used" in s:
     rep("  return Math.min(K.total, n);", "  return Math.min(K.size, n);")
     rep("const K = P.package, used = K ? packUsed(K) : 0, left = K ? K.total - used : 0;",
         "const K = P.pack, used = K ? packUsed(K) : 0, left = K ? K.size - used : 0;")
-    rep("<b>'+esc(K.name)+'</b>", "<b>'+(K.paid ? 'Оплачен пакет: ' : 'Пакет: ')+K.size+' уроков</b>")
-    rep("' из '+K.total+' уроков прошло\">'+Array.from({length:K.total}", "' из '+K.size+' уроков прошло\">'+Array.from({length:K.size}")
+    if "' из '+K.total" in s:   # Russian interface
+        rep("<b>'+esc(K.name)+'</b>", "<b>'+(K.paid ? 'Оплачен пакет: ' : 'Пакет: ')+K.size+' уроков</b>")
+        rep("' из '+K.total+' уроков прошло\">'+Array.from({length:K.total}", "' из '+K.size+' уроков прошло\">'+Array.from({length:K.size}")
+    else:                        # English interface (Lilia, Nov 2026)
+        rep("<b>'+esc(K.name)+'</b>", "<b>'+(K.paid ? 'Paid package: ' : 'Package: ')+K.size+' lessons</b>")
+        rep("' of '+K.total+' lessons done\">'+Array.from({length:K.total}", "' of '+K.size+' lessons done\">'+Array.from({length:K.size}")
 
 # 1) profile comes from the database (Stacy/Claude edit it there, no redeploy)
 _a = s.index("const PROFILE = {"); _b = s.index("\n};", _a) + 3
@@ -44,6 +48,11 @@ rep('(h.done?\'<span class="due">✓ Сделано</span>\':\'<button class="do
     '(h.done||(hwInApp(h)&&d)?\'<span class="due">✓ Сделано</span>\':hwInApp(h)?\'<span></span>\':\'<button class="donebtn" data-hw="\'+esc(h.id)+\'" aria-pressed="\'+d+\'">\'+(d?\'✓ Сделано\':\'Отметить как сделанное\')+\'</button>\')', optional=True)
 rep('\'<button class="donebtn" data-hw="\'+esc(h.id)+\'" aria-pressed="\'+d+\'">\'+(d?\'✓ Done\':\'Mark as done\')+\'</button></div></div>\'; };',
     '(hwInApp(h) ? (d?\'<span class="due">✓ Done</span>\':\'<span></span>\') : \'<button class="donebtn" data-hw="\'+esc(h.id)+\'" aria-pressed="\'+d+\'">\'+(d?\'✓ Done\':\'Mark as done\')+\'</button>\')+\'</div></div>\'; };', optional=True)
+# same, English page with an "Earlier homework" list (Lilia, Nov 2026)
+rep('const hwDone = id => !!(store.hw||{})[id];',
+    'const hwInApp = h => !!(h && h.url && !/^https?:/.test(h.url));\nconst hwDone = id => { const h = (PROFILE.homework||[]).find(h=>h.id===id)||{}; return !!h.done || (hwInApp(h) ? !!(store.hwServer||{})[id] : !!(store.hw||{})[id]); };', optional=True)
+rep("""              : '<button class="donebtn" data-hw="'+esc(h.id)+'" aria-pressed="'+d+'">'+(d?'✓ Done':'Mark as done')+'</button>')+'</div></div>'; };""",
+    """              : hwInApp(h) ? (d?'<span class="due">✓ Done</span>':'<span></span>') : '<button class="donebtn" data-hw="'+esc(h.id)+'" aria-pressed="'+d+'">'+(d?'✓ Done':'Mark as done')+'</button>')+'</div></div>'; };""", optional=True)
 # lesson time changed for one week: profile.lessons entries may carry {from, until}
 rep('      if(new Date(d).getUTCDay()===wd && start + 60*6e4 > now){ if(!best || start < best.start) best = {start, day:k, l}; break; }',
     '      const iso = new Date(d).toISOString().slice(0,10);\n      if((l.from && iso < l.from) || (l.until && iso > l.until)) continue; /* one-week changes: {from, until} */\n      if(new Date(d).getUTCDay()===wd && start + 60*6e4 > now){ if(!best || start < best.start) best = {start, day:k, l}; break; }', optional=True)
