@@ -1,0 +1,352 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Wiggle room, on edge &amp; letting off steam</title>
+<style>
+:root{
+  --bg:#F6F1E7; --card:#FCFAF5; --ink:#231815; --muted:#6E5C52; --line:#E3D9C8;
+  --brown:#643A24; --on-brown:#F6F1E7; --butter-soft:#FAF0CF;
+  --blue-soft:#E3EEF4; --blue-ink:#2F4C5E; --orange:#C2552B;
+  --good:#2E6B45; --good-soft:#E2F0E5; --warn:#8A4B12; --warn-soft:#F6E6D3;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){ :root{
+  --bg:#231815; --card:#2E211C; --ink:#F3ECDF; --muted:#BCA995; --line:#46352C;
+  --brown:#F4DC96; --on-brown:#231815; --butter-soft:#3F3422;
+  --blue-soft:#253743; --blue-ink:#C1DBE8; --orange:#F0A27F;
+  --good:#9FD3AE; --good-soft:#1F3426; --warn:#F0C08E; --warn-soft:#3E2B1B; color-scheme:dark }}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16.5px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
+.wrap{max-width:580px;margin:0 auto;padding:20px max(14px,env(safe-area-inset-left,0px)) 64px;display:grid;gap:18px}
+.back{color:var(--muted);font-size:.9rem;text-decoration:none}
+h1{font:600 2rem/1.1 Georgia,"Iowan Old Style",serif;margin:0}
+h2{font:600 1.45rem/1.15 Georgia,"Iowan Old Style",serif;margin:0}
+p{margin:0}
+.eyebrow{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.muted{color:var(--muted)}
+.part{display:grid;gap:12px;padding-top:8px;border-top:1px solid var(--line)}
+.how{background:var(--butter-soft);border-radius:16px;padding:12px 14px;font-size:.95rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;display:grid;gap:8px;min-width:0}
+.card.ok{border-color:var(--good)}
+.def{font-weight:600}
+.n{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--brown);color:var(--on-brown);font-size:.78rem;font-weight:700;margin-right:6px;vertical-align:1px}
+.card.ok .n{background:var(--good);color:var(--card)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button{font:inherit;cursor:pointer;border-radius:999px;padding:9px 16px;font-weight:600;font-size:.92rem;border:1.5px solid var(--brown);background:var(--brown);color:var(--on-brown);min-height:44px}
+button.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+button[disabled]{opacity:.45;cursor:default}
+input[type=text],textarea{font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:8px 10px;min-height:44px;width:100%}
+textarea{min-height:96px;resize:vertical}
+input.short{width:auto;min-width:0;flex:1 1 140px;max-width:220px}
+.fb{font-size:.93rem;border-radius:12px;padding:7px 11px}
+.fb.good{background:var(--good-soft);color:var(--good)}
+.fb.bad{background:var(--warn-soft);color:var(--warn)}
+.fb.info{background:var(--blue-soft);color:var(--blue-ink)}
+.gap{display:inline-flex;align-items:center;gap:2px}
+.sent{font-size:1.02rem}
+/* forum */
+.thread{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.th-head{padding:12px 14px;border-bottom:1px solid var(--line);display:grid;gap:4px}
+.sub{font-size:.8rem;font-weight:700;color:var(--orange)}
+.th-title{font-weight:700;font-size:1.05rem;line-height:1.3}
+.post{padding:10px 14px;display:grid;gap:4px;border-bottom:1px solid var(--line)}
+.post:last-child{border-bottom:0}
+.post.nested{margin-left:18px;border-left:2px solid var(--line);padding-left:12px}
+.meta{font-size:.78rem;color:var(--muted)}
+.meta b{color:var(--ink);font-weight:600}
+.op{background:var(--blue-soft);color:var(--blue-ink);border-radius:6px;padding:0 5px;font-size:.7rem;font-weight:700;margin-left:4px}
+.opts{display:grid;gap:8px}
+.opts button{text-align:left;border-radius:12px;background:var(--card);color:var(--ink);border-color:var(--line);font-weight:500}
+.opts button.right{border-color:var(--good);background:var(--good-soft);color:var(--good)}
+.opts button.wrong{border-color:var(--warn);background:var(--warn-soft);color:var(--warn)}
+.ex{border-left:3px solid var(--line);padding-left:10px;font-style:italic}
+.match{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.match .col{display:grid;gap:8px;align-content:start}
+.match button{border-radius:12px;background:var(--card);color:var(--ink);border-color:var(--line);font-weight:500;text-align:left;font-size:.9rem;padding:8px 10px}
+.match button.sel{border-color:var(--brown);outline:2px solid var(--brown)}
+.match button.done{border-color:var(--good);background:var(--good-soft);color:var(--good)}
+.match button.shake{border-color:var(--warn);background:var(--warn-soft)}
+.check{display:flex;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}
+.check:last-child{border-bottom:0}
+.check input{width:22px;height:22px;flex:none}
+.hw-sent{background:var(--good-soft);color:var(--good);font-weight:700;border-radius:12px;padding:10px 14px}
+</style></head><body>
+<div class="wrap">
+  <a class="back" href="../" data-hw-back>← My English</a>
+  <div>
+    <p class="eyebrow">Homework · this week's words</p>
+    <h1>Wiggle room, on edge &amp; letting off steam</h1>
+  </div>
+  <p class="muted">About 35 minutes. Your answers save as you go, so you can stop and come back later.</p>
+  <main id="app" style="display:grid;gap:18px"></main>
+</div>
+<script src="../../../kit/hw.js"></script>
+<script>
+/* ---------- content ---------- */
+const N = s => String(s||"").toLowerCase().replace(/[’`]/g,"'").replace(/[^a-z' -]/g," ").replace(/-/g," ").replace(/\s+/g," ").trim();
+
+/* 10 target phrases: definition, checker (accepts natural variants), model */
+const PH = [
+  {d:"extra time or space you plan in, so you can deal with problems", re:/wiggle room/, m:"leave (some) wiggle room"},
+  {d:"a few extra minutes between two things in your schedule", re:/buffer/, m:"a (time) buffer"},
+  {d:"stay calm when something stressful or annoying happens", re:/keep(s|ing)? (\w+ )?cool|kept (\w+ )?cool/, m:"keep your cool"},
+  {d:"nervous and easily upset, as if anything could set you off", re:/on edge/, m:"be on edge"},
+  {d:"get rid of strong feelings or energy by doing something active", re:/let(s|ting)? off steam/, m:"let off steam"},
+  {d:"so strong that you can almost feel it physically (about tension, excitement, joy)", re:/palpable/, m:"the tension was palpable"},
+  {d:"makes someone feel disgusted", re:/gross(es|ed)? (\w+ )?out/, m:"something grosses you out"},
+  {d:"makes you feel like you're going to be sick", re:/gag/, m:"something makes you gag"},
+  {d:"needs a lot of attention, care or effort", re:/high maintenance/, m:"high maintenance"},
+  {d:"very quietly, so other people can't hear", re:/under (my|your|his|her|their|our) breath/, m:"under your breath"}
+];
+const ok = (i,v) => PH[i].re.test(N(v));
+const ORDER3 = [3,0,7,4,9,1,6,2,8,5]; /* task 3 uses a different order */
+
+/* ---------- threads (forum-style, based on real discussions) ---------- */
+const THREADS = [
+ {sub:"r/germany", title:"18 minutes to change trains in Munich – should I trust Deutsche Bahn?", posts:[
+  {u:"vienna_bound_kat", op:true, t:"2 h", p:"", x:"Going Stuttgart → Vienna next Saturday, changing at München Hbf. The app gives me 18 minutes. Is that enough, or am I being naive? It's my first trip to Vienna and I'm already a bit on edge about it 😅"},
+  {u:"schienenfrust", t:"2 h", p:"412", x:"Honestly? No. Leave yourself some wiggle room in case your first train is late – and it will be. Take the connection an hour later and have a coffee at the station."},
+  {u:"lena_reist", t:"1 h", p:"198", x:"This. I always leave at least a 45-minute buffer for anything international. Last month my ICE stopped in the middle of a field for 40 minutes. The guy next to me was cursing under his breath the whole time, and honestly, I didn't blame him."},
+  {u:"schienenfrust", t:"1 h", p:"87", nested:true, x:"The field stop is a DB classic. When they finally announced the train was cancelled, the tension in the carriage was palpable. Nobody said a word."},
+  {u:"mk_muc", t:"58 min", p:"64", x:"Pro tip: keep your cool and go straight to the DB Travel Centre. Shouting at the conductor won't get you to Vienna any faster. If you need to let off steam, walk once around the station first 😂"},
+  {u:"vienna_bound_kat", op:true, t:"20 min", p:"31", x:"Update: rebooked with 70 minutes of wiggle room for unexpected delays. Coffee and a pretzel it is. Thank you all!"}
+ ]},
+ {sub:"r/reactivedogs", title:"Rest day after a morning full of triggers? (long-ish, sorry)", posts:[
+  {u:"biscuit_and_me", op:true, t:"5 h", p:"", x:"My boy saw three dogs, a scooter and a man with an umbrella before 8 a.m. He held it together for most of it, but now he's on edge – he jumps at every sound in the flat. My partner wants to take him for a run tonight \"so he can let off steam\". Good idea or bad idea?"},
+  {u:"decompress_daily", t:"4 h", p:"238", x:"Bad idea, IMO. After a day like that he needs boring. A sniff walk somewhere quiet, a chew, a nap. Dogs who struggle to keep their cool around triggers need a rest day after a big day, not more excitement."},
+  {u:"two_hounds_one_sofa", t:"4 h", p:"121", x:"Agree. Zoomies in the garden are fine if he has pent-up energy, but no busy streets. He sounds a bit like my Otis – very sensitive, very high maintenance. Otis won't even sit on wet grass. It totally grosses him out. He just hovers."},
+  {u:"biscuit_and_me", op:true, t:"3 h", p:"44", nested:true, x:"HOVERS 😂 Mine does exactly the same!"},
+  {u:"greyhound_gran", t:"3 h", p:"57", x:"For the chew: lamb ears or a yak chew are good. Avoid beef lung if you give it indoors – the smell literally makes me gag."},
+  {u:"decompress_daily", t:"2 h", p:"40", x:"And let him sleep in tomorrow. Mine howls under his breath in his sleep after a stressful day. I think he's still processing it 🐺"},
+  {u:"biscuit_and_me", op:true, t:"1 h", p:"26", x:"Rest day it is. He's on the sofa under a blanket, snoring. Thank you, everyone!"}
+ ]}
+];
+const GIST = [
+ {q:"Thread 1: What is the person who started the thread worried about?", o:["Missing her connection in Munich","Losing her luggage on the train","The price of the ticket"], a:0},
+ {q:"Thread 2: What do most people advise?", o:["A long run in the evening","A quiet, boring rest day","A visit to the vet"], a:1}
+];
+const WR = [ /* task 4a: wiggle room grammar */
+ {q:"What comes after in case?", o:["A full sentence (subject + verb): in case your first train is late","A noun: in case delays"], a:0},
+ {q:"What comes after for?", o:["A full sentence: for the train is late","A noun: for unexpected delays"], a:1}
+];
+const CN = [ /* task 4b: correct or not */
+ {s:"I always leave a wiggle room before appointments.", c:false, why:"No a. Say some wiggle room, a little wiggle room or just wiggle room."},
+ {s:"Leave some wiggle room in case the train is late.", c:true, why:"in case + a full sentence."},
+ {s:"Leave some wiggle room in case for delays.", c:false, why:"in case + sentence OR for + noun – not both: in case there are delays / for delays."},
+ {s:"I plan wiggle room before my appointments.", c:false, why:"The verb is leave or have: I leave some wiggle room."},
+ {s:"We had a little wiggle room for unexpected delays.", c:true, why:"have + a little wiggle room + for + noun."}
+];
+const PAIRS = [ /* task 4c: chunk halves */
+ ["he struggled to","keep his cool"],["she cursed","under her breath"],["the tension in the room","was palpable"],["the smell of beef lung makes me","gag"],
+ ["I went for a run to","let off steam"],["wet grass totally","grosses him out"],["a very sensitive,","high-maintenance dog"],["after the morning walk he was","on edge all day"]
+];
+const RIGHT_ORDER = [5,2,7,0,3,6,1,4]; /* shuffled display order of right halves */
+const GF = [ /* task 5: gap-fill, first letter given */
+ ["Ginger had a terrible morning, so he's been on ","edge"," all afternoon."],
+ ["I always ","leave"," some wiggle room before my afternoon appointments."],
+ ["Take the later train – you need some wiggle room in ","case"," the first one is late."],
+ ["He really ","struggled"," to keep his cool when the husky ran towards him."],
+ ["The bus was 20 minutes late again, and I cursed under my ","breath","."],
+ ["When the two big dogs stood nose to nose, the tension was ","palpable","."],
+ ["Sitting on wet, muddy grass totally ","grosses"," him out."],
+ ["The smell of fried fish in the flat ","makes"," me gag."],
+ ["Pyjamas, a duvet, special sausages… My daughter is right: he's a high-","maintenance"," dog."],
+ ["After a stressful day, I went for a long walk to ","let"," off steam."],
+ ["Leave a 15-minute ","buffer"," between appointments, in case something goes wrong."]
+];
+const FIX = [ /* task 6: fix the comment */
+ {s:"This demotivate me a lot.", re:/^this demotivates me a lot$/, m:"This demotivates me a lot.", tip:"he / she / it / this → verb + s"},
+ {s:"Yesterday I just give him a treat.", re:/^yesterday i (just )?gave him a treat$/, m:"Yesterday I just gave him a treat.", tip:"yesterday → past simple"},
+ {s:"He sometimes do this.", re:/^he sometimes does this$/, m:"He sometimes does this.", tip:"he → verb + s"},
+ {s:"There were too much dogs for one ball.", re:/^there were too many dogs for one ball$/, m:"There were too many dogs for one ball.", tip:"dogs can be counted"},
+ {s:"He barked on a woman on a wheelchair.", re:/^he barked at a woman in a wheelchair$/, m:"He barked at a woman in a wheelchair.", tip:"two prepositions"},
+ {s:"I always leave a wiggle room in case for delays.", re:/^i always leave (some |a little )?wiggle room (for (unexpected )?delays|in case of delays|in case (there are|there is|there's|the train is|my train is|the train's|something goes) .+)$/, m:"I always leave some wiggle room for delays. / …in case there are delays.", tip:"no a; in case + sentence OR for + noun"}
+];
+const SIT = [
+ "A friend from Hamburg messages you: \"Booked Munich → Vienna, 12 minutes to change trains. Good idea?\" Write your reply.",
+ "Your neighbour wants to bring her very excited puppy to meet Ginger tonight. But Ginger had a morning full of triggers. What do you tell her?",
+ "Your friend missed the meetup at the dog park yesterday, when two big dogs nearly had a fight. She asks: \"So what happened?\"",
+ "Someone at the park asks you: \"Is Ginger easy to look after?\""
+];
+
+/* ---------- state ---------- */
+const it = () => ({val:"",tries:[],ok:false});
+const S = {
+  t1: PH.map(()=>({val:"",tries:[],ok:false,skip:false})),
+  t2: GIST.map(()=>({tries:[],ok:false})),
+  t3: PH.map(it),
+  t4a: WR.map(()=>({tries:[],ok:false})),
+  t4b: CN.map(()=>({tries:[],ok:false})),
+  t4c: {done:[], wrong:[]},
+  t5: GF.map(it),
+  t6: FIX.map(it),
+  t7: {a:SIT.map(()=>""), shown:false, used:PH.map(()=>false), rewrite:""}
+};
+let pickL = null; /* current left pick in matching (not saved) */
+
+/* ---------- helpers ---------- */
+const el = (t,c,x) => { const e=document.createElement(t); if(c) e.className=c; if(x!=null) e.textContent=x; return e; };
+const fb = (cls,x) => el("p","fb "+cls,x);
+function part(n,title,how){ const s=el("section","part"); s.append(el("p","eyebrow","Task "+n), el("h2",null,title)); if(how) s.append(el("p","how",how)); return s; }
+function input(st,ph){ const i=el("input"); i.type="text"; i.value=st.val; i.placeholder=ph||""; i.autocapitalize="off"; i.autocomplete="off"; i.spellcheck=false;
+  i.oninput=()=>{st.val=i.value; HW.save();}; return i; }
+function triesTxt(t){ return t.length ? t.join(" → ")+" ("+t.length+(t.length===1?" try)":" tries)") : "not answered"; }
+
+/* ---------- render ---------- */
+function render(){
+  const app=document.getElementById("app"); app.innerHTML="";
+
+  /* Task 1 — retrieval */
+  let s=part(1,"What do you remember?","These phrases came up in our last lessons. Read each meaning and type the phrase if you remember it. No help yet – just try. If you can't remember, tap \"Skip\". You'll find all of them in the forum threads below.");
+  PH.forEach((ph,i)=>{ const st=S.t1[i], c=el("div","card"+(st.ok?" ok":""));
+    const d=el("p","def"); d.append(el("span","n",String(i+1)), document.createTextNode(ph.d)); c.append(d);
+    if(st.ok){ c.append(fb("good","✓ "+st.tries[st.tries.length-1])); }
+    else if(st.skip||st.tries.length>=2){ c.append(fb("info", st.tries.length?"You wrote: "+st.tries.join(" / ")+". Look for it in the threads.":"Skipped – look for it in the threads.")); }
+    else { const r=el("div","row"), inp=input(st,"type the phrase"); const b=el("button",null,"Check"), k=el("button","ghost","Skip");
+      b.onclick=()=>{ const v=st.val.trim(); if(!v) return; st.tries.push(v); st.ok=ok(i,v); render(); };
+      k.onclick=()=>{ st.skip=true; render(); };
+      r.append(inp,b,k); c.append(r);
+      if(st.tries.length===1) c.append(fb("bad","Not quite. One more try – or skip.")); }
+    s.append(c); });
+  app.append(s);
+
+  /* Task 2 — read for meaning */
+  s=part(2,"Read the threads","Two forum-style threads, based on real discussions. Read them for the general idea first, then answer one question about each.");
+  THREADS.forEach(th=>{ const box=el("div","thread"), h=el("div","th-head"); h.append(el("span","sub",th.sub), el("span","th-title",th.title)); box.append(h);
+    th.posts.forEach(p=>{ const d=el("div","post"+(p.nested?" nested":"")), m=el("div","meta"), b=el("b",null,"u/"+p.u); m.append(b);
+      if(p.op){ m.append(el("span","op","OP")); }
+      m.append(document.createTextNode(" · "+p.t+(p.p?" · ▲ "+p.p:""))); d.append(m, el("p",null,p.x)); box.append(d); });
+    s.append(box); });
+  GIST.forEach((g,i)=>s.append(mcq(g,S.t2[i])));
+  app.append(s);
+
+  /* Task 3 — find in the threads */
+  s=part(3,"Find them in the threads","Scroll back up. Find the phrase in the threads that matches each meaning and type it the way it's used there.");
+  ORDER3.forEach((pi,k)=>{ const st=S.t3[pi], c=el("div","card"+(st.ok?" ok":""));
+    const d=el("p","def"); d.append(el("span","n",String(k+1)), document.createTextNode(PH[pi].d)); c.append(d);
+    if(st.ok) c.append(fb("good","✓ "+st.tries[st.tries.length-1]));
+    else if(st.tries.length>=2) c.append(fb("info","It's: "+PH[pi].m));
+    else { const r=el("div","row"), inp=input(st,"phrase from the thread"), b=el("button",null,"Check");
+      b.onclick=()=>{ const v=st.val.trim(); if(!v) return; st.tries.push(v); st.ok=ok(pi,v); render(); };
+      r.append(inp,b); c.append(r); if(st.tries.length===1) c.append(fb("bad","Not quite – look again.")); }
+    s.append(c); });
+  app.append(s);
+
+  /* Task 4 — build the chunk */
+  s=part(4,"Look closer: how the phrases work","Part A. Look at how wiggle room is used in Thread 1:");
+  const ex=el("div","card"); ["Leave yourself some wiggle room in case your first train is late.","Rebooked with 70 minutes of wiggle room for unexpected delays.","I always leave at least a 45-minute buffer for anything international."].forEach(x=>ex.append(el("p","ex",x)));
+  s.append(ex); WR.forEach((q,i)=>s.append(mcq(q,S.t4a[i])));
+  s.append(el("p","how","Part B. Correct or not? Tap ✓ or ✗."));
+  CN.forEach((q,i)=>{ const st=S.t4b[i], c=el("div","card"+(st.ok?" ok":"")); c.append(el("p","sent",q.s));
+    if(st.ok||st.tries.length>=2){ c.append(fb(st.ok?"good":"info",(q.c?"✓ Correct. ":"✗ Not correct. ")+q.why)); }
+    else { const r=el("div","row"); [["✓ Correct",true],["✗ Not correct",false]].forEach(([lab,v])=>{ const b=el("button","ghost",lab);
+        b.onclick=()=>{ st.tries.push(v?"correct":"not correct"); st.ok=(v===q.c); render(); }; r.append(b); });
+      c.append(r); if(st.tries.length===1) c.append(fb("bad","Think again.")); }
+    s.append(c); });
+  s.append(el("p","how","Part C. Put the phrases back together. Tap a beginning, then its ending."));
+  const mt=el("div","match"), L=el("div","col"), R=el("div","col");
+  PAIRS.forEach((p,i)=>{ const b=el("button",S.t4c.done.includes(i)?"done":(pickL===i?"sel":""),p[0]); b.disabled=S.t4c.done.includes(i);
+    b.onclick=()=>{ pickL=i; render(); }; L.append(b); });
+  RIGHT_ORDER.forEach(j=>{ const b=el("button",S.t4c.done.includes(j)?"done":"",PAIRS[j][1]); b.disabled=S.t4c.done.includes(j);
+    b.onclick=()=>{ if(pickL==null) return; const hit=(pickL===j); if(hit){ S.t4c.done.push(j); } else { S.t4c.wrong.push(PAIRS[pickL][0]+" + "+PAIRS[j][1]); b.classList.add("shake"); }
+      pickL=null; setTimeout(render, hit?0:350); }; R.append(b); });
+  mt.append(L,R); s.append(mt);
+  if(S.t4c.done.length===PAIRS.length) s.append(fb("good","✓ All together!"));
+  app.append(s);
+
+  /* Task 5 — gap-fill */
+  s=part(5,"Fill the gaps","One word in each gap. The first letter is there to help you.");
+  GF.forEach((g,i)=>{ const st=S.t5[i], c=el("div","card"+(st.ok?" ok":"")), p=el("p","sent"); p.append(el("span","n",String(i+1)), document.createTextNode(g[0]));
+    if(st.ok||st.tries.length>=2){ const b=el("b",null,g[1]); p.append(b, document.createTextNode(g[2])); c.append(p); if(!st.ok) c.append(fb("info","You wrote: "+st.tries.join(" / ")+". The answer is "+g[1]+".")); }
+    else { p.append(document.createTextNode("___"+g[2])); c.append(p); const r=el("div","row"), inp=input(st,g[1][0]+"…"); inp.className="short";
+      const b=el("button",null,"Check"); b.onclick=()=>{ const v=N(st.val); if(!v) return; st.tries.push(st.val.trim()); st.ok=(v===g[1]); render(); };
+      r.append(inp,b); c.append(r); if(st.tries.length===1) c.append(fb("bad","Not quite. Check the spelling and the form.")); }
+    s.append(c); });
+  app.append(s);
+
+  /* Task 6 — fix the comment */
+  s=part(6,"Fix the comment","Someone wrote this comment in a hurry. Each sentence has a mistake (the last one has two). Write each sentence again, correctly.");
+  const cm=el("div","thread"), ch=el("div","post"), cmeta=el("div","meta"); cmeta.append(el("b",null,"u/new_in_munich"), document.createTextNode(" · 30 min"));
+  ch.append(cmeta, el("p",null,FIX.map(f=>f.s).join(" "))); cm.append(ch); s.append(cm);
+  FIX.forEach((f,i)=>{ const st=S.t6[i], c=el("div","card"+(st.ok?" ok":"")); const d=el("p","sent"); d.append(el("span","n",String(i+1)), document.createTextNode(f.s)); c.append(d);
+    if(st.ok) c.append(fb("good","✓ "+st.tries[st.tries.length-1]));
+    else if(st.tries.length>=2) c.append(fb("info","Model: "+f.m+" ("+f.tip+")"));
+    else { const r=el("div","row"), inp=input(st,"write it correctly"); const b=el("button",null,"Check");
+      b.onclick=()=>{ const v=st.val.trim(); if(!v) return; st.tries.push(v); st.ok=f.re.test(N(v)); render(); };
+      r.append(inp,b); c.append(r); if(st.tries.length===1) c.append(fb("bad","Not yet. Hint: "+f.tip+".")); }
+    s.append(c); });
+  app.append(s);
+
+  /* Task 7 — situations */
+  s=part(7,"What would you say?","Answer each situation in 2–4 sentences, the way you'd really say it. You can also answer as voice messages in Telegram – just speak, don't read aloud.");
+  SIT.forEach((q,i)=>{ const c=el("div","card"), d=el("p","def"); d.append(el("span","n",String(i+1)), document.createTextNode(q)); c.append(d);
+    const ta=el("textarea"); ta.value=S.t7.a[i]; ta.placeholder="Your answer"; ta.disabled=S.t7.shown;
+    ta.oninput=()=>{ S.t7.a[i]=ta.value; HW.save(); const filled=S.t7.a.filter(x=>x.trim().length>15).length; const sb=document.getElementById("showB"); if(sb) sb.disabled=filled<3; };
+    c.append(ta); s.append(c); });
+  if(!S.t7.shown){ const b=el("button",null,"I've answered – show me this week's phrases"); b.id="showB";
+    b.disabled=S.t7.a.filter(x=>x.trim().length>15).length<3; b.onclick=()=>{ S.t7.shown=true; render(); }; s.append(b);
+    s.append(el("p","muted","(Answer at least 3 situations first.)")); }
+  else {
+    const c=el("div","card"); c.append(el("p","def","Which of these did you use? Tick them."));
+    PH.forEach((ph,i)=>{ const r=el("label","check"), cb=el("input"); cb.type="checkbox"; cb.checked=S.t7.used[i];
+      cb.onchange=()=>{ S.t7.used[i]=cb.checked; HW.save(); }; r.append(cb, el("span",null,ph.m)); c.append(r); });
+    s.append(c);
+    const c2=el("div","card"); c2.append(el("p","def","Now choose one of your answers and write it again. Add two phrases you didn't use."));
+    const ta=el("textarea"); ta.value=S.t7.rewrite; ta.placeholder="Your new version"; ta.oninput=()=>{ S.t7.rewrite=ta.value; HW.save(); }; c2.append(ta); s.append(c2);
+  }
+  app.append(s);
+
+  const end=el("section","part"); end.append(el("p",null,"Finished? Send it to me – I'll see everything you wrote, including your tries.")); end.append(HW.sendBlock({lang:"en"}));
+  app.append(end);
+  HW.save();
+}
+
+function mcq(q,st){ const c=el("div","card"+(st.ok?" ok":"")); c.append(el("p","def",q.q)); const o=el("div","opts");
+  q.o.forEach((t,k)=>{ const b=el("button",null,t); const picked=st.tries.includes(k);
+    if(st.ok&&k===q.a) b.className="right"; else if(picked) b.className="wrong";
+    b.disabled=st.ok||st.tries.length>=2; if(!st.ok&&st.tries.length>=2&&k===q.a) b.className="right";
+    b.onclick=()=>{ st.tries.push(k); st.ok=(k===q.a); render(); }; o.append(b); });
+  c.append(o); return c; }
+
+/* ---------- summary for Stacy ---------- */
+function summary(){
+  const L=[]; const mk=st=>st.ok?"✓ ":(st.tries.length?"✗ ":"· ");
+  const head=(t)=>{ if(L.length) L.push(""); L.push(t); };
+  head("Task 1 · Retrieval (no help)");
+  L.push("Remembered "+S.t1.filter(x=>x.ok).length+" of "+PH.length+" on her own");
+  PH.forEach((ph,i)=>{ const st=S.t1[i]; L.push(mk(st)+ph.m+": "+(st.tries.length?triesTxt(st.tries):(st.skip?"skipped":"—"))); });
+  head("Task 2 · Gist");
+  GIST.forEach((g,i)=>{ const st=S.t2[i]; L.push(mk(st)+g.q+" → "+(st.tries.length?st.tries.map(k=>g.o[k]).join(" → "):"—")); });
+  head("Task 3 · Find in the threads");
+  L.push("Found "+S.t3.filter(x=>x.ok).length+" of "+PH.length);
+  ORDER3.forEach(pi=>{ const st=S.t3[pi]; L.push(mk(st)+PH[pi].m+": "+triesTxt(st.tries)); });
+  head("Task 4 · How the phrases work");
+  WR.forEach((q,i)=>{ const st=S.t4a[i]; L.push((st.tries.length?(st.ok&&st.tries.length===1?"✓ ":"✗ "):"· ")+q.q+" → "+(st.tries.length?st.tries.map(k=>q.o[k]).join(" → "):"—")); });
+  CN.forEach((q,i)=>{ const st=S.t4b[i]; L.push((st.tries.length?(st.ok&&st.tries.length===1?"✓ ":"✗ "):"· ")+q.s+" ("+(q.c?"correct":"wrong")+") → "+(st.tries.join(" → ")||"—")); });
+  L.push("Halves: "+S.t4c.done.length+" of "+PAIRS.length+" matched"+(S.t4c.wrong.length?" · ✗ wrong tries: "+S.t4c.wrong.join("; "):" · ✓ no wrong tries"));
+  head("Task 5 · Gap fill");
+  L.push(S.t5.filter(x=>x.ok&&x.tries.length===1).length+" of "+GF.length+" right first time");
+  GF.forEach((g,i)=>{ const st=S.t5[i]; L.push(mk(st)+g[1]+": "+triesTxt(st.tries)); });
+  head("Task 6 · Fix the comment");
+  L.push("Fixed "+S.t6.filter(x=>x.ok).length+" of "+FIX.length+" on her own");
+  FIX.forEach((f,i)=>{ const st=S.t6[i]; L.push(mk(st)+f.s+" → "+triesTxt(st.tries)); });
+  head("Task 7 · What would you say? (before seeing the phrases)");
+  SIT.forEach((q,i)=>L.push((i+1)+". "+(S.t7.a[i].trim()||"— (maybe a voice message in Telegram)")));
+  L.push("Ticked as used: "+(PH.filter((_,i)=>S.t7.used[i]).map(p=>p.m).join(", ")||"none"));
+  L.push("Rewrite: "+(S.t7.rewrite.trim()||"—"));
+  return L.join("\n");
+}
+
+function setArr(dst,src){ return Array.isArray(src)&&src.length===dst.length ? src : dst; }
+HW.start({
+  id:"hw1", title:"Wiggle room, on edge & letting off steam",
+  get:()=>S,
+  set:(z)=>{ if(!z) return;
+    S.t1=setArr(S.t1,z.t1); S.t2=setArr(S.t2,z.t2); S.t3=setArr(S.t3,z.t3); S.t4a=setArr(S.t4a,z.t4a); S.t4b=setArr(S.t4b,z.t4b);
+    if(z.t4c&&Array.isArray(z.t4c.done)) S.t4c={done:z.t4c.done.filter(n=>n<PAIRS.length), wrong:Array.isArray(z.t4c.wrong)?z.t4c.wrong:[]};
+    S.t5=setArr(S.t5,z.t5); S.t6=setArr(S.t6,z.t6);
+    if(z.t7){ S.t7.a=setArr(S.t7.a,z.t7.a); S.t7.used=setArr(S.t7.used,z.t7.used); S.t7.shown=!!z.t7.shown; S.t7.rewrite=String(z.t7.rewrite||""); }
+  },
+  summary, render
+});
+</script>
+</body></html>
