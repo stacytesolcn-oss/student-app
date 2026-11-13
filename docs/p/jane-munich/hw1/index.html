@@ -279,12 +279,12 @@ function render(){
   /* Task 7 — situations */
   s=part(7,"What would you say?","Answer each situation in 2–4 sentences, the way you'd really say it. You can also answer as voice messages in Telegram – just speak, don't read aloud.");
   SIT.forEach((q,i)=>{ const c=el("div","card"), d=el("p","def"); d.append(el("span","n",String(i+1)), document.createTextNode(q)); c.append(d);
-    const ta=el("textarea"); ta.value=S.t7.a[i]; ta.placeholder="Your answer"; ta.disabled=S.t7.shown;
-    ta.oninput=()=>{ S.t7.a[i]=ta.value; HW.save(); const filled=S.t7.a.filter(x=>x.trim().length>15).length; const sb=document.getElementById("showB"); if(sb) sb.disabled=filled<3; };
+    const ta=el("textarea"); ta.value=S.t7.a[i]; ta.placeholder="Your answer";
+    ta.oninput=()=>{ S.t7.a[i]=ta.value; HW.save(); };
     c.append(ta); s.append(c); });
-  if(!S.t7.shown){ const b=el("button",null,"I've answered – show me this week's phrases"); b.id="showB";
-    b.disabled=S.t7.a.filter(x=>x.trim().length>15).length<3; b.onclick=()=>{ S.t7.shown=true; render(); }; s.append(b);
-    s.append(el("p","muted","(Answer at least 3 situations first.)")); }
+  if(!S.t7.shown){ const b=el("button",null,"See all the phrases and tick the ones you used"); b.id="showB";
+    b.onclick=()=>{ S.t7.shown=true; render(); }; s.append(b);
+    s.append(el("p","muted","Tap this when you've finished your answers (written or voice).")); }
   else {
     const c=el("div","card"); c.append(el("p","def","Which of these did you use? Tick them."));
     PH.forEach((ph,i)=>{ const r=el("label","check"), cb=el("input"); cb.type="checkbox"; cb.checked=S.t7.used[i];
