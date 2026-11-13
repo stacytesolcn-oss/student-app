@@ -98,14 +98,15 @@ const PH = [
   {d:"very quietly, so other people can't hear", re:/under (my|your|his|her|their|our) breath/, m:"under your breath"}
 ];
 const ok = (i,v) => PH[i].re.test(N(v));
-const ORDER3 = [3,0,7,4,9,1,6,2,8,5]; /* task 3 uses a different order */
+/* task 3: [phrase index, thread, post] in reading order, so she sees the post while she looks */
+const T3 = [[3,0,0],[0,0,1],[1,0,2],[9,0,2],[5,0,3],[2,0,4],[4,0,4],[8,1,2],[6,1,2],[7,1,4]];
 
 /* ---------- threads (forum-style, based on real discussions) ---------- */
 const THREADS = [
  {sub:"r/germany", title:"Only 18 minutes to change trains in Munich – is that enough?", posts:[
   {u:"vienna_bound_kat", op:true, t:"2 h", p:"", x:"I'm going from Stuttgart to Vienna next Saturday, and I have to change trains in Munich. The app gives me 18 minutes. Is that enough? It's my first trip to Vienna and I'm already a bit on edge about it 😅"},
   {u:"schienenfrust", t:"2 h", p:"412", x:"Honestly? No. German trains are often late. Leave yourself some wiggle room in case your first train is late. Take the train an hour later and have a coffee at the station."},
-  {u:"lena_reist", t:"1 h", p:"198", x:"I agree. I always leave at least a 45-minute buffer when I travel abroad. Last month my train stopped in the middle of nowhere for 40 minutes. The man next to me was cursing under his breath the whole time, and honestly, I understood him."},
+  {u:"lena_reist", t:"1 h", p:"198", x:"I agree. I always leave at least a 45-minute buffer when I travel abroad. Last month my train stopped in the middle of nowhere for 40 minutes. The man next to me was cursing under his breath the whole time, and honestly, I didn't blame him."},
   {u:"schienenfrust", t:"1 h", p:"87", nested:true, x:"The same thing happened to me. When they finally told us the train was cancelled, the tension on the train was palpable. Nobody said a word."},
   {u:"mk_muc", t:"58 min", p:"64", x:"My advice: keep your cool and go to the ticket office. Shouting at the staff won't help. If you need to let off steam, take a walk around the station first 😂"},
   {u:"vienna_bound_kat", op:true, t:"20 min", p:"31", x:"Update: I changed my ticket. Now I have 70 minutes of wiggle room for unexpected delays. Time for coffee and a pretzel! Thank you all!"}
@@ -220,14 +221,15 @@ function render(){
   app.append(s);
 
   /* Task 3 — find in the threads */
-  s=part(3,"Find them in the threads","Scroll back up. Find the phrase in the threads that matches each meaning and type it the way it's used there.");
-  ORDER3.forEach((pi,k)=>{ const st=S.t3[pi], c=el("div","card"+(st.ok?" ok":""));
+  s=part(3,"Find them in the posts","Read each post again. Find the phrase in it that matches the meaning and type it the way it's used in the post.");
+  T3.forEach(([pi,ti,po],k)=>{ const st=S.t3[pi], c=el("div","card"+(st.ok?" ok":"")), P=THREADS[ti].posts[po];
+    const q=el("div","post"); q.style.padding="0"; const m=el("div","meta"); m.append(el("b",null,"Thread "+(ti+1)+" · u/"+P.u)); q.append(m, el("p","ex",P.x)); c.append(q);
     const d=el("p","def"); d.append(el("span","n",String(k+1)), document.createTextNode(PH[pi].d)); c.append(d);
     if(st.ok) c.append(fb("good","✓ "+st.tries[st.tries.length-1]));
     else if(st.tries.length>=2) c.append(fb("info","It's: "+PH[pi].m));
-    else { const r=el("div","row"), inp=input(st,"phrase from the thread"), b=el("button",null,"Check");
+    else { const r=el("div","row"), inp=input(st,"phrase from this post"), b=el("button",null,"Check");
       b.onclick=()=>{ const v=st.val.trim(); if(!v) return; st.tries.push(v); st.ok=ok(pi,v); render(); };
-      r.append(inp,b); c.append(r); if(st.tries.length===1) c.append(fb("bad","Not quite – look again.")); }
+      r.append(inp,b); c.append(r); if(st.tries.length===1) c.append(fb("bad","Not quite – look at the post again.")); }
     s.append(c); });
   app.append(s);
 
@@ -318,7 +320,7 @@ function summary(){
   GIST.forEach((g,i)=>{ const st=S.t2[i]; L.push(mk(st)+g.q+" → "+(st.tries.length?st.tries.map(k=>g.o[k]).join(" → "):"—")); });
   head("Task 3 · Find in the threads");
   L.push("Found "+S.t3.filter(x=>x.ok).length+" of "+PH.length);
-  ORDER3.forEach(pi=>{ const st=S.t3[pi]; L.push(mk(st)+PH[pi].m+": "+triesTxt(st.tries)); });
+  T3.forEach(([pi])=>{ const st=S.t3[pi]; L.push(mk(st)+PH[pi].m+": "+triesTxt(st.tries)); });
   head("Task 4 · How the phrases work");
   WR.forEach((q,i)=>{ const st=S.t4a[i]; L.push((st.tries.length?(st.ok&&st.tries.length===1?"✓ ":"✗ "):"· ")+q.q+" → "+(st.tries.length?st.tries.map(k=>q.o[k]).join(" → "):"—")); });
   CN.forEach((q,i)=>{ const st=S.t4b[i]; L.push((st.tries.length?(st.ok&&st.tries.length===1?"✓ ":"✗ "):"· ")+q.s+" ("+(q.c?"correct":"wrong")+") → "+(st.tries.join(" → ")||"—")); });
