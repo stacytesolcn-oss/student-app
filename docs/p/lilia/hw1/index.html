@@ -65,6 +65,7 @@ input:disabled{opacity:.8}
 ul.starters{margin:0;padding-left:1.1em;display:grid;gap:2px;font-size:.95rem}
 .article{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;display:grid;gap:12px;font-size:1.02rem;line-height:1.65}
 .article h3{font-size:1.5rem}
+.photo{width:100%;height:auto;border-radius:14px;display:block;margin:4px 0}
 .gl{background:var(--butter-soft);border-bottom:2px solid var(--butter);border-radius:4px;padding:0 3px;cursor:pointer}
 .sheet{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--brown);color:var(--on-brown);padding:14px max(16px,env(safe-area-inset-left,0px)) calc(14px + env(safe-area-inset-bottom,0px));display:flex;gap:12px;align-items:flex-start;box-shadow:0 -6px 20px rgba(0,0,0,.18)}
 .sheet[hidden]{display:none}
@@ -128,16 +129,16 @@ const A1 = [
 ];
 const TITLE = "What I'm Really Protecting: Why I Need My Home to Ask Less of Me";
 const GLOSS = {
-  "strong-willed":"she knows what she wants and doesn't give up easily",
-  "sassy":"answers back in a cheeky, a bit rude way",
-  "declutter":"get rid of things you don't need",
-  "capacity":"how much energy, time and patience you have left to give",
-  "parent someone through it":"stay with your child and guide them through a hard moment",
-  "figure out":"understand something after thinking about it",
+  "strong-willed":"she knows what she wants and doesn't change her mind easily",
+  "sassy":"she answers back to adults: a little rude, but often funny",
+  "declutter":"give away or throw away things you don't need, so you have less stuff at home",
+  "capacity":"how much energy, time and patience you still have",
+  "parent someone through it":"help your child, step by step, when something is hard for them",
+  "figure out":"understand something after you think about it",
   "get worked up":"get more and more upset or angry",
-  "regulate yourself":"notice your strong feelings and calm yourself down",
-  "left out":"not included by the others",
-  "meltdown":"when a child suddenly loses control of their feelings: crying, shouting"
+  "regulate yourself":"notice a strong feeling and help yourself to calm down",
+  "left out":"when the other children don't play with you or invite you",
+  "meltdown":"when a child suddenly can't control their feelings and starts crying or shouting"
 };
 /* {shown text|glossary key} */
 const ARTICLE = [
@@ -159,6 +160,8 @@ const ARTICLE = [
 "I want my home to take as little of me as possible, so I have more of myself left for the people who matter most.",
 "So here's my question for you: what do you wish you had more of yourself left for?"
 ];
+/* real photos after these paragraphs (index in ARTICLE) */
+const PHOTOS = {2:["img/quiet.webp","A quiet moment with a cup of coffee"], 8:["img/worried.webp","A mum and her upset child"], 15:["img/hug.webp","A mum and her daughter on the sofa"]};
 const ORIGINAL = "https://doitintentionally.substack.com/p/what-im-really-protecting-why-i-need";
 const PHRASES = [
   ["have a lot on her plate", /\bon (her|my|their|his) plate\b/],
@@ -304,13 +307,14 @@ function task3(app){
   /* Stage B */
   part.append(el("h3",null,"While you read"));
   part.append(el("div","how","Don't worry if you don't know every word. Try to figure out the meaning from the context. For some tricky words I've added a short definition. Tap a highlighted word to see it."));
-  const cap=el("div","box"); cap.append(el("b",null,"capacity"), document.createTextNode("how much energy, time and patience you have left to give")); part.append(cap);
+  const cap=el("div","box"); cap.append(el("b",null,"capacity"), document.createTextNode("how much energy, time and patience you still have")); part.append(cap);
   const art=el("article","article"); art.append(el("h3",null,TITLE));
-  ARTICLE.forEach(par=>{ const p=el("p");
+  ARTICLE.forEach((par,pi)=>{ const p=el("p");
     par.split(/(\{[^}]+\})/).forEach(bit=>{ const m=bit.match(/^\{([^|]+)\|([^}]+)\}$/);
       if(m){ const s=el("span","gl",m[1]); s.setAttribute("role","button"); s.tabIndex=0; s.onclick=()=>showGloss(m[2]); s.onkeydown=e=>{if(e.key==="Enter")showGloss(m[2]);}; p.append(s); }
       else if(bit) p.append(document.createTextNode(bit)); });
-    art.append(p); });
+    art.append(p);
+    if(PHOTOS[pi]){ const im=el("img","photo"); im.src=PHOTOS[pi][0]; im.alt=PHOTOS[pi][1]; im.loading="lazy"; art.append(im); } });
   const src=el("p","muted"); src.style.fontSize=".9rem"; src.append(document.createTextNode("Adapted from Do It Intentionally (Substack), 4 Oct 2026. "));
   const a=el("a",null,"Read the original article →"); a.href=ORIGINAL; a.target="_blank"; a.rel="noopener"; src.append(a); art.append(src);
   part.append(art);
