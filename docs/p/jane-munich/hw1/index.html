@@ -76,7 +76,7 @@ input.short{width:auto;min-width:0;flex:1 1 140px;max-width:220px}
     <p class="eyebrow">Homework · this week's words</p>
     <h1>Trains, dogs and this week’s words</h1>
   </div>
-  <p class="muted">About 35 minutes. Your answers save as you go, so you can stop and come back later.</p>
+  <p class="muted">About 25 minutes. Your answers save as you go, so you can stop and come back later.</p>
   <main id="app" style="display:grid;gap:18px"></main>
 </div>
 <script src="../../../kit/hw.js"></script>
@@ -154,13 +154,12 @@ const GF = [ /* task 5: gap-fill, first letter given */
  ["After a stressful day, I went for a long walk to ","let"," off steam."],
  ["Leave a 15-minute ","buffer"," between appointments, in case something goes wrong."]
 ];
-const FIX = [ /* task 6: fix the comment (one coherent reply, her real mistakes) */
- {s:"My dog is great at home, but outside he sometimes do this.", re:/^my dog is great at home but outside he sometimes does this$/, m:"My dog is great at home, but outside he sometimes does this.", tip:"he → verb + s"},
- {s:"Last week he barked on a woman on a wheelchair.", re:/^last week he barked at a woman in a wheelchair$/, m:"Last week he barked at a woman in a wheelchair.", tip:"two prepositions"},
- {s:"Honestly, this demotivate me a lot.", re:/^honestly this demotivates me a lot$/, m:"Honestly, this demotivates me a lot.", tip:"he / she / it / this → verb + s"},
- {s:"Yesterday there were too much dogs in the park,", re:/^yesterday there were too many dogs in the park$/, m:"Yesterday there were too many dogs in the park,", tip:"dogs can be counted"},
- {s:"so I just give him a treat and we went home early.", re:/^so i (just )?gave him a treat and we went home early$/, m:"so I just gave him a treat and we went home early.", tip:"yesterday → past simple"},
- {s:"Now I always leave a wiggle room in case for problems like this.", re:/^now i always leave (some |a little )?wiggle room (for (problems|situations|delays) like this|in case (?!for ).+)$/, m:"Now I always leave some wiggle room for problems like this. / …in case something like this happens.", tip:"no a; in case + sentence OR for + noun"}
+const FIX = [ /* task 5: subject–verb agreement only (her real slips: do this, his ears is, this demotivate, make me feel, people who knows) */
+ {s:"My dog is great at home, but outside he sometimes do this.", re:/^my dog is great at home but outside he sometimes does this$/, m:"…outside he sometimes does this.", tip:"he → does"},
+ {s:"Every time a dog walks past, his ears goes back and he starts barking.", re:/^every time a dog walks past his ears go back and he starts barking$/, m:"…his ears go back and he starts barking.", tip:"ears = they"},
+ {s:"Honestly, this demotivate me a lot.", re:/^honestly this demotivates me a lot$/, m:"Honestly, this demotivates me a lot.", tip:"this = it"},
+ {s:"The other owners look at me like I'm doing something wrong, and that just make me feel worse.", re:/^the other owners look at me like i'm doing something wrong and that just makes me feel worse$/, m:"…and that just makes me feel worse.", tip:"that = it"},
+ {s:"People who knows reactive dogs understand, but most people don't.", re:/^people who know reactive dogs understand but most people don't$/, m:"People who know reactive dogs understand, but most people don't.", tip:"people = they"}
 ];
 const SIT = [
  "A friend from Hamburg messages you: \"Booked Munich → Vienna, 12 minutes to change trains. Good idea?\" Write your reply.",
@@ -255,18 +254,8 @@ function render(){
   if(S.t4c.done.length===PAIRS.length) s.append(fb("good","✓ All together!"));
   app.append(s);
 
-  /* Task 5 — gap-fill */
-  s=part(5,"Fill the gaps","One word in each gap. The first letter is there to help you.");
-  GF.forEach((g,i)=>{ const st=S.t5[i], c=el("div","card"+(st.ok?" ok":"")), p=el("p","sent"); p.append(el("span","n",String(i+1)), document.createTextNode(g[0]));
-    if(st.ok||st.tries.length>=2){ const b=el("b",null,g[1]); p.append(b, document.createTextNode(g[2])); c.append(p); if(!st.ok) c.append(fb("info","You wrote: "+st.tries.join(" / ")+". The answer is "+g[1]+".")); }
-    else { p.append(document.createTextNode("___"+g[2])); c.append(p); const r=el("div","row"), inp=input(st,g[1][0]+"…"); inp.className="short";
-      const b=el("button",null,"Check"); b.onclick=()=>{ const v=N(st.val); if(!v) return; st.tries.push(st.val.trim()); st.ok=(v===g[1]); render(); };
-      r.append(inp,b); c.append(r); if(st.tries.length===1) c.append(fb("bad","Not quite. Check the spelling and the form.")); }
-    s.append(c); });
-  app.append(s);
-
   /* Task 6 — fix the comment */
-  s=part(6,"Fix the comment","Someone replied to Thread 2 in a hurry. Each line of the comment has a mistake (the last one has two). Write each line again, correctly.");
+  s=part(5,"Fix the comment","Someone replied to Thread 2 in a hurry. Each line has one mistake with the verb (he does / they do). Write each line again, correctly.");
   const cm=el("div","thread"), ch=el("div","post"), cmeta=el("div","meta"); cmeta.append(el("b",null,"u/new_in_munich"), document.createTextNode(" · 30 min · reply to Thread 2"));
   ch.append(cmeta, el("p",null,"Same here! "+FIX.map(f=>f.s).join(" "))); cm.append(ch); s.append(cm);
   FIX.forEach((f,i)=>{ const st=S.t6[i], c=el("div","card"+(st.ok?" ok":"")); const d=el("p","sent"); d.append(el("span","n",String(i+1)), document.createTextNode(f.s)); c.append(d);
@@ -279,7 +268,7 @@ function render(){
   app.append(s);
 
   /* Task 7 — situations */
-  s=part(7,"What would you say?","Answer each situation in 2–4 sentences, the way you'd really say it. You can also answer as voice messages in Telegram – just speak, don't read aloud.");
+  s=part(6,"What would you say?","Answer each situation in 2–4 sentences, the way you'd really say it. You can also answer as voice messages in Telegram – just speak, don't read aloud.");
   SIT.forEach((q,i)=>{ const c=el("div","card"), d=el("p","def"); d.append(el("span","n",String(i+1)), document.createTextNode(q)); c.append(d);
     const ta=el("textarea"); ta.value=S.t7.a[i]; ta.placeholder="Your answer";
     ta.oninput=()=>{ S.t7.a[i]=ta.value; HW.save(); };
@@ -325,13 +314,10 @@ function summary(){
   WR.forEach((q,i)=>{ const st=S.t4a[i]; L.push((st.tries.length?(st.ok&&st.tries.length===1?"✓ ":"✗ "):"· ")+q.q+" → "+(st.tries.length?st.tries.map(k=>q.o[k]).join(" → "):"—")); });
   CN.forEach((q,i)=>{ const st=S.t4b[i]; L.push((st.tries.length?(st.ok&&st.tries.length===1?"✓ ":"✗ "):"· ")+q.s+" ("+(q.c?"correct":"wrong")+") → "+(st.tries.join(" → ")||"—")); });
   L.push("Halves: "+S.t4c.done.length+" of "+PAIRS.length+" matched"+(S.t4c.wrong.length?" · ✗ wrong tries: "+S.t4c.wrong.join("; "):" · ✓ no wrong tries"));
-  head("Task 5 · Gap fill");
-  L.push(S.t5.filter(x=>x.ok&&x.tries.length===1).length+" of "+GF.length+" right first time");
-  GF.forEach((g,i)=>{ const st=S.t5[i]; L.push(mk(st)+g[1]+": "+triesTxt(st.tries)); });
-  head("Task 6 · Fix the comment");
+  head("Task 5 · Fix the comment (he does / they do)");
   L.push("Fixed "+S.t6.filter(x=>x.ok).length+" of "+FIX.length+" on her own");
   FIX.forEach((f,i)=>{ const st=S.t6[i]; L.push(mk(st)+f.s+" → "+triesTxt(st.tries)); });
-  head("Task 7 · What would you say? (before seeing the phrases)");
+  head("Task 6 · What would you say? (before seeing the phrases)");
   SIT.forEach((q,i)=>L.push((i+1)+". "+(S.t7.a[i].trim()||"— (maybe a voice message in Telegram)")));
   L.push("Ticked as used: "+(PH.filter((_,i)=>S.t7.used[i]).map(p=>p.m).join(", ")||"none"));
   L.push("Rewrite: "+(S.t7.rewrite.trim()||"—"));
