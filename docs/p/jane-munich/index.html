@@ -758,7 +758,8 @@ html,body{overflow-x:clip}
           .then(function(j){ Object.assign(PROFILE, j.profile || {}); try{ renderProfile(); }catch(e){} })
           .catch(function(){ b.disabled = false; b.textContent = EN ? "Try again" : "Ещё раз"; });
       };
-      row.appendChild(b); el.appendChild(row);
+      if (!P.noPaidBtn) row.appendChild(b); /* noPaidBtn: no "I've paid" button (Jane Munich, Nov 13) */
+      if (row.children.length) el.appendChild(row);
     });
   };
 

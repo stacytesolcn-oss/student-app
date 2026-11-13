@@ -536,8 +536,8 @@ async function paymentDue(s: any, force = false): Promise<Msg> {
     : `Hi ${s.name}! 💳 Friendly reminder: your next lesson payment is due on ${prettyDate(due)}.`;
   const row: any[] = [];
   if (P.stripe) row.push({ text: "Pay", url: P.stripe });
-  row.push({ text: "I've paid ✓", callback_data: "paid" });
-  return { kind: "pay", key: `${due}:${d}`, text, reply_markup: { inline_keyboard: [row] } };
+  if (!P.noPaidBtn) row.push({ text: "I've paid ✓", callback_data: "paid" }); // noPaidBtn: Stacy confirms payment herself
+  return { kind: "pay", key: `${due}:${d}`, text, reply_markup: { inline_keyboard: row.length ? [row] : [] } };
 }
 // ONE evening message before a lesson: lesson tomorrow (+ homework line) and, if a payment is due/overdue, the payment
 // line with its Pay / I've paid buttons (Stacy, Nov 12).
