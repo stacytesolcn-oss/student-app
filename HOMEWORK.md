@@ -85,6 +85,8 @@ A lesson moved to another DAY: put the old date in `pack.skip` and the new date 
 
 Students in the app: Jane (not connected yet, older page template), Michael (connected), Sabina (connected, English page),
 Lilia (moved Nov 13, Belgrade time, English page, older template; live, link with Stacy to send).
+Jane Munich (moved Nov 13, slug `jane-munich`, Berlin time, English page, newer template; lessons Tue 10:20 / Thu 10:15;
+5-lesson Nov package paid, next payment Nov 19; no Stripe link yet; `hw1` built but not added to her page yet).
 Server: Edge Function `app` v25, repo file in sync.
 
 Reminders now (all students, student time):
