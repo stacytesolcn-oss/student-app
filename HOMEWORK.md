@@ -84,7 +84,7 @@ A lesson moved to another DAY: put the old date in `pack.skip` and the new date 
 ## State on Nov 12 (evening) — read before moving the next student
 
 Students in the app: Jane (not connected yet, older page template), Michael (connected), Sabina (connected, English page),
-Lilia (moved Nov 13, Belgrade time, English page, older template; test row "Lilia TEST" until Stacy's OK).
+Lilia (moved Nov 13, Belgrade time, English page, older template; live, link with Stacy to send).
 Server: Edge Function `app` v25, repo file in sync.
 
 Reminders now (all students, student time):
