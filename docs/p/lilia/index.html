@@ -163,6 +163,7 @@ a.btn{display:block;text-align:center;text-decoration:none}
 .icard .foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:8px}
 .icard a.open{font-family:var(--caps);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ink);text-decoration:none;border-bottom:1.5px solid var(--butter)}
 .icard.done h3{text-decoration:line-through;text-decoration-color:var(--muted)}
+.cnote{font-size:.8rem;line-height:1.3;font-weight:600;background:rgba(255,255,255,.55);border-radius:10px;padding:5px 8px;margin-top:2px}
 .donebtn{border:1px solid var(--ink);background:transparent;border-radius:999px;padding:8px 14px;font-size:.85rem;font-weight:600}
 .donebtn[aria-pressed="true"]{background:var(--brown);border-color:var(--brown);color:var(--on-brown)}
 .icard.done .tick{background:var(--brown);border-color:var(--brown);color:var(--on-brown)}
@@ -755,6 +756,15 @@ html,body{overflow-x:clip}
 
 /* ex: 3 sentences. [ ] = the gapped phrase, { } = words that go with it (bold). The 3rd sentence is from our lessons unless noOwn:true. */
 const CARDS = {
+"have a lot on your plate":{"def": "have a lot of work or problems to deal with", "ex": ["I can't help this week. I already [have a lot on my plate].", "Mums with small kids [have a lot on their plate].", "With work, school and two kids, she [has a lot on her plate]."], "q": "Your friend asks you to organise her birthday party this weekend, but this week you have work, the girls' school things and the house. Say no kindly and explain why.", "noOwn": true},
+"stay on top of":{"def": "in control of something or able to deal with it successfully, especially something that is often changing or increasing", "ex": ["I need to check my email every morning to [stay on top of] my {projects}.", "[Staying on top of] your {finances} takes effort, but it's worth it.", "With two kids at school, it's hard to [stay on top of] all the {homework}."], "q": "Your daughters have homework, tests and messages from teachers every week. How do you make sure nothing gets forgotten?", "noOwn": true},
+"meet in the middle":{"def": "each person gives up a little, so you can agree", "ex": ["OK, so you want an allowance of $20 a week, and your mother and I want to give you $10. {Let's} [meet in the middle] then: $15.", "My fiancé wants an outdoor wedding, and I want a church wedding, so we've [met in the middle]: we're having a church wedding with an outdoor reception.", "My daughter wanted to come home at 11, I said 9, so we [met in the middle](past): 10."], "q": "Your daughter wants to stay at a friend's party until midnight. You want her home by nine. Find a solution you can both accept. What do you tell her?", "noOwn": true},
+"the breadwinner":{"def": "the person who earns the money for the family", "ex": ["Men were often expected {to be} [the breadwinner] {in a family}.", "When the baby was born, I {became} [the] sole [breadwinner].", "After he lost his job, his wife {became} [the breadwinner]."], "q": "Think about your parents' generation and families today. Who earned the money for the family then, and who earns it now?", "noOwn": true},
+"settle in":{"def": "start to feel comfortable in a new place, school or job", "ex": ["How's your new home? Are you [settling in] OK?", "How are the kids [settling into] {their new school}?", "The first weeks at a new school are hard, but most kids [settle in] quickly."], "q": "A new girl from another country joins your daughter's class. How is she feeling in her first weeks, and what can the class do to help her?", "noOwn": true},
+"be hard on":{"def": "be too strict with someone or criticise them too much (also yourself)", "ex": ["He [was hard on](past) {his kids}, but he was also extremely proud of them.", "Don't [be] so [hard on] {yourself}. Everyone makes mistakes.", "She got a B and cried all evening. She [is] too [hard on] {herself}."], "q": "Your daughter got a B on her English test and says she's terrible at English. What do you tell her?", "noOwn": true},
+"struggle with":{"def": "find something difficult", "ex": ["I'm really [struggling with] {this essay}.", "A lot of kids [struggle with] {maths} at secondary school.", "He [struggles with] {making new friends} at his new school."], "q": "Think about your daughters at school this year. What is difficult for each of them?", "noOwn": true},
+"come out of your shell":{"def": "stop being shy and start talking to people", "ex": ["Samantha was quite a quiet girl growing up, but she really started [coming out of her shell] in college.", "It took Dan a few weeks to [come out of his shell], but he's doing well now.", "Joining a dance class really helped her [come out of her shell]."], "q": "Your daughter joins a new club. She's shy and doesn't talk to anyone. What could help her, and how will things change in a few weeks?", "noOwn": true},
+"keep up with":{"def": "do things as fast or as well as other people", "ex": ["He walks too fast. I can't [keep up with] him.", "After two weeks off school, it was hard for her to [keep up with] {the rest of the class}.", "The new girl works hard to [keep up with] {the other kids}."], "q": "Your daughter was ill and missed a week of school. What is going to be hard for her when she goes back?", "noOwn": true},
 "a picky eater":{"def": "someone who eats only a few kinds of food and says no to a lot of others", "ex": ["He's [a picky eater].", "My son is such [a picky eater] — he only eats pasta.", "She doesn't like the fries or the ćevapi at school. She's [a picky eater]."], "q": "Say it with the phrase: My daughter doesn't eat many different foods. She says no to everything new."},
 "grumpy":{"def": "in a bad mood and complaining about everything", "ex": ["Mina's always {a bit} [grumpy] {first thing in the morning}.", "Come back and see me when you're less [grumpy].", "My eldest daughter was {a bit} [grumpy] {this morning}. She complained about her breakfast."], "q": "If my eldest daughter doesn't like her breakfast, she …"},
 "just a phase":{"def": "a short time when someone behaves in a strange way; it will pass", "ex": ["He has been throwing tantrums a lot, but the doctor says {it's} [just a phase].", "Don't worry, {it's} [just a phase] — all teenagers do it.", "She didn't eat eggs for half a year, but {it was} [just a phase]."], "q": "Your eldest didn't eat eggs for half a year. Why weren't you worried?"},
@@ -796,6 +806,15 @@ const CARDS = {
 
 /* part of speech, IPA (American), and what goes before / after: [before, phrase form, after] */
 const META = {
+"have a lot on your plate":{"pos": "idiom · informal", "ipa": "/hæv ə lɑːt ɑːn jʊr pleɪt/", "pat": [["have a lot / too much", "on your plate", ""]], "past": "had a lot on my plate"},
+"stay on top of":{"pos": "phrase", "ipa": "/steɪ ɑːn ˈtɑːp əv/", "pat": [["", "stay on top of", "your work / homework / finances"]], "past": "stayed on top of"},
+"meet in the middle":{"pos": "idiom", "ipa": "/miːt ɪn ðə ˈmɪd.əl/", "pat": [["let's", "meet in the middle", ""]], "past": "met in the middle"},
+"the breadwinner":{"pos": "noun", "ipa": "/ðə ˈbredˌwɪn.ɚ/", "pat": [["be / become", "the breadwinner", "in a family"]]},
+"settle in":{"pos": "phrasal verb", "ipa": "/ˈset̬.əl ɪn/", "pat": [["", "settle in", ""], ["", "settle into", "a new school / home"]], "past": "settled in"},
+"be hard on":{"pos": "phrase", "ipa": "/bi ˈhɑːrd ɑːn/", "pat": [["be (too / so)", "hard on", "someone / yourself"]], "past": "was hard on"},
+"struggle with":{"pos": "verb + preposition", "ipa": "/ˈstrʌɡ.əl wɪð/", "pat": [["", "struggle with", "something / doing something"]], "past": "struggled with"},
+"come out of your shell":{"pos": "idiom", "ipa": "/kʌm aʊt əv jʊr ʃel/", "pat": [["", "come out of", "your / her / his shell"]], "past": "came out of her shell"},
+"keep up with":{"pos": "phrasal verb", "ipa": "/kiːp ʌp wɪð/", "pat": [["", "keep up with", "someone / the rest of the class"]], "past": "kept up with"},
 "a picky eater":{"pos": "noun phrase · informal", "ipa": "/ə ˈpɪki ˈiː.t̬ɚ/", "pat": [["be", "a picky eater", ""]]},
 "grumpy":{"pos": "adjective", "ipa": "/ˈɡrʌm.pi/", "pat": [["be a bit", "grumpy", "in the morning"]]},
 "just a phase":{"pos": "noun phrase", "ipa": "/dʒʌst ə ˈfeɪz/", "pat": [["it's", "just a phase", ""]]},
@@ -839,8 +858,9 @@ const PHOTOS = {};
 
 /* Topic decks for extra practice. New cards are introduced in deck order, then any card not in a deck. */
 const TOPICS = [
+ {"name": "School", "sub": "Your girls at school, teachers and classmates", "color": "coral", "words": ["settle in", "be hard on", "struggle with", "come out of your shell", "keep up with"]},
  {"name": "Kids and routines", "sub": "Your girls, mornings and bedtime", "color": "teal", "words": ["a picky eater", "grumpy", "just a phase", "stick to a routine", "get along with", "extracurricular activities", "grow out of"]},
- {"name": "Parents and generations", "sub": "Our parents and millennial parents", "color": "plum", "words": ["feel guilty", "put pressure on", "overthink", "overprotective", "spend quality time with"]},
+ {"name": "Parents and generations", "sub": "Our parents and millennial parents", "color": "plum", "words": ["have a lot on your plate", "stay on top of", "meet in the middle", "the breadwinner", "feel guilty", "put pressure on", "overthink", "overprotective", "spend quality time with"]},
  {"name": "Me time and feelings", "sub": "Calm, stress and nostalgia", "color": "coral", "words": ["carve out some me time", "happy place", "fill someone with nostalgia", "make someone feel warm inside", "give someone anxiety", "out of my control", "get your ducks in a row", "broaden your social circle", "get back into the swing of things"]},
  {"name": "Fun and celebrations", "sub": "Parties, trips and good times", "color": "gold", "words": ["go out for breakfast", "have a blast", "throw someone a party", "celebrate something with", "take someone to", "covered in something from head to toe", "take a selfie", "go zip-lining", "field trip"]},
  {"name": "Food, crafts and autumn", "sub": "Baking, knitting and crisp mornings", "color": "teal", "words": ["make something from scratch", "sourdough", "knit", "crochet", "yarn", "crisp air", "autumn is in the air"]}
@@ -923,11 +943,14 @@ const grow = i => i < 1 ? 1 : i < 3 ? 3 : i < 7 ? 7 : Math.min(180, Math.round(i
 const doneToday = () => store.log[today()] || 0;
 const DAILY_MIN = 8;
 let early = new Set();
+/* newest cards from the last lesson: shown first while they are new */
+const FIRST = ["have a lot on your plate", "stay on top of", "meet in the middle", "the breadwinner", "settle in", "be hard on", "struggle with", "come out of your shell", "keep up with"];
 function todayQueue(){
   const room = Math.max(0, DAILY_CAP - doneToday());
   const due = ALL.filter(isDue).sort((a,b)=>st(a).due - st(b).due);
   const fresh = [...new Set(TOPICS.flatMap(t=>t.words).concat(ALL))].filter(isNew);
-  let q = due.concat(fresh).slice(0, room);
+  const first = FIRST.filter(isNew);
+  let q = first.concat(due, fresh.filter(w=>!first.includes(w))).slice(0, room);
   const want = Math.min(room, Math.max(0, DAILY_MIN - doneToday()));
   early = new Set();
   if(q.length < want){
@@ -1095,7 +1118,7 @@ function renderWeek(){
   document.querySelector("#v-today .secrow").hidden = !ideas.length; $("ideas").hidden = !ideas.length;
   const q = todayQueue();
   $("pcCards").innerHTML = '<span class="pill">Word cards</span>'+
-    (q.length ? '<span class="num">'+q.length+'</span><span class="lbl2">cards today<br>about '+Math.max(2,Math.round(q.length*0.5))+' min</span><span class="go">Start <i aria-hidden="true">→</i></span>'
+    (q.length ? '<span class="num">'+q.length+'</span><span class="lbl2">cards today<br>about '+Math.max(2,Math.round(q.length*0.5))+' min</span>'+(P.cardsNote&&FIRST.some(isNew)?'<span class="cnote">'+esc(P.cardsNote)+'</span>':'')+'<span class="go">Start <i aria-hidden="true">→</i></span>'
               : '<span class="num">✓</span><span class="lbl2">All done for today.<br>See you tomorrow!</span><span class="go">Extra practice <i aria-hidden="true">→</i></span>');
   const t0 = today(), wd0 = (new Date(t0*DAY).getUTCDay()+6)%7, mon0 = t0 - wd0;
   $("strip").innerHTML = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map((L,i)=>{
@@ -1163,7 +1186,7 @@ function render(){
   const q = todayQueue(), all = counts(ALL);
   $("badge").hidden = !q.length; $("badge").textContent = q.length;
   const startBtn = '<button class="btn" data-start>'+("Start practice")+'</button>';
-  $("cardsSummary").innerHTML = '<span class="eyebrow">Today</span><h3>'+(q.length ? q.length+" cards to practise today" : "All done for today ✓")+'</h3>'+chipsHTML(all)+(q.length?startBtn:"");
+  $("cardsSummary").innerHTML = '<span class="eyebrow">Today</span><h3>'+(q.length ? q.length+" cards to practise today" : "All done for today ✓")+'</h3>'+(PROFILE.cardsNote&&FIRST.some(isNew)?'<p class="note">'+esc(PROFILE.cardsNote)+'</p>':'')+chipsHTML(all)+(q.length?startBtn:"");
   document.querySelectorAll("[data-start]").forEach(b=>b.addEventListener("click",()=>{ const q2 = todayQueue(); if(q2.length) openDeck("Today's cards", q2, true); else show("cards"); }));
   const tile = (attrs, cls, n, color, name, sub, arr) => '<button class="topic '+cls+'" '+attrs+'><span class="dot" style="background:var(--'+color+'-soft);color:var(--'+color+')">'+n+'</span>'+
     '<span class="t"><strong>'+esc(name)+'</strong><span>'+esc(sub)+'</span></span><span class="arr" aria-hidden="true">'+arr+'</span></button>';
