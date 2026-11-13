@@ -526,8 +526,11 @@ async function paymentDue(s: any, force = false): Promise<Msg> {
   // Only the evening before a lesson, right after the "lesson tomorrow" message (18:00), when the payment is due
   // by that lesson or overdue (Stacy, Nov 12). No other payment messages.
   const lessonTmr = lessonsOn(s, new Date(Date.now() + DAY)).length > 0;
-  if (!force && !(lessonTmr && d <= 1)) return null;
-  const text = d === 1
+  // payLead: also remind on lesson evenings up to N days before the due date (default 1)
+  if (!force && !(lessonTmr && d <= (Number(P.payLead) || 1))) return null;
+  // payMsg: Stacy's own text for this student ({date} = due date)
+  const text = P.payMsg ? `Hi ${s.name}! 💳 ` + String(P.payMsg).replace("{date}", prettyDate(due))
+    : d === 1
     ? `Hi ${s.name}! 💳 Friendly reminder: your lesson payment is due tomorrow.`
     : d === 0
     ? `Hi ${s.name}! 💳 Friendly reminder: your lesson payment is due today.`
