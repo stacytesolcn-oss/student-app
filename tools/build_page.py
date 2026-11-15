@@ -53,6 +53,13 @@ rep('const hwDone = id => !!(store.hw||{})[id];',
     'const hwInApp = h => !!(h && h.url && !/^https?:/.test(h.url));\nconst hwDone = id => { const h = (PROFILE.homework||[]).find(h=>h.id===id)||{}; return !!h.done || (hwInApp(h) ? !!(store.hwServer||{})[id] : !!(store.hw||{})[id]); };', optional=True)
 rep("""              : '<button class="donebtn" data-hw="'+esc(h.id)+'" aria-pressed="'+d+'">'+(d?'✓ Done':'Mark as done')+'</button>')+'</div></div>'; };""",
     """              : hwInApp(h) ? (d?'<span class="due">✓ Done</span>':'<span></span>') : '<button class="donebtn" data-hw="'+esc(h.id)+'" aria-pressed="'+d+'">'+(d?'✓ Done':'Mark as done')+'</button>')+'</div></div>'; };""", optional=True)
+# same, English page with an "archived" homework list (Inna, Nov 2026)
+rep('const hwDone = id => !!(store.hw||{})[id] || (PROFILE.homework||[]).some(h=>h.id===id && h.archived);',
+    'const hwInApp = h => !!(h && h.url && !/^https?:/.test(h.url));\nconst hwDone = id => { const h = (PROFILE.homework||[]).find(h=>h.id===id)||{}; return !!h.done || !!h.archived || (hwInApp(h) ? !!(store.hwServer||{})[id] : !!(store.hw||{})[id]); };', optional=True)
+rep("""      '<button class="donebtn" data-hw="'+esc(h.id)+'" aria-pressed="'+d+'">'+(d?'✓ Done':'Mark as done')+'</button></div></div>'; }).join("");""",
+    """      (hwInApp(h) ? (d?'<span class="due">✓ Done</span>':'<span></span>') : '<button class="donebtn" data-hw="'+esc(h.id)+'" aria-pressed="'+d+'">'+(d?'✓ Done':'Mark as done')+'</button>')+'</div></div>'; }).join("");""", optional=True)
+rep('const past = (PROFILE.homework || []).filter(h=>h.archived), hw = (PROFILE.homework || []).filter(h=>!h.archived)',
+    'const past = (PROFILE.homework || []).filter(h=>h.archived||h.done), hw = (PROFILE.homework || []).filter(h=>!(h.archived||h.done))', optional=True)
 # lesson time changed for one week: profile.lessons entries may carry {from, until}
 if "!inRange(l, iso)" not in s:  # newer template (Jane Munich) already handles from/until
   rep('      if(new Date(d).getUTCDay()===wd && start + 60*6e4 > now){ if(!best || start < best.start) best = {start, day:k, l}; break; }',
