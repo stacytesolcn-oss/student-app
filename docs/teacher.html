@@ -126,7 +126,7 @@ function homeView(d){
     var sm = (d.summary || {})[s.id] || {}, P = s.profile || {}, c = sm.cards || {};
     var hw = hwList(s, sm).filter(function(x){ return !x.old; }), cur = hw[0];
     var lessons = lessonLabel(P, true);
-    html += '<button class="stu" data-open="' + s.id + '"><span class="stu-top"><b>' + esc(s.name) + '</b><span class="chev">›</span></span>' +
+    html += '<button class="stu" data-open="' + s.id + '"><span class="stu-top"><b>' + esc(P.fullName || s.name) + '</b><span class="chev">›</span></span>' +
       '<span class="muted">' + esc(lessons || "No lessons set") + (s.tg_user_id ? '' : ' · not connected yet') + '</span>' +
       '<span class="pills">' + payPill(s) +
       (cur ? '<span class="pill' + (hwState(cur) === "finished" || hwState(cur) === "done" ? ' done' : hwState(cur) === "open" ? ' draft' : '') + '">Homework: ' +
@@ -140,7 +140,7 @@ function homeView(d){
 function studentView(d, s){
   var sm = (d.summary || {})[s.id] || {}, c = sm.cards || {}, dy = sm.diary || {}, P = s.profile || {}, K = P.pack || {}, W = who(P);
   var base = s.link.split("#")[0], key = s.link.split("#k=")[1] || "";
-  var h = '<button class="back" data-back="1">‹ All students</button><h1>' + esc(s.name) + '</h1>' +
+  var h = '<button class="back" data-back="1">‹ All students</button><h1>' + esc(P.fullName || s.name) + '</h1>' +
     '<div class="muted">' + esc(lessonLabel(P, false)) + ' · ' + esc(s.tz) + ' · ' + (s.tg_user_id ? "Telegram connected ✓" : "Telegram not connected yet") + '</div>' +
     '<div class="links"><a href="' + esc(s.link.replace('#k=', '?preview=1#k=')) + '" target="_blank" rel="noopener"><button class="primary">Open ' + W.his + ' page</button></a>' +
     (s.telegramLink ? '<button data-copy="' + esc(s.telegramLink) + '">Copy Telegram link</button>' : '') + '<button data-copy="' + esc(s.link) + '">Copy web link</button></div>';

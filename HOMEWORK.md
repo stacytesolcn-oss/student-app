@@ -45,8 +45,9 @@ and the answers show in Teacher view → student → Homework, with "Open it the
 
 Editing a published homework: changing texts is safe; adding/removing items resets that task for a student who already started.
 
-Student names (`students.name`) are short first names only ("Jane", "Anna"): reminders say "Hi {name}!". Two rows can share a name
-(Jane Moscow `p/jane/`, Jane Munich `p/jane-munich/`); tell students apart by `page`, never by name.
+Student names (`students.name`) are short first names only ("Jane", "Anna"): students see them ("Hi {name}!").
+Stacy sees `profile.fullName` = the calendar name ("Jane Munich", "Anna Belgrade") in Teacher view and in the bot's messages to her
+(server v27). Set both when moving a student. Two rows can share a short name; tell students apart by `page`.
 
 ## 2. Weekly updates for an app student
 
@@ -95,7 +96,7 @@ Jane Munich (moved Nov 13, slug `jane-munich`, Berlin time, English page, newer 
 Anna (Belgrade) (moved Nov 16, slug `anna-belgrade`, row name "Anna", Belgrade time, English page, own template: the package
 dots are built from `pack` by `packLessons()` in the page; homework list + `pastHomework`; Mon 09:30 / Fri 10:30;
 9-lesson package from Nov 2, paid, Nov 13 cancelled (`pack.skip`) → last lesson Dec 4, next payment Dec 7; `hw1` = Girls' trip stories in the app).
-Server: Edge Function `app` v25, repo file in sync.
+Server: Edge Function `app` v27 (fullName), repo file in sync.
 
 Reminders now (all students, student time):
 - One practice message a day (homework day > pronunciation day > cards). Texts rotate; they live in `app_config` key

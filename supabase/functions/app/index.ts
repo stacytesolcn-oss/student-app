@@ -209,7 +209,7 @@ async function submit(req: Request) {
   if (!hw.completed_at) {
     await db.from("homework").update({ completed_at: new Date().toISOString() }).eq("id", hw.id);
     const teacher = (await cfg()).TEACHER_TG_ID;
-    if (teacher) await tg("sendMessage", { chat_id: teacher, text: `✅ ${s.name} finished "${hw.title}".`,
+    if (teacher) await tg("sendMessage", { chat_id: teacher, text: `✅ ${fullName(s)} finished "${hw.title}".`,
       reply_markup: await openButton("See answers", "/teacher.html") });
   }
   return send(200, { ok: true });
@@ -321,6 +321,9 @@ const tzOf = (s: any) => s.profile?.tzName || s.tz || "Europe/Moscow";
 const tzLabel = (s: any) => (tzOf(s).split("/").pop() || "Moscow").replace(/_/g, " ") + " time";
 const prettyDate = (iso: string) => new Date(iso + "T12:00:00Z").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" });
 const daysBetween = (a: string, b: string) => Math.round((Date.parse(b + "T00:00:00Z") - Date.parse(a + "T00:00:00Z")) / DAY);
+
+/* Stacy's name for a student (Teacher view, messages to Stacy): profile.fullName, e.g. "Jane Munich". Students only see the short name. */
+const fullName = (s: any) => (s.profile && s.profile.fullName) || s.name;
 
 // ---------- packages: lesson dates and automatic next payment ----------
 const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -635,7 +638,7 @@ async function testReminders(req: Request) {
   const labels: string[] = [];
   for (const m of msgs) {
     if (!m) continue;
-    await tg("sendMessage", { chat_id: c.TEACHER_TG_ID, text: `🧪 TEST (${m.kind}) — what ${s.name} would get` + (m.kind === "practice" ? ` (daily at ${hhmm(pt.at)}, ${pt.learned ? `learned from ${pt.days} days` : `default until 5 days of practice — ${pt.days} so far`})` : "") + `:\n\n${m.text}`, reply_markup: m.reply_markup });
+    await tg("sendMessage", { chat_id: c.TEACHER_TG_ID, text: `🧪 TEST (${m.kind}) — what ${fullName(s)} would get` + (m.kind === "practice" ? ` (daily at ${hhmm(pt.at)}, ${pt.learned ? `learned from ${pt.days} days` : `default until 5 days of practice — ${pt.days} so far`})` : "") + `:\n\n${m.text}`, reply_markup: m.reply_markup });
     labels.push(m.kind);
   }
   return send(200, { sent: labels });
@@ -652,7 +655,7 @@ async function markPaid(s: any) {
   withAutoPayment(P);
   await db.from("students").update({ profile: P, pay_check_at: new Date().toISOString() }).eq("id", s.id);
   const t = (await cfg()).TEACHER_TG_ID;
-  if (t) await tg("sendMessage", { chat_id: t, text: `💳 ${s.name} tapped "I've paid" — please check the payment.`,
+  if (t) await tg("sendMessage", { chat_id: t, text: `💳 ${fullName(s)} tapped "I've paid" — please check the payment.`,
     reply_markup: await openButton("Open teacher view", "/teacher.html") });
   return P;
 }
@@ -711,7 +714,7 @@ async function hwSaved(s: any, hwId: string, data: any, wasSubmitted: boolean) {
   cards.act[day] = [...new Set([...(cards.act[day] || []), "homework"])];
   await db.from("student_state").upsert({ student_id: s.id, key: "cards", data: cards, updated_at: new Date().toISOString() });
   const teacher = (await cfg()).TEACHER_TG_ID;
-  if (teacher) await tg("sendMessage", { chat_id: teacher, text: `✅ ${s.name} finished the homework "${String(data.title || hwId).slice(0, 80)}".`,
+  if (teacher) await tg("sendMessage", { chat_id: teacher, text: `✅ ${fullName(s)} finished the homework "${String(data.title || hwId).slice(0, 80)}".`,
     reply_markup: await openButton("See answers", "/teacher.html") });
 }
 
