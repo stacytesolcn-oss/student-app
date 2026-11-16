@@ -47,7 +47,7 @@ Editing a published homework: changing texts is safe; adding/removing items rese
 
 Student names (`students.name`) are short first names only ("Jane", "Anna"): students see them ("Hi {name}!").
 Stacy sees `profile.fullName` = the calendar name ("Jane Munich", "Anna Belgrade") in Teacher view and in the bot's messages to her
-(server v27). Set both when moving a student. Two rows can share a short name; tell students apart by `page`.
+(server v27). Set both when moving a student. Access key = `encode(gen_random_bytes(18),'hex')` (letters/digits only; a uuid with dashes is rejected). Two rows can share a short name; tell students apart by `page`.
 
 ## 2. Weekly updates for an app student
 
