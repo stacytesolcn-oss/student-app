@@ -92,7 +92,7 @@ const SORT = [
   {p:"exercises", a:["do"]},
   {p:"a shower", a:["take"]},
   {p:"photos", a:["take"]},
-  {p:"breakfast for my boyfriend", a:["make"]},
+  {p:"breakfast with my boyfriend", a:["make","have"]},
   {p:"breakfast at home", a:["have"]},
   {p:"breakfast at work", a:["have"]},
   {p:"breakfast in a café", a:["have"]},
@@ -109,13 +109,13 @@ const GAPS = [
   "I sometimes [do] a face [mask] in the evening.",
   "On weekdays, I don't [have] [time] to do yoga in the morning.",
   "After work, I only [have] the [energy] to scroll Instagram.",
-  "On weekends, I [make] [breakfast] for my boyfriend.",
+  "On weekends, my boyfriend and I [make] [breakfast] together.",
   "When I travel, I always [take] a lot of [photos].",
   "When I see travel photos, I [get] [itchy] [feet]."
 ];
 const GAPW = GAPS.map(s => [...s.matchAll(/\[(.+?)\]/g)].map(m => m[1]));
-const ME = ["On weekdays, I don't have time to …","On weekends, I usually / often …","I get itchy feet when I see …"];
-const BF = ["On weekdays, he doesn't have time to …","On weekends, he usually / often …","He gets itchy feet when he sees …"];
+const ME = ["What is a normal weekday like for you? What don't you have time to do?","What do you usually do on weekends?","When do you get itchy feet?"];
+const BF = ["What is a normal weekday like for him? What doesn't he have time to do?","What does he usually do on weekends?","When does he get itchy feet?"];
 
 /* ---------- state ---------- */
 const S = {
@@ -147,7 +147,7 @@ function nav(app, canNext){
 function go(n){ S.step = Math.max(0, Math.min(STEPS, n)); armed = null; render(); window.scrollTo(0,0); }
 function wordBank(open){
   const d = el("details","wb"); if (open) d.open = true;
-  d.innerHTML = '<summary>Word bank</summary>'+
+  d.innerHTML = '<summary>Need help? Open the word bank</summary>'+
     '<div class="row"><span>Phrases</span>do my morning routine · do a face mask · do yoga · do exercises · take a shower · take photos · make breakfast · have breakfast at home / at work / in a café · (don\'t) have time to … · (don\'t) have the energy to … · prefer black coffee · get itchy feet</div>'+
     '<div class="row"><span>How often</span>always · usually · often · sometimes · rarely · never</div>'+
     '<div class="row"><span>When</span>on weekdays · on weekends · in the morning · in the evening · after work · when I travel</div>';
@@ -226,10 +226,10 @@ function step2(app){
 
 /* ---------- step 3: voice ---------- */
 function step3(app){
-  app.append(head(3, "My week", ["Tell me about your week. Use the phrases from Steps 1 and 2."]));
-  const v = el("div","voice"); v.innerHTML = "<p><b>Send me a voice message in Telegram</b> (1–2 minutes). Don't read from the screen: look at the sentence starters, then speak.</p>"; app.append(v);
-  const st = el("div","stems"); ME.forEach(s => st.append(el("p","",esc(s)))); app.append(st);
-  app.append(wordBank(true));
+  app.append(head(3, "My week", ["Answer these three questions in one voice message. Use the phrases from Steps 1 and 2."]));
+  const v = el("div","voice"); v.innerHTML = "<p><b>Send me a voice message in Telegram</b> (1–2 minutes). Don't read from the screen: look at the questions, then speak.</p>"; app.append(v);
+  const st = el("div","stems"); ME.forEach((s,i) => st.append(el("p","",(i+1)+". "+esc(s)))); app.append(st);
+  app.append(wordBank(false));
   const l = el("label","chk"); const c = document.createElement("input"); c.type = "checkbox"; c.checked = S.voice;
   c.onchange = () => { S.voice = c.checked; HW.save(); };
   l.append(c, document.createTextNode("I sent my voice message")); app.append(l);
@@ -238,11 +238,11 @@ function step3(app){
 
 /* ---------- step 4: boyfriend ---------- */
 function step4(app){
-  app.append(head(4, "And your boyfriend?", ["Now write about your boyfriend. Use the same phrases.", "Remember: he <b>has</b>, he <b>doesn't</b>, he <b>gets</b>."]));
+  app.append(head(4, "And your boyfriend?", ["Now write about your boyfriend: 1–2 sentences for each question.", "Remember: he <b>has</b>, he <b>doesn't</b>, he <b>gets</b>."]));
   BF.forEach((s, i) => {
     const lb = el("label","stem", esc(s)); lb.htmlFor = "bf"+i; app.append(lb);
     const t = document.createElement("textarea"); t.id = "bf"+i; t.value = S.bf[i];
-    t.placeholder = s.replace(" …","…"); t.oninput = () => { S.bf[i] = t.value; HW.save(); };
+    t.placeholder = "He …"; t.oninput = () => { S.bf[i] = t.value; HW.save(); };
     app.append(t);
   });
   app.append(wordBank(false));
@@ -289,7 +289,7 @@ HW.start({
       else L.push(`${i+1}. ${st.ok ? "✓" : "✗"} ${line} — typed: ${st.tries.join(" → ")}${st.shown ? " (answer shown)" : ""}`); });
     L.push("", "Task 3 · My week (voice message)", S.voice ? "✓ She says she sent the voice message" : "✗ Voice message not ticked");
     L.push("", "Task 4 · My boyfriend");
-    BF.forEach((s, i) => L.push(`${s.replace(" …","")} … → ${S.bf[i].trim() || "—"}`));
+    BF.forEach((s, i) => L.push(`${s} → ${S.bf[i].trim() || "—"}`));
     return L.join("\n");
   },
   render
