@@ -89,6 +89,9 @@ Inna (moved Nov 15, slug `inna`, Moscow time, English page with an `archived` ho
 lessons Tue 11:15 / Fri 11:20; 10-lesson package from Nov 10 paid Nov 9, next payment Dec 15; hw1–hw5 are old artifact links).
 Jane Munich (moved Nov 13, slug `jane-munich`, Berlin time, English page, newer template; lessons Tue 10:20 / Thu 10:15;
 5-lesson Nov package paid, next payment Nov 19; no Stripe link yet; `hw1` built but not added to her page yet).
+Anna (Belgrade) (moved Nov 16, slug `anna-belgrade`, row name "Anna", Belgrade time, English page, own template: the package
+dots are built from `pack` by `packLessons()` in the page; homework list + `pastHomework`; Mon 09:30 / Fri 10:30;
+9-lesson package from Nov 2, paid, Nov 13 cancelled (`pack.skip`) → last lesson Dec 4, next payment Dec 7; `hw1` = Girls' trip stories in the app).
 Server: Edge Function `app` v25, repo file in sync.
 
 Reminders now (all students, student time):

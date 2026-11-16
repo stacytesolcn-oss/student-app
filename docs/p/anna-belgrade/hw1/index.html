@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Girls' trip stories</title>
+<style>
+  :root{
+    --bg:#f4f1ec; --card:#fff; --ink:#1f1d1a; --muted:#6b665e; --line:#e4ded4;
+    --accent:#d9572b; --ok:#1d8a4e; --ok-soft:#e2f4ea;
+    --bad:#c23b3b; --bad-soft:#fbe4e4; --blue:#2f5fa7; --blue-soft:#e6eefa;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+  .wrap{max-width:560px;margin:0 auto;padding:16px 14px 80px}
+  header h1{font-size:22px;margin:4px 0 2px}
+  header p{margin:0;color:var(--muted);font-size:14px}
+  .progress{display:flex;gap:6px;margin:16px 0 18px}
+  .progress span{flex:1;height:6px;border-radius:3px;background:var(--line)}
+  .progress span.on{background:var(--accent)}
+  .step{display:none}
+  .step.on{display:block}
+  .task-head{background:var(--card);border-radius:14px;padding:14px 16px;margin-bottom:12px;border:1px solid var(--line)}
+  .task-head .n{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+  .task-head h2{font-size:19px;margin:2px 0 6px}
+  .task-head p{margin:0;color:var(--muted);font-size:15px}
+  /* thread */
+  .thread{background:var(--card);border-radius:14px;border:1px solid var(--line);overflow:hidden;margin-bottom:14px}
+  .forum{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted)}
+  .forum b{color:var(--ink)}
+  .dot{width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+  .post{padding:12px 14px;border-bottom:1px solid var(--line)}
+  .post:last-child{border-bottom:0}
+  .post.reply{padding-left:26px;border-left:3px solid var(--line);margin-left:14px}
+  .meta{font-size:13px;color:var(--muted);margin-bottom:4px}
+  .meta b{color:var(--ink)}
+  .post h3{font-size:17px;margin:0 0 6px}
+  .post p{margin:0 0 8px}
+  .post p:last-child{margin-bottom:0}
+  .op-photo{display:block;width:100%;max-height:420px;object-fit:cover;border-radius:10px;margin:4px 0 6px}
+  .page-photo{border-radius:14px;max-height:300px;margin:0 0 12px}
+  .votes{font-size:12px;color:var(--muted);margin-top:6px}
+  .tg{font-weight:inherit;border-radius:5px;padding:1px 3px;margin:0 -1px;background:#ffe9a8;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+  .tap .tg{cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .tap .tg.found{background:var(--ok-soft);color:var(--ok)}
+  .tap .tg.flash-bad{background:var(--bad-soft);color:var(--bad)}
+  .tap .tg.show-right{background:var(--ok-soft);color:var(--ok);outline:2px solid var(--ok)}
+  .tap .tg.mine{background:var(--blue-soft);color:var(--blue);outline:2px solid var(--blue)}
+  .finder{position:sticky;top:0;z-index:5;background:var(--ink);color:#fff;border-radius:12px;padding:12px 14px;margin-bottom:12px;box-shadow:0 4px 14px rgba(0,0,0,.15)}
+  .finder .lab{font-size:12px;opacity:.75;text-transform:uppercase;letter-spacing:.06em}
+  .finder .def{font-size:17px;font-weight:600;margin-top:2px}
+  .finder .ffb{font-size:14px;margin-top:4px;min-height:20px}
+  .finder .ffb.ok{color:#8be0ae} .finder .ffb.no{color:#ffb3b3}
+  .mine-list{font-size:14px;margin-top:6px}
+  /* questions */
+  .q{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px}
+  .q .prompt{font-weight:600;margin-bottom:10px}
+  .num{color:var(--muted);font-weight:500;margin-right:4px}
+  .opts{display:flex;flex-direction:column;gap:8px}
+  .opts.row{flex-direction:row;flex-wrap:wrap}
+  .opt{appearance:none;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:11px 12px;font:inherit;text-align:left;cursor:pointer;color:var(--ink);min-height:44px}
+  .opts.row .opt{flex:1;text-align:center;min-width:110px}
+  .opt.correct{border-color:var(--ok);background:var(--ok-soft)}
+  .opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+  .opt:disabled{cursor:default}
+  .fb{font-size:14px;margin-top:8px;display:none}
+  .fb.show{display:block}
+  .fb.ok{color:var(--ok)} .fb.no{color:var(--bad)}
+  .sent{margin-bottom:8px}
+  .hint{font-family:ui-monospace,Menlo,monospace;color:var(--blue);font-size:15px;letter-spacing:.08em;background:var(--blue-soft);border-radius:6px;padding:2px 6px;white-space:nowrap}
+  .chunk{width:100%;font:inherit;padding:10px;border:1.5px solid var(--line);border-radius:10px}
+  .chunk.correct{border-color:var(--ok);background:var(--ok-soft)}
+  .chunk.wrong{border-color:var(--bad);background:var(--bad-soft)}
+  .right{font-size:15px;margin-top:6px;color:var(--ok);display:none}
+  .right.show{display:block}
+  .btn{appearance:none;border:0;border-radius:10px;padding:12px 16px;font:inherit;font-weight:600;cursor:pointer;min-height:44px}
+  .btn.small{padding:8px 14px;min-height:38px;font-size:15px}
+  .btn.main{background:var(--accent);color:#fff;width:100%;margin-top:8px}
+  .btn.sec{background:var(--blue-soft);color:var(--blue)}
+  .btn:disabled{opacity:.5;cursor:default}
+  .nav{display:flex;gap:10px;margin-top:16px}
+  .nav .btn{flex:1}
+  .nav .back{background:#fff;border:1.5px solid var(--line);color:var(--ink)}
+  textarea{width:100%;font:inherit;padding:10px;border:1.5px solid var(--line);border-radius:10px;min-height:64px;resize:vertical}
+  .frame{background:var(--blue-soft);color:var(--blue);border-radius:10px;padding:10px 12px;font-weight:600;font-size:15px;margin-top:10px}
+  .model{background:#faf8f4;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:15px;display:none}
+  .model.show{display:block}
+  .done-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center}
+  .done-card h2{margin:4px 0 8px}
+  .done-card ul{text-align:left;padding-left:20px;margin:10px 0}
+  .back-link{display:inline-block;color:var(--muted);text-decoration:none;font-size:15px;padding:6px 0;min-height:44px}
+  .hw-sent{background:var(--ok-soft);color:var(--ok);font-weight:700;border-radius:10px;padding:12px 14px;margin-top:10px}
+  .copied{color:var(--ok);font-size:14px;margin-top:8px;min-height:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a href="../" data-hw-back class="back-link">← My English</a>
+  <header>
+    <h1>Girls' trip stories 🧳</h1>
+    <p>Homework · 5 short tasks · about 25 minutes</p>
+  </header>
+  <div class="progress" id="progress"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+
+  <template id="threadTpl">
+    <div class="thread">
+      <div class="forum"><div class="dot">T</div><b>TripTalk</b> · Girls' Trips · posted 2 days ago</div>
+      <div class="post">
+        <div class="meta"><b>maya_runs</b> · original post</div>
+        <h3>Planning my <span class="tg" data-k="abroad">first girls' trip abroad</span> — any advice?</h3>
+        <p>Five of us are going to Lisbon in May, and none of us has done this before. Packing, food, who to go with… any tips?</p>
+        <img class="op-photo" alt="Two friends taking a selfie on a city street" src="img/trip-selfie.webp">
+        <div class="votes">▲ 214 · 6 replies</div>
+      </div>
+      <div class="post reply">
+        <div class="meta"><b>jules_b</b></div>
+        <p><span class="tg" data-k="bags">Pack your bags</span> the night before, not at 6 a.m. like I did 🙃 And check the forecast! I <span class="tg" data-k="warm">didn't pack warm clothes</span> for Edinburgh in June and <span class="tg" data-k="spentwhole">spent the whole trip</span> in my friend's hoodie.</p>
+        <p>Oh, and I always bring a few sachets of <span class="tg" data-k="icoffee">instant coffee</span>. Not amazing, but still better than most hotel coffee 😅</p>
+        <div class="votes">▲ 87</div>
+      </div>
+      <div class="post reply">
+        <div class="meta"><b>priyaaa</b></div>
+        <p>Don't plan anything for the first evening. Our flight was delayed and <span class="tg" data-k="took">the whole trip took</span> fourteen hours, door to door. We were <span class="tg" data-k="tired">too tired to explore</span>, so we grabbed some <span class="tg" data-k="inoodles">instant noodles</span> from the shop downstairs and went to bed. I <span class="tg" data-k="baby">slept like a baby</span> lol</p>
+        <div class="votes">▲ 66</div>
+      </div>
+      <div class="post reply">
+        <div class="meta"><b>lucia.eats</b></div>
+        <p>My advice: explore the city and try small local places, not only the famous ones. In Vienna we found a tiny Chinese restaurant that makes noodles <span class="tg" data-k="scratch">from scratch</span>. And the steamed buns… amazing 😍</p>
+        <div class="votes">▲ 59</div>
+      </div>
+      <div class="post reply">
+        <div class="meta"><b>carla.m</b></div>
+        <p>Go with someone who likes driving! In Tuscany my sister drove the whole way, so I was just a <span class="tg" data-k="princess">passenger princess</span> — snacks and music 👑</p>
+        <p>And don't rent an apartment. Book a hotel with a <span class="tg" data-k="buffet">breakfast buffet</span>. Nobody wants to cook or <span class="tg" data-k="dishes">do the dishes</span> on holiday 😂</p>
+        <div class="votes">▲ 53</div>
+      </div>
+      <div class="post reply">
+        <div class="meta"><b>em_k</b></div>
+        <p>Honest answer: be careful who you go with. On my last trip, one girl was on her phone the whole weekend and didn't want to do anything. I was <span class="tg" data-k="death">bored to death</span>. It was more annoying than relaxing, to be honest 😬</p>
+        <div class="votes">▲ 41</div>
+      </div>
+      <div class="post reply">
+        <div class="meta"><b>nat.travels</b></div>
+        <p>Bring an <span class="tg" data-k="icamera">instant camera</span>! We <span class="tg" data-k="blast">had a blast</span> in Croatia, and those little photos are the best souvenir.</p>
+        <p>And don't worry if you don't <span class="tg" data-k="routine">stick to your routine</span>. I <span class="tg" data-k="journal">didn't journal</span> or <span class="tg" data-k="gym">go to the gym</span> for a week, and that's OK 😅 We <span class="tg" data-k="spentmost">spent most evenings</span> on the balcony with ice cream, <span class="tg" data-k="gossip">gossiping about our exes</span>.</p>
+        <div class="votes">▲ 38</div>
+      </div>
+    </div>
+  </template>
+
+  <!-- STEP 1 -->
+  <section class="step on" data-step="0">
+    <div class="task-head">
+      <div class="n">Task 1</div>
+      <h2>Read the thread</h2>
+      <p>Maya asks for advice about her first girls' trip. Read her post and the replies. Then answer two questions.</p>
+    </div>
+    <div class="threadSlot"></div>
+    <div id="t1"></div>
+    <div class="nav"><button class="btn main next">Next →</button></div>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="step" data-step="1">
+    <div class="task-head">
+      <div class="n">Task 2</div>
+      <h2>Find the phrase</h2>
+      <p>Read the meaning in the black box. Find the <b>highlighted</b> phrase in the thread that means the same, and tap it.</p>
+    </div>
+    <div class="finder" id="finder">
+      <div class="lab" id="fLab">Find 1 / 15</div>
+      <div class="def" id="fDef"></div>
+      <div class="ffb" id="fFb"></div>
+      <div class="mine-list" id="mineList"></div>
+    </div>
+    <div class="tap" id="tapThread"></div>
+    <div class="nav"><button class="btn back prev">← Back</button><button class="btn main next">Next →</button></div>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="step" data-step="2">
+    <img class="op-photo page-photo" alt="Two friends relaxing on a hotel bed" src="img/hotel-bed.webp">
+    <div class="task-head">
+      <div class="n">Task 3</div>
+      <h2>-ed or -ing?</h2>
+      <p>More comments from the same thread. Choose the right word.<br>-ed = how a person feels · -ing = the thing that makes you feel it</p>
+    </div>
+    <div id="t3"></div>
+    <div class="nav"><button class="btn back prev">← Back</button><button class="btn main next">Next →</button></div>
+  </section>
+
+  <!-- STEP 4 -->
+  <section class="step" data-step="3">
+    <img class="op-photo page-photo" alt="Suitcases and bags with an instant camera at an airport" src="img/airport-bags.webp">
+    <div class="task-head">
+      <div class="n">Task 4</div>
+      <h2>Remember the phrases</h2>
+      <p>Don't look at the thread. For each word you see the first and last letter, and a dash for each missing letter. Type the whole phrase, then tap <b>Check</b>.</p>
+    </div>
+    <div id="t4"></div>
+    <div class="nav"><button class="btn back prev">← Back</button><button class="btn main next">Next →</button></div>
+  </section>
+
+  <!-- STEP 5 -->
+  <section class="step" data-step="4">
+    <div class="task-head">
+      <div class="n">Task 5</div>
+      <h2>Say it with <i>spend</i></h2>
+      <p>Write each sentence again with <b>spent</b>. Keep the meaning. Then tap <b>Check</b> and compare.</p>
+      <div class="frame">… spent a lot of time + ___ing …<br>… spent the whole trip / weekend / day + ___ing …</div>
+    </div>
+    <div id="t5"></div>
+    <div class="nav"><button class="btn back prev">← Back</button><button class="btn main next">Finish →</button></div>
+  </section>
+
+  <!-- STEP 6 -->
+  <section class="step" data-step="5">
+    <div class="done-card">
+      <div style="font-size:34px">🎉</div>
+      <h2>Well done!</h2>
+      <div id="summary"></div>
+      <p>When you're happy with your answers, send them to me.</p>
+      <div id="sendSlot"></div>
+    </div>
+    <div class="nav"><button class="btn back prev">← Back</button></div>
+  </section>
+</div>
+
+<script src="../../../kit/hw.js"></script>
+<script>
+(function(){
+  const T1 = [
+    {p:"What is Maya planning?", o:["a work trip to Lisbon","her first girls' trip abroad","a weekend at a spa"], a:1},
+    {p:"Who had a bad experience on her last trip?", o:["nat.travels","carla.m","em_k"], a:2}
+  ];
+  const T2 = [
+    {d:"had a lot of fun", k:"blast"},
+    {d:"slept really, really well", k:"baby"},
+    {d:"made from the beginning, not from a packet", k:"scratch"},
+    {d:"coffee you make in a second — you just add hot water", k:"icoffee"},
+    {d:"noodles you make in three minutes — you just add hot water", k:"inoodles"},
+    {d:"sat next to the driver and just relaxed", k:"princess"},
+    {d:"do your usual daily things", k:"routine"},
+    {d:"talking about our ex-boyfriends", k:"gossip"},
+    {d:"so tired that we couldn't go out and see the city", k:"tired"},
+    {d:"the time from start to finish was…", k:"took"},
+    {d:"very, very bored", k:"death"},
+    {d:"put your things into your suitcase", k:"bags"},
+    {d:"a trip to another country with your girlfriends", k:"abroad"},
+    {d:"a camera that prints the photo right away", k:"icamera"},
+    {d:"wash the plates and cups after a meal", k:"dishes"}
+  ];
+  const T3 = [
+    {p:"Our flight was delayed for five hours. It was so ___.", o:["tired","tiring"], a:1},
+    {p:"Maya is so ___ about her first trip abroad!", o:["excited","exciting"], a:0},
+    {p:"The audio guide at the museum was really ___.", o:["bored","boring"], a:1},
+    {p:"After a day at the beach, we all felt ___.", o:["relaxed","relaxing"], a:0},
+    {p:"The train announcements were only in Portuguese. So ___!", o:["confused","confusing"], a:1},
+    {p:"The hotel wifi didn't work, and Em was really ___.", o:["annoyed","annoying"], a:0},
+    {p:"Dinner in Lisbon was ___ — much cheaper than at home!", o:["surprised","surprising"], a:1},
+    {p:"Jules is ___ in old castles, so Edinburgh was perfect for her.", o:["interested","interesting"], a:0},
+    {p:"One girl talked about her job for an hour. I felt ___.", o:["bored","boring"], a:0},
+    {p:"The boat trip along the coast was so ___.", o:["relaxed","relaxing"], a:1}
+  ];
+  const T4 = [
+    {b:"Carla's sister drove, so Carla was a", c:"passenger princess", a:"the whole way."},
+    {b:"After the delay, Priya and her friends were", c:"too tired to explore", a:"."},
+    {b:"Door to door,", c:"the whole trip took", a:"fourteen hours."},
+    {b:"After fourteen hours of travelling, Priya", c:"slept like a baby", a:"."},
+    {b:"Every evening, Nat and her friends", c:"spent a lot of time gossiping", a:"about their exes."},
+    {b:"On holiday, Nat", c:"didn't stick to her routine", a:"."},
+    {b:"The tiny Chinese restaurant makes noodles", c:"from scratch", a:"."},
+    {b:"Jules", c:"packed her bags", a:"at 6 a.m."},
+    {b:"She", c:"didn't pack warm clothes", a:"for Edinburgh."},
+    {b:"Jules always brings a few sachets of", c:"instant coffee", a:"."},
+    {b:"Maya is planning her", c:"first girls' trip abroad", a:"."},
+    {b:"Nat took lots of photos with her", c:"instant camera", a:"."},
+    {b:"Nat and her friends", c:"had a blast", a:"in Croatia."},
+    {b:"One girl was on her phone all weekend, and Em was", c:"bored to death", a:"."}
+  ];
+  const T5 = [
+    {p:"Jules wore her friend's hoodie all trip.", v:["wearing"], m:"Jules spent the whole trip wearing her friend's hoodie."},
+    {p:"Nat and her friends gossiped about their exes a lot.", v:["gossiping"], m:"They spent a lot of time gossiping about their exes."},
+    {p:"One girl was on her phone all weekend.", v:[], m:"She spent the whole weekend looking at / scrolling on her phone."},
+    {p:"Carla listened to music in the car all day.", v:["listening"], m:"Carla spent the whole day listening to music in the car."},
+    {p:"Priya and her friends explored Lisbon a lot.", v:["exploring"], m:"They spent a lot of time exploring Lisbon."}
+  ];
+
+
+  /* All answers live in S (saved by the kit). Each item is answered once (like the original page). */
+  const S = {step:0, t1:T1.map(()=>null), t2:[], mine:[], t3:T3.map(()=>null), t4:T4.map(()=>({val:"",ok:null})), t5:T5.map(()=>({text:"",ok:null}))};
+  const norm = s => s.toLowerCase().replace(/[’‘`]/g,"'").replace(/[.!?,]+\s*$/,'').replace(/\s+/g,' ').trim();
+  const loose = s => norm(s).replace(/'/g,'');
+  let built = false;
+
+  function build(){
+  // ---------- thread ----------
+  const tpl = document.getElementById('threadTpl');
+  document.querySelectorAll('.threadSlot').forEach(s => s.appendChild(tpl.content.cloneNode(true)));
+  const tapWrap = document.getElementById('tapThread');
+  tapWrap.appendChild(tpl.content.cloneNode(true));
+
+  // ---------- MCQ builder ----------
+  function mcq(container, data, arr, row){
+    data.forEach((q,i)=>{
+      const d = document.createElement('div'); d.className='q';
+      d.innerHTML = `<div class="prompt"><span class="num">${i+1}.</span>${q.p}</div><div class="opts${row?' row':''}"></div><div class="fb"></div>`;
+      const opts = d.querySelector('.opts'), fb = d.querySelector('.fb');
+      const show = j => {
+        const all = opts.querySelectorAll('.opt'); all.forEach(x=>x.disabled=true);
+        const ok = j===q.a; all[j].classList.add(ok?'correct':'wrong'); if(!ok) all[q.a].classList.add('correct');
+        fb.textContent = ok ? '✓ Correct!' : '✗ Not quite — the green one is right.'; fb.className = 'fb show ' + (ok?'ok':'no');
+      };
+      q.o.forEach((t,j)=>{
+        const b = document.createElement('button'); b.className='opt'; b.textContent=t;
+        b.onclick = ()=>{ if(arr[i]!=null || HW.preview) return; arr[i] = j; show(j); HW.save(); };
+        opts.appendChild(b);
+      });
+      if(arr[i]!=null) show(arr[i]);
+      container.appendChild(d);
+    });
+  }
+  mcq(document.getElementById('t1'), T1, S.t1);
+  mcq(document.getElementById('t3'), T3, S.t3, true);
+
+  // ---------- Task 2: find in thread ----------
+  const fLab = document.getElementById('fLab'), fDef = document.getElementById('fDef'), fFb = document.getElementById('fFb'), mineList = document.getElementById('mineList');
+  let busy = false;
+  const fi = () => S.t2.length;
+  function showDef(){
+    if(fi() < T2.length){
+      fLab.textContent = `Find ${fi()+1} / ${T2.length}`;
+      fDef.textContent = T2[fi()].d;
+    } else {
+      fLab.textContent = 'Your turn';
+      fDef.textContent = 'Now tap 3 highlighted phrases that YOU used when you told me about your trip to Budapest.';
+      fFb.textContent = ''; fFb.className = 'ffb';
+      tapWrap.querySelectorAll('.tg').forEach(x=>x.classList.remove('show-right'));
+      renderMine();
+    }
+  }
+  function renderMine(){
+    mineList.textContent = S.mine.length ? 'My phrases: ' + S.mine.join(' · ') + (S.mine.length===3 ? '  ✓' : '') : '';
+  }
+  // restore
+  S.t2.forEach((x,i)=>{ const el = tapWrap.querySelector(`.tg[data-k="${T2[i].k}"]`); if(el) el.classList.add('found'); });
+  tapWrap.querySelectorAll('.tg').forEach(el=>{ if(S.mine.indexOf(el.textContent.trim())>-1) el.classList.add('mine'); });
+  tapWrap.querySelectorAll('.tg').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      if(HW.preview) return;
+      if(fi() >= T2.length){
+        const t = el.textContent.trim();
+        const idx = S.mine.indexOf(t);
+        if(idx>-1){ S.mine.splice(idx,1); el.classList.remove('mine'); }
+        else if(S.mine.length<3){ S.mine.push(t); el.classList.add('mine'); }
+        renderMine(); HW.save(); return;
+      }
+      if(busy || el.classList.contains('found')) return;
+      const target = T2[fi()].k;
+      const ok = el.dataset.k === target;
+      S.t2.push({ok, tapped: el.textContent.trim()}); HW.save();
+      busy = true;
+      if(ok){
+        el.classList.add('found');
+        fFb.textContent = '✓ Yes! “' + el.textContent.trim() + '”'; fFb.className = 'ffb ok';
+        setTimeout(()=>{ busy=false; fFb.textContent=''; showDef(); }, 900);
+      } else {
+        el.classList.add('flash-bad');
+        const right = tapWrap.querySelector(`.tg[data-k="${target}"]`);
+        right.classList.add('show-right');
+        right.scrollIntoView({behavior:'smooth', block:'center'});
+        fFb.textContent = '✗ Not this one. The right phrase is “' + right.textContent.trim() + '”.'; fFb.className = 'ffb no';
+        setTimeout(()=>{
+          el.classList.remove('flash-bad'); right.classList.remove('show-right'); right.classList.add('found');
+          busy=false; fFb.textContent=''; showDef();
+        }, 2200);
+      }
+    });
+  });
+  showDef();
+
+  // ---------- Task 4: whole chunk ----------
+  const maskWord = w => {
+    const m = w.match(/^([A-Za-z]+)(.*)$/); if(!m) return w;
+    const core = m[1], rest = m[2];
+    return (core.length<=2 ? core : core[0] + '_'.repeat(core.length-2) + core[core.length-1]) + rest;
+  };
+  const maskChunk = c => c.split(' ').map(w => w.includes("'") && !w.endsWith("'") ? w.split("'").map(maskWord).join("'") : maskWord(w)).join('  ');
+  const t4 = document.getElementById('t4');
+  T4.forEach((q,i)=>{
+    const st = S.t4[i];
+    const d = document.createElement('div'); d.className='q';
+    d.innerHTML = `<div class="sent"><span class="num">${i+1}.</span>${q.b} <span class="hint">${maskChunk(q.c)}</span> ${q.a}</div>
+      <input class="chunk" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type the whole phrase">
+      <button class="btn sec small" style="margin-top:8px">Check</button>
+      <div class="fb"></div><div class="right">✔ ${q.c}</div>`;
+    const inp = d.querySelector('input'), btn = d.querySelector('button'), fb = d.querySelector('.fb'), right = d.querySelector('.right');
+    inp.value = st.val; inp.oninput = ()=>{ st.val = inp.value; HW.save(); };
+    const show = ok => {
+      inp.disabled = true; btn.disabled = true;
+      inp.classList.add(ok?'correct':'wrong');
+      fb.textContent = ok ? '✓ Correct!' : '✗ Not quite. Here is the phrase:';
+      fb.className = 'fb show ' + (ok?'ok':'no');
+      if(!ok) right.classList.add('show');
+    };
+    btn.onclick = ()=>{
+      if(HW.preview) return;
+      if(!inp.value.trim()){ fb.textContent='Type the phrase first.'; fb.className='fb show no'; return; }
+      st.val = inp.value; st.ok = loose(inp.value) === loose(q.c); show(st.ok); HW.save();
+    };
+    if(st.ok!=null) show(st.ok);
+    t4.appendChild(d);
+  });
+
+  // ---------- Task 5: spend ----------
+  const t5 = document.getElementById('t5');
+  T5.forEach((q,i)=>{
+    const st = S.t5[i];
+    const d = document.createElement('div'); d.className='q';
+    d.innerHTML = `<div class="prompt"><span class="num">${i+1}.</span>${q.p}</div><textarea placeholder="… spent …"></textarea><button class="btn sec small" style="margin-top:8px">Check</button><div class="fb"></div><div class="model"><b>Compare:</b> ${q.m}</div>`;
+    const ta = d.querySelector('textarea'), btn = d.querySelector('button'), fb = d.querySelector('.fb'), md = d.querySelector('.model');
+    ta.value = st.text; ta.oninput = ()=>{ st.text = ta.value; HW.save(); };
+    const show = ok => {
+      ta.disabled = true; btn.disabled = true;
+      fb.textContent = ok ? '✓ Great — spent + -ing!' : '✗ Check: spent + time + verb-ing.';
+      fb.className = 'fb show ' + (ok?'ok':'no');
+      md.classList.add('show');
+    };
+    btn.onclick = ()=>{
+      if(HW.preview) return;
+      const v = norm(ta.value);
+      if(!v){ fb.textContent='Write your sentence first.'; fb.className='fb show no'; return; }
+      st.text = ta.value.trim();
+      st.ok = /\bspent\b/.test(v) && (q.v.length ? q.v.some(w=>v.includes(w)) : /\b\w+ing\b/.test(v));
+      show(st.ok); HW.save();
+    };
+    if(st.ok!=null) show(st.ok);
+    t5.appendChild(d);
+  });
+
+  // ---------- navigation ----------
+  const steps = [...document.querySelectorAll('.step')];
+  const bars = [...document.querySelectorAll('#progress span')];
+  function go(n){
+    steps.forEach(x=>x.classList.remove('on')); S.step = n; steps[n].classList.add('on');
+    bars.forEach((b,i)=>b.classList.toggle('on', i<=n));
+    if(n===5) buildSummary();
+    window.scrollTo({top:0,behavior:'smooth'});
+    HW.save();
+  }
+  document.querySelectorAll('.next').forEach(b=>b.onclick=()=>go(Math.min(S.step+1,5)));
+  document.querySelectorAll('.prev').forEach(b=>b.onclick=()=>go(Math.max(S.step-1,0)));
+  go(S.step);
+  }
+
+  // ---------- summary ----------
+  const okCount = arr => arr.filter(x=>x===true||(x&&x.ok===true)).length;
+  const t1ok = () => S.t1.filter((j,i)=>j===T1[i].a).length, t3ok = () => S.t3.filter((j,i)=>j===T3[i].a).length;
+  function lines(){
+    return [
+      `Task 1 (read): ${t1ok()}/${T1.length}`,
+      `Task 2 (find the phrase): ${okCount(S.t2)}/${T2.length}`,
+      `Task 3 (-ed / -ing): ${t3ok()}/${T3.length}`,
+      `Task 4 (remember the phrases): ${okCount(S.t4)}/${T4.length}`,
+      `Task 5 (spend): ${okCount(S.t5)}/${T5.length}`
+    ];
+  }
+  function buildSummary(){
+    document.getElementById('summary').innerHTML = '<ul>'+lines().map(l=>`<li>${l}</li>`).join('')+'</ul>';
+  }
+  function teacherSummary(){
+    const L = [], mark = ok => ok===true ? '✓' : ok===false ? '✗' : '—';
+    L.push('Task 1 · Read the thread', `${t1ok()} of ${T1.length} right`);
+    T1.forEach((q,i)=>L.push(`${i+1}. ${q.p} → ${S.t1[i]==null ? '— not answered' : mark(S.t1[i]===q.a)+' '+q.o[S.t1[i]]}`));
+    L.push('', 'Task 2 · Find the phrase', `Found ${okCount(S.t2)} of ${T2.length} on the first tap`);
+    T2.forEach((q,i)=>{ const r = S.t2[i]; L.push(`${i+1}. ${q.d} → ${r ? mark(r.ok)+' tapped “'+r.tapped+'”' : '— not done'}`); });
+    L.push('Phrases she used about her Budapest trip: ' + (S.mine.length ? S.mine.join(' · ') : '—'));
+    L.push('', 'Task 3 · -ed or -ing', `${t3ok()} of ${T3.length} right`);
+    T3.forEach((q,i)=>L.push(`${i+1}. ${q.p} → ${S.t3[i]==null ? '— not answered' : mark(S.t3[i]===q.a)+' '+q.o[S.t3[i]]}`));
+    L.push('', 'Task 4 · Remember the phrases', `${okCount(S.t4)} of ${T4.length} right`);
+    T4.forEach((q,i)=>{ const st = S.t4[i]; L.push(`${i+1}. ${q.c} → ${st.ok==null ? '— not checked'+(st.val.trim()?' (typed “'+st.val.trim()+'”)':'') : mark(st.ok)+' typed “'+st.val.trim()+'”'}`); });
+    L.push('', 'Task 5 · Say it with spend', `${okCount(S.t5)} of ${T5.length} with spent + -ing`);
+    T5.forEach((q,i)=>{ const st = S.t5[i]; L.push(`${i+1}. ${q.p} → ${st.ok==null ? '— not checked'+(st.text.trim()?' (wrote “'+st.text.trim()+'”)':'') : mark(st.ok)+' “'+st.text+'”'}`); });
+    return L.join('\n');
+  }
+
+  function render(){
+    if(!built){ build(); built = true; }
+    const slot = document.getElementById('sendSlot'); slot.innerHTML = ''; slot.appendChild(HW.sendBlock({lang:"en"}));
+    HW.save();
+  }
+
+  HW.start({
+    id:"hw1", title:"Girls' trip stories",
+    get:()=>S,
+    set:(z)=>{
+      if(!z) return;
+      if(Array.isArray(z.t1) && z.t1.length===T1.length) S.t1 = z.t1;
+      if(Array.isArray(z.t3) && z.t3.length===T3.length) S.t3 = z.t3;
+      if(Array.isArray(z.t2) && z.t2.length<=T2.length) S.t2 = z.t2;
+      if(Array.isArray(z.mine)) S.mine = z.mine.slice(0,3);
+      if(Array.isArray(z.t4) && z.t4.length===T4.length) S.t4 = z.t4;
+      if(Array.isArray(z.t5) && z.t5.length===T5.length) S.t5 = z.t5;
+      if(typeof z.step==="number" && z.step>=0 && z.step<=5) S.step = z.step;
+    },
+    summary: teacherSummary,
+    render
+  });
+})();
+</script>
+</body>
+</html>
