@@ -794,7 +794,7 @@ const PROFILE = {
   minutes: 60,
   miro: "https://miro.com/app/board/uXjVEOdL3eY=/",
   goals: "",
-  note: "Привет, Маша! Начни с домашки во вкладке Homework. Потом загляни в Word cards: это флеш-карточки, чтобы повторять слова с нашего урока.",
+  note: "Привет, Маша! Начни с домашки во вкладке Homework. Потом загляни в Word cards: это флеш-карточки, чтобы повторять слова с нашего урока. Сначала прочитай, как они работают.",
   ideas: [],
   homework: []
 };
@@ -1081,6 +1081,7 @@ function render(){
 
 /* ---------- deck ---------- */
 let queue=[], total=0, doneCount=0, scheduled=true, missed=new Set(), res={good:0,almost:0,no:0};
+setTimeout(()=>{ try{ if(!store.howSeen){ const d=document.querySelector("details.how"); if(d){ d.open=true; d.addEventListener("toggle",()=>{ if(!d.open && !store.howSeen){ store.howSeen=today(); save(); } }); } } }catch(e){} }, 0);
 function firstHow(go){
   const ol = document.querySelector("details.how ol"); const box = document.createElement("div");
   box.style.cssText = "position:fixed;inset:0;z-index:200;background:rgba(35,24,21,.55);display:flex;align-items:center;justify-content:center;padding:18px";
