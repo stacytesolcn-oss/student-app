@@ -295,7 +295,7 @@ function step6(app){
   ["Yes, very similar","A little","No, very different"].forEach(o => { const c = el("button","chip"+(S.like===o?" sel":""), o); c.onclick = () => { S.like = o; render(); }; row.append(c); });
   q.append(row); app.append(q);
   const v = el("div","voice"); v.innerHTML = "<p><b>Запиши второе голосовое в Telegram</b> (1 минута): расскажи про её день и сравни со своим. Не читай с экрана.</p>"; app.append(v);
-  const st = el("div","stems"); ["She usually …","She doesn't have time to …","Her day is similar to mine / different from mine because …"].forEach(x => st.append(el("p","",esc(x)))); app.append(st);
+  const st = el("div","stems"); ["She usually …","In the morning, she has time to …","Her day is similar to mine / different from mine because …"].forEach(x => st.append(el("p","",esc(x)))); app.append(st);
   const l = el("label","chk"); const c = document.createElement("input"); c.type = "checkbox"; c.checked = S.voice2;
   c.onchange = () => { S.voice2 = c.checked; HW.save(); };
   l.append(c, document.createTextNode("Я отправила второе голосовое")); app.append(l);
