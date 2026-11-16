@@ -285,12 +285,12 @@ function step4(app){
 /* ---------- step 6: video ---------- */
 const VIDEO = "dpPogO98IfA";
 function step6(app){
-  app.append(head(6, "Her day and your day", ["Посмотри короткое видео: день девушки, которая работает в офисе.", "Пока смотришь, думай: её день похож на твой?"]));
+  app.append(head(6, "Her day and your day", ["Посмотри короткое видео: день девушки, которая работает в офисе.", "Пока смотришь, подумай: Is her day similar to yours?"]));
   const fr = el("div",""); fr.style.cssText = "position:relative;width:100%;max-width:340px;margin:0 auto 8px;aspect-ratio:9/16;border-radius:14px;overflow:hidden;background:#000";
   fr.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/'+VIDEO+'?playsinline=1&rel=0" title="Video" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
   app.append(fr);
   const op = el("p",""); op.style.cssText = "text-align:center;margin:0 0 12px;font-size:14px"; op.innerHTML = '<a href="https://www.youtube.com/shorts/'+VIDEO+'" target="_blank" rel="noopener" style="color:var(--brown)">Не открывается? Смотри на YouTube</a>'; app.append(op);
-  const q = el("div","item"); q.append(el("div","",'<b>Её день похож на твой?</b>'));
+  const q = el("div","item"); q.append(el("div","",'<b>Is her day similar to yours?</b>'));
   const row = el("div","chips"); row.style.marginTop = "8px";
   ["Yes, very similar","A little","No, very different"].forEach(o => { const c = el("button","chip"+(S.like===o?" sel":""), o); c.onclick = () => { S.like = o; render(); }; row.append(c); });
   q.append(row); app.append(q);
