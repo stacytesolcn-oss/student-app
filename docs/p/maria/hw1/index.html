@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -76,7 +76,7 @@ textarea{width:100%;min-height:64px;font:16px/1.4 inherit;font-family:inherit;pa
   <a class="back" href="../" data-hw-back>← My English</a>
   <header>
     <h1>My week: do, take, make, have</h1>
-    <p>Phrases from our first lesson · about 25 minutes</p>
+    <p>Фразы с нашего первого урока · около 30 минут</p>
   </header>
   <div class="progress" id="progress"></div>
   <main id="app"></main>
@@ -126,40 +126,41 @@ const S = {
   gaps: GAPS.map((_, i) => ({vals: GAPW[i].map(() => ""), tries: [], ok: false, shown: false})),
   groups: Array.from({length: NG}, () => ({name: "", items: []})),
   voice: false,
+  like: "", voice2: false,
   bf: BF.map(() => "")
 };
 let armed = null; // index of the selected phrase in step 1
-const STEPS = 5; // + final screen
+const STEPS = 6; // + final screen
 const norm = s => String(s||"").toLowerCase().replace(/[’']/g,"'").replace(/[^a-z' ]/g," ").replace(/\s+/g," ").trim();
 const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
 function head(n, title, ps){
   const h = el("div","head");
-  h.append(el("div","n", n ? "Step "+n+" of "+STEPS : "Done"), el("h2","",title));
+  h.append(el("div","n", n ? "Шаг "+n+" из "+STEPS : "Готово"), el("h2","",title));
   ps.forEach(p => h.append(el("p","",p)));
   return h;
 }
 function nav(app, canNext){
   const n = el("div","nav");
-  const b = el("button","btn ghost","← Back"); b.onclick = () => go(S.step-1);
+  const b = el("button","btn ghost","← Назад"); b.onclick = () => go(S.step-1);
   b.style.visibility = S.step ? "visible" : "hidden";
-  const f = el("button","btn", S.step === STEPS-1 ? "Finish →" : "Next →"); f.onclick = () => go(S.step+1);
+  const f = el("button","btn", S.step === STEPS-1 ? "Завершить →" : "Дальше →"); f.onclick = () => go(S.step+1);
   n.append(b, f); app.append(n);
 }
 function go(n){ S.step = Math.max(0, Math.min(STEPS, n)); armed = null; armedP = null; render(); window.scrollTo(0,0); }
 function wordBank(open){
   const d = el("details","wb"); if (open) d.open = true;
-  d.innerHTML = '<summary>Need help? Open the word bank</summary>'+
-    '<div class="row"><span>Phrases</span>do my morning routine · do a face mask · do yoga · do exercises · take a shower · take photos · make breakfast · have breakfast at home / at work / in a café · (don\'t) have time to … · (don\'t) have the energy to … · prefer black coffee · get itchy feet</div>'+
-    '<div class="row"><span>How often</span>always · usually · often · sometimes · rarely · never</div>'+
-    '<div class="row"><span>When</span>on weekdays · on weekends · in the morning · in the evening · after work · when I travel</div>';
+  d.innerHTML = '<summary>Нужна помощь? Открой банк слов</summary>'+
+    '<div class="row"><span>Фразы</span>do my morning routine · do a face mask · do yoga · do exercises · take a shower · take photos · make breakfast · have breakfast at home / at work / in a café · (don\'t) have time to … · (don\'t) have the energy to … · prefer black coffee · get itchy feet</div>'+
+    '<div class="row"><span>Как часто</span>always · usually · often · sometimes · rarely · never</div>'+
+    '<div class="row"><span>Когда</span>on weekdays · on weekends · in the morning · in the evening · after work · when I travel</div>';
   return d;
 }
 
 /* ---------- step 1: sort ---------- */
 function step1(app){
-  app.append(head(1, "Which verb?", ["First look at the six verbs. Then tap a phrase below and tap the verb it goes with."]));
+  app.append(head(1, "Which verb?", ["Сначала посмотри на шесть глаголов. Потом нажми на фразу внизу и на глагол, с которым она сочетается."]));
   const boxes = el("div","boxes");
   VERBS.forEach(v => {
     const b = el("button","box"+(armed!=null?" armed":""));
@@ -168,25 +169,25 @@ function step1(app){
     boxes.append(b);
   });
   app.append(boxes);
-  const bank = el("div","bank"); bank.append(el("div","lab","Phrases"));
+  const bank = el("div","bank"); bank.append(el("div","lab","Фразы"));
   const chips = el("div","chips");
   SORT.forEach((it,i) => { if (S.sort[i].done) return;
     const c = el("button","chip"+(armed===i?" sel":""), esc(it.p)); c.onclick = () => { armed = (armed===i?null:i); render(); };
     chips.append(c); });
-  if (!chips.children.length) chips.append(el("span","", "All done! ✓"));
+  if (!chips.children.length) chips.append(el("span","", "Всё готово! ✓"));
   bank.append(chips); app.append(bank);
-  app.append(el("div","msg"+(step1.msg?(" "+step1.msg[0]):""), step1.msg?esc(step1.msg[1]):(armed!=null?"Now tap the verb.":"")));
+  app.append(el("div","msg"+(step1.msg?(" "+step1.msg[0]):""), step1.msg?esc(step1.msg[1]):(armed!=null?"Теперь нажми на глагол.":"")));
   nav(app);
 }
 function place(v){
-  if (armed == null){ step1.msg = ["bad","First tap a phrase."]; render(); return; }
+  if (armed == null){ step1.msg = ["bad","Сначала нажми на фразу."]; render(); return; }
   const i = armed, st = S.sort[i], it = SORT[i];
   st.tries.push(v);
   if (it.a.includes(v)){ st.done = true; st.v = v; armed = null;
-    step1.msg = ["ok","✓ "+v+" "+it.p+(it.a.length>1?"  (also: "+it.a.filter(x=>x!==v).join(" / ")+" "+it.p+")":"")]; }
+    step1.msg = ["ok","✓ "+v+" "+it.p+(it.a.length>1?"  (можно и так: "+it.a.filter(x=>x!==v).join(" / ")+" "+it.p+")":"")]; }
   else if (st.tries.length >= 2){ st.done = true; st.shown = true; st.v = it.a[0]; armed = null;
-    step1.msg = ["bad","It's "+it.a[0]+" "+it.p+". Remember this one!"]; }
-  else step1.msg = ["bad","Not "+v+". Try another verb."];
+    step1.msg = ["bad","Правильно: "+it.a[0]+" "+it.p+". Запомни!"]; }
+  else step1.msg = ["bad","Не "+v+". Попробуй другой глагол."];
   render();
 }
 
@@ -197,8 +198,8 @@ function ph(w){
   return w[0]+" "+"_ ".repeat(w.length-2)+w[w.length-1];
 }
 function step2(app){
-  app.append(head(2, "Fill the gaps", ["These are sentences about your week. Write the missing words: you can see the first and last letter.", "Don't remember a phrase?"]));
-  const lk = el("button","link","Look back at Step 1"); lk.onclick = () => go(0); app.querySelector(".head p:last-child").append(" ", lk);
+  app.append(head(2, "Fill the gaps", ["Это предложения про твою неделю. Впиши пропущенные слова: видны первая и последняя буквы.", "Не помнишь фразу?"]));
+  const lk = el("button","link","Вернись к шагу 1"); lk.onclick = () => go(0); app.querySelector(".head p:last-child").append(" ", lk);
   GAPS.forEach((s, i) => {
     const st = S.gaps[i], box = el("div","item"); let k = 0;
     const html = (i+1)+". "+esc(s).replace(/\[(.+?)\]/g, (_, w) => { const j = k++; const p = ph(w);
@@ -211,7 +212,7 @@ function step2(app){
       inp.oninput = () => { st.vals[j] = inp.value; HW.save(); };
     });
     if (!st.ok && !st.shown){
-      const b = el("button","btn ghost","Check"); b.style.marginTop = "6px"; b.style.minHeight = "40px"; b.style.padding = "8px 14px";
+      const b = el("button","btn ghost","Проверить"); b.style.marginTop = "6px"; b.style.minHeight = "40px"; b.style.padding = "8px 14px";
       b.onclick = () => { if (st.vals.every(v => !v.trim())) return;
         st.tries.push(st.vals.map(v => v.trim()).join(" / "));
         st.ok = st.vals.every((v, j) => norm(v) === GAPW[i][j]);
@@ -219,9 +220,9 @@ function step2(app){
         render(); };
       box.append(b);
     }
-    if (st.ok) box.append(el("div","fb ok","✓ Correct"));
-    else if (st.shown) box.append(el("div","fb bad","Here is the answer. Read the sentence out loud."));
-    else if (st.tries.length) box.append(el("div","fb bad","Not quite. Fix the red words and check again."));
+    if (st.ok) box.append(el("div","fb ok","✓ Верно"));
+    else if (st.shown) box.append(el("div","fb bad","Вот ответ. Прочитай предложение вслух."));
+    else if (st.tries.length) box.append(el("div","fb bad","Почти. Исправь красные слова и проверь ещё раз."));
     app.append(box);
   });
   nav(app);
@@ -230,11 +231,11 @@ function step2(app){
 /* ---------- step 3: my phrases (her own groups) ---------- */
 let armedP = null;
 function step3g(app){
-  app.append(head(3, "My phrases", ["Sort the phrases into 4 groups. You decide what the groups are: for example, by time of day or by place.", "Give each group a name. Tap a phrase, then tap a group. Tap a phrase in a group to take it out."]));
+  app.append(head(3, "My phrases", ["Разложи фразы на 4 группы. Какие будут группы, решаешь ты: например, по времени дня или по месту.", "Назови каждую группу. Нажми на фразу, потом на группу. Чтобы убрать фразу из группы, нажми на неё."]));
   const boxes = el("div","boxes");
   S.groups.forEach((g, gi) => {
     const b = el("div","box"+(armedP!=null?" armed":"")); b.style.cursor = "pointer";
-    const nm = document.createElement("input"); nm.value = g.name; nm.placeholder = "Group "+(gi+1)+": name it";
+    const nm = document.createElement("input"); nm.value = g.name; nm.placeholder = "Группа "+(gi+1)+": название";
     nm.style.cssText = "font:700 16px Georgia,serif;border:0;border-bottom:1.5px solid var(--sand);background:transparent;width:100%;padding:2px 0;margin-bottom:6px;color:var(--ink)";
     nm.onclick = e => e.stopPropagation(); nm.oninput = () => { g.name = nm.value; HW.save(); };
     b.append(nm);
@@ -245,32 +246,32 @@ function step3g(app){
   });
   app.append(boxes);
   const placed = new Set(S.groups.flatMap(g => g.items));
-  const bank = el("div","bank"); bank.append(el("div","lab","Phrases"));
+  const bank = el("div","bank"); bank.append(el("div","lab","Фразы"));
   const chips = el("div","chips");
   PHR.forEach((t, i) => { if (placed.has(i)) return;
     const c = el("button","chip"+(armedP===i?" sel":""), esc(t)); c.onclick = () => { armedP = (armedP===i?null:i); render(); }; chips.append(c); });
-  if (!chips.children.length) chips.append(el("span","","All sorted! ✓"));
+  if (!chips.children.length) chips.append(el("span","","Все фразы разложены! ✓"));
   bank.append(chips); app.append(bank);
   nav(app);
 }
 
 /* ---------- step 4: voice ---------- */
 function step3(app){
-  app.append(head(4, "My week", ["Answer these three questions in one voice message. Use your phrases."]));
+  app.append(head(4, "My week", ["Ответь на три вопроса в одном голосовом сообщении. Используй свои фразы."]));
   const mine = S.groups.filter(g => g.items.length);
-  if (mine.length){ const pl = el("div","wb"); pl.innerHTML = "<b>Your groups</b>" + mine.map(g => '<div class="row"><span>'+esc(g.name||"Group")+'</span>'+g.items.map(i=>esc(PHR[i])).join(" · ")+'</div>').join(""); app.append(pl); }
-  const v = el("div","voice"); v.innerHTML = "<p><b>Send me a voice message in Telegram</b> (1–2 minutes). Don't read from the screen: look at the questions, then speak.</p>"; app.append(v);
+  if (mine.length){ const pl = el("div","wb"); pl.innerHTML = "<b>Твои группы</b>" + mine.map(g => '<div class="row"><span>'+esc(g.name||"Группа")+'</span>'+g.items.map(i=>esc(PHR[i])).join(" · ")+'</div>').join(""); app.append(pl); }
+  const v = el("div","voice"); v.innerHTML = "<p><b>Запиши мне голосовое в Telegram</b> (1–2 минуты). Не читай с экрана: посмотри на вопросы и говори.</p>"; app.append(v);
   const st = el("div","stems"); ME.forEach((s,i) => st.append(el("p","",(i+1)+". "+esc(s)))); app.append(st);
   if (!mine.length) app.append(wordBank(false));
   const l = el("label","chk"); const c = document.createElement("input"); c.type = "checkbox"; c.checked = S.voice;
   c.onchange = () => { S.voice = c.checked; HW.save(); };
-  l.append(c, document.createTextNode("I sent my voice message")); app.append(l);
+  l.append(c, document.createTextNode("Я отправила голосовое")); app.append(l);
   nav(app);
 }
 
 /* ---------- step 5: boyfriend ---------- */
 function step4(app){
-  app.append(head(5, "And your boyfriend?", ["Now write about your boyfriend: 1–2 sentences for each question.", "Remember: he <b>has</b>, he <b>doesn't</b>, he <b>gets</b>."]));
+  app.append(head(5, "And your boyfriend?", ["Теперь напиши про своего парня: 1–2 предложения на каждый вопрос.", "Помни: he <b>has</b>, he <b>doesn't</b>, he <b>gets</b>."]));
   BF.forEach((s, i) => {
     const lb = el("label","stem", esc(s)); lb.htmlFor = "bf"+i; app.append(lb);
     const t = document.createElement("textarea"); t.id = "bf"+i; t.value = S.bf[i];
@@ -281,18 +282,38 @@ function step4(app){
   nav(app);
 }
 
+/* ---------- step 6: video ---------- */
+const VIDEO = "dpPogO98IfA";
+function step6(app){
+  app.append(head(6, "Her day and your day", ["Посмотри короткое видео: день девушки, которая работает в офисе.", "Пока смотришь, думай: её день похож на твой?"]));
+  const fr = el("div",""); fr.style.cssText = "position:relative;width:100%;max-width:340px;margin:0 auto 8px;aspect-ratio:9/16;border-radius:14px;overflow:hidden;background:#000";
+  fr.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/'+VIDEO+'?playsinline=1&rel=0" title="Video" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
+  app.append(fr);
+  const op = el("p",""); op.style.cssText = "text-align:center;margin:0 0 12px;font-size:14px"; op.innerHTML = '<a href="https://www.youtube.com/shorts/'+VIDEO+'" target="_blank" rel="noopener" style="color:var(--brown)">Не открывается? Смотри на YouTube</a>'; app.append(op);
+  const q = el("div","item"); q.append(el("div","",'<b>Её день похож на твой?</b>'));
+  const row = el("div","chips"); row.style.marginTop = "8px";
+  ["Yes, very similar","A little","No, very different"].forEach(o => { const c = el("button","chip"+(S.like===o?" sel":""), o); c.onclick = () => { S.like = o; render(); }; row.append(c); });
+  q.append(row); app.append(q);
+  const v = el("div","voice"); v.innerHTML = "<p><b>Запиши второе голосовое в Telegram</b> (1 минута): расскажи про её день и сравни со своим. Не читай с экрана.</p>"; app.append(v);
+  const st = el("div","stems"); ["She usually …","She doesn't have time to …","Her day is similar to mine / different from mine because …"].forEach(x => st.append(el("p","",esc(x)))); app.append(st);
+  const l = el("label","chk"); const c = document.createElement("input"); c.type = "checkbox"; c.checked = S.voice2;
+  c.onchange = () => { S.voice2 = c.checked; HW.save(); };
+  l.append(c, document.createTextNode("Я отправила второе голосовое")); app.append(l);
+  nav(app);
+}
+
 /* ---------- final ---------- */
 function stepEnd(app){
-  app.append(head(0, "Well done, Maria!", ["Check that you sent your voice message in Telegram. Then tap the button."]));
-  app.append(HW.sendBlock({lang:"en"}));
-  const n = el("div","nav"); const b = el("button","btn ghost","← Back"); b.onclick = () => go(S.step-1); n.append(b); app.append(n);
+  app.append(head(0, "Well done, Маша!", ["Проверь, что ты отправила оба голосовых в Telegram. Потом нажми на кнопку."]));
+  app.append(HW.sendBlock());
+  const n = el("div","nav"); const b = el("button","btn ghost","← Назад"); b.onclick = () => go(S.step-1); n.append(b); app.append(n);
 }
 
 function render(){
   const pr = document.getElementById("progress"); pr.innerHTML = "";
   for (let i = 0; i < STEPS; i++) pr.append(el("span", i <= S.step ? "on" : ""));
   const app = document.getElementById("app"); app.innerHTML = "";
-  [step1, step2, step3g, step3, step4, stepEnd][S.step](app);
+  [step1, step2, step3g, step3, step4, step6, stepEnd][S.step](app);
   step1.msg = null;
   HW.save();
 }
@@ -305,7 +326,7 @@ HW.start({
     if (Array.isArray(z.sort) && z.sort.length === SORT.length) S.sort = z.sort;
     if (Array.isArray(z.gaps) && z.gaps.length === GAPS.length && z.gaps.every((g, i) => g && Array.isArray(g.vals) && g.vals.length === GAPW[i].length)) S.gaps = z.gaps;
     if (Array.isArray(z.groups) && z.groups.length === NG) S.groups = z.groups.map(g => ({name: String(g.name||""), items: (g.items||[]).filter(i => i >= 0 && i < PHR.length)}));
-    S.voice = !!z.voice;
+    S.voice = !!z.voice; S.voice2 = !!z.voice2; S.like = String(z.like||"");
     if (Array.isArray(z.bf) && z.bf.length === BF.length) S.bf = z.bf.map(String);
   },
   summary: () => {
@@ -327,6 +348,7 @@ HW.start({
     L.push("", "Task 4 · My week (voice message)", S.voice ? "✓ She says she sent the voice message" : "✗ Voice message not ticked");
     L.push("", "Task 5 · My boyfriend");
     BF.forEach((s, i) => L.push(`${s} → ${S.bf[i].trim() || "—"}`));
+    L.push("", "Task 6 · Video", `Her day like mine? ${S.like || "—"}`, S.voice2 ? "✓ She says she sent the second voice message" : "✗ Second voice message not ticked");
     return L.join("\n");
   },
   render
