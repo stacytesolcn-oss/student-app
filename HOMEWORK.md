@@ -45,6 +45,9 @@ and the answers show in Teacher view → student → Homework, with "Open it the
 
 Editing a published homework: changing texts is safe; adding/removing items resets that task for a student who already started.
 
+Student names (`students.name`) are short first names only ("Jane", "Anna"): reminders say "Hi {name}!". Two rows can share a name
+(Jane Moscow `p/jane/`, Jane Munich `p/jane-munich/`); tell students apart by `page`, never by name.
+
 ## 2. Weekly updates for an app student
 
 Anything in the page's `PROFILE` → the database, never the page file (the database wins):
