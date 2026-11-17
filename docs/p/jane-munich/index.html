@@ -1258,6 +1258,8 @@ function renderWeek(){
 }
 /* ---------- homework: PROFILE.homework = [{id, title, note?, url?, due?:"YYYY-MM-DD", mins?}] ---------- */
 const hwInApp = h => !!(h && h.url && !/^https?:/.test(h.url));
+/* In-app homework opens in the same window and carries the login, so answers save to the server even if the phone opens it in another browser. */
+const hwHref = h => { if(!hwInApp(h)) return h.url; let a=""; try{ const t=sessionStorage.getItem("tgInit"); if(t) a="tgWebAppData="+encodeURIComponent(t); else { const k=localStorage.getItem("myKey"); if(k) a="k="+encodeURIComponent(k); } }catch(e){} return h.url+(a?"#"+a:""); };
 const hwDone = id => { const h = (PROFILE.homework||[]).find(h=>h.id===id)||{}; return !!h.done || (hwInApp(h) ? !!(store.hwServer||{})[id] : !!(store.hw||{})[id]); };
 const dueLabel = d => d ? "Due "+new Date(d+"T00:00:00Z").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",timeZone:"UTC"}) : "";
 function renderHomework(){
@@ -1275,7 +1277,7 @@ function renderHomework(){
   const item = h=>{ const d = hwDone(h.id);
     return '<div class="hwitem'+(d?' done':'')+'">'+(h.due?'<span class="due">'+esc(dueLabel(h.due))+(h.mins?' · '+esc(h.mins):'')+'</span>':'')+
       '<h3>'+esc(h.title)+'</h3>'+(h.note?'<p>'+esc(h.note)+'</p>':'')+
-      '<div class="foot">'+(h.url?'<a class="open" href="'+esc(h.url)+'" target="_blank" rel="noopener">Open</a>':'<span></span>')+
+      '<div class="foot">'+(h.url?'<a class="open" href="'+esc(hwHref(h))+'"'+(hwInApp(h)?'':' target="_blank" rel="noopener"')+'>Open</a>':'<span></span>')+
       (hwInApp(h) ? (d?'<span class="due">✓ Done</span>':'<span></span>') : '<button class="donebtn" data-hw="'+esc(h.id)+'" aria-pressed="'+d+'">'+(d?'✓ Done':'Mark as done')+'</button>')+'</div></div>'; };
   $("hwList").innerHTML = hw.map(item).join("") + (past.length ? '<span class="eyebrow" style="margin-top:10px">Previous homework</span>' + past.map(item).join("") : '');
   document.querySelectorAll("[data-hw]").forEach(b=>b.addEventListener("click",()=>{

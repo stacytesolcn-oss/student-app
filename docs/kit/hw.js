@@ -50,7 +50,11 @@
         n.style.cssText = "position:sticky;top:0;z-index:99;background:#fbe6d8;color:#1b2624;padding:8px 14px;font:600 14px system-ui,sans-serif"; document.body.insertBefore(n, document.body.firstChild);
         document.querySelectorAll("[data-hw-back]").forEach(function(a){ a.remove(); }); }
     };
-    if (!AUTH){ fin(local()); return; }
+    if (!AUTH){ fin(local());
+      if (!preview){ var w = document.createElement("div"); w.setAttribute("lang", "ru");
+        w.textContent = "⚠️ Ответы сейчас сохраняются только на этом телефоне, Stacy их не видит. Откройте домашку со своей страницы «My English» в Telegram.";
+        w.style.cssText = "position:sticky;top:0;z-index:99;background:#fbe6d8;color:#1b2624;padding:10px 14px;font:600 14px/1.4 system-ui,sans-serif"; document.body.insertBefore(w, document.body.firstChild); }
+      return; }
     setTimeout(function(){ fin(local()); }, 7000);
     fetch(API + "/state", { headers: { "x-auth": AUTH } }).then(function(r){ if (!r.ok) throw 0; return r.json(); })
       .then(function(j){ var sv = (j.state || {})[KEY] || null, lc = preview ? null : local(); fin(sv && lc && (lc.at || 0) > (sv.at || 0) ? lc : (sv || lc)); })
