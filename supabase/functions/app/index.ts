@@ -256,9 +256,9 @@ async function bot(req: Request) {
     if (cq && cq.data === "paid") {
       const { data: st } = await db.from("students").select("*").eq("tg_user_id", cq.from.id).maybeSingle();
       if (st) await markPaid(st);
-      await tg("answerCallbackQuery", { callback_query_id: cq.id, text: st ? "Thank you! Stacy will check it 🙂" : "" });
+      await tg("answerCallbackQuery", { callback_query_id: cq.id, text: st ? "Thank you! Payment noted ✓" : "" });
       if (st && cq.message) await tg("editMessageReplyMarkup", { chat_id: cq.message.chat.id, message_id: cq.message.message_id, reply_markup: { inline_keyboard: [] } });
-      if (st && cq.message) await tg("sendMessage", { chat_id: cq.message.chat.id, text: "Thank you! 💛 Stacy will check the payment." });
+      if (st && cq.message) await tg("sendMessage", { chat_id: cq.message.chat.id, text: "Thank you! 💛 Your payment is noted." });
       return send(200, { ok: true });
     }
     const m = upd.message;
