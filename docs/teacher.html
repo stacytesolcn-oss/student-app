@@ -92,12 +92,12 @@ function lessonLabel(P, short){
 function taughtCount(P){
   var K = P.pack || {}; if (!K.start) return null;
   var W = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], days = {}, skip = {}, add = {};
-  (P.lessons || []).forEach(function(l){ days[l.day] = 1; });
+  function has(wd, iso){ return (P.lessons || []).some(function(l){ return l.day === wd && !(l.from && iso < l.from) && !(l.until && iso > l.until); }); }
   (K.skip || []).concat(P.cancel || []).forEach(function(d){ skip[d] = 1; }); (K.add || []).forEach(function(d){ add[d] = 1; });
   var today = new Intl.DateTimeFormat("en-CA", {timeZone: P.tzName || "Europe/Moscow"}).format(new Date()), n = 0;
   for (var t = Date.parse(K.start + "T12:00:00Z"), i = 0; i < 400; i++, t += 864e5){
     var iso = new Date(t).toISOString().slice(0, 10); if (iso > today) break;
-    if ((days[W[new Date(t).getUTCDay()]] && !skip[iso]) || add[iso]) n++;
+    if ((has(W[new Date(t).getUTCDay()], iso) && !skip[iso]) || add[iso]) n++;
   }
   return Math.min(n, Number(K.size) || n);
 }
@@ -186,7 +186,10 @@ function studentView(d, s){
        '<div class="hint">' + (K.paid ? 'Paid ' + esc(K.paid) + '. ' : '') + 'Paying per lesson? Put the number of lessons paid for.</div>' +
        '<div class="links" style="align-items:center;margin-top:12px"><label class="muted">Next payment <input type="date" data-np="' + s.id + '" value="' + esc(P.nextPayment || "") + '"></label><button data-save-np="' + s.id + '">Change date</button>' +
        (P.nextPaymentManual ? '<button data-auto="' + s.id + '">Use automatic</button>' : '') + '</div>' +
-       '<div class="hint">Automatic: an unpaid package is due at its first lesson; a paid one at the first lesson after it ends.</div></details></div>';
+       '<div class="hint">Automatic: an unpaid package is due at its first lesson; a paid one at the first lesson after it ends.</div>' +
+       '<div style="margin-top:12px"><label class="muted" style="display:block">Package name on ' + W.his + ' page <input type="text" data-pkgname="' + s.id + '" value="' + esc(P.package || "") + '" placeholder="e.g. Пакет на декабрь: 8 уроков" style="width:100%"></label></div>' +
+       '<div style="margin-top:8px"><label class="muted" style="display:block">Payment link (Stripe) <input type="url" data-stripe="' + s.id + '" value="' + esc(P.stripe || "") + '" placeholder="https://buy.stripe.com/…" style="width:100%"></label></div>' +
+       '<div class="links"><button data-save-paylink="' + s.id + '">Save name & link</button></div></details></div>';
 
   // ---- Practice
   var LBL = {cards:"Cards", watch:"Watched", listen:"Listened", read:"Read", speak:"Spoke English", write:"Wrote", homework:"Homework", pron:"Pronunciation"};
@@ -228,6 +231,10 @@ function wireActions(){
     post({student_id: id, action: "profile", patch: {note: document.querySelector('[data-note="' + id + '"]').value.trim()}}).then(load).catch(function(){ b.disabled = false; b.textContent = "Error"; }); }; });
   document.querySelectorAll("[data-clear-note]").forEach(function(b){ b.onclick = function(){
     b.disabled = true; post({student_id: b.dataset.clearNote, action: "profile", patch: {note: ""}}).then(load); }; });
+  document.querySelectorAll("[data-save-paylink]").forEach(function(b){ b.onclick = function(){
+    var id = b.dataset.savePaylink; b.disabled = true;
+    post({student_id: id, action: "profile", patch: {package: document.querySelector('[data-pkgname="' + id + '"]').value.trim(),
+      stripe: document.querySelector('[data-stripe="' + id + '"]').value.trim()}}).then(function(){ b.textContent = "Saved ✓"; setTimeout(load, 600); }).catch(function(){ b.disabled = false; b.textContent = "Error"; }); }; });
   document.querySelectorAll("[data-auto]").forEach(function(b){ b.onclick = function(){
     b.disabled = true; post({student_id: b.dataset.auto, action: "profile", patch: {autoPayment: true}}).then(load); }; });
   document.querySelectorAll("[data-markpaid]").forEach(function(b){ b.onclick = function(){

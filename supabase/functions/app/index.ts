@@ -333,11 +333,12 @@ function lessonDates(P: any, start: string, count: number) {
   if (!start) return out;
   const skip = new Set([...(P.pack?.skip || []), ...(P.cancel || [])]);
   const add = new Set(P.pack?.add || []);
-  const days = new Set((P.lessons || []).map((l: any) => l.day));
+  // a lesson slot counts only between its own from / until dates (schedule changes)
+  const has = (wd: string, iso: string) => (P.lessons || []).some((l: any) => l.day === wd && !(l.from && iso < l.from) && !(l.until && iso > l.until));
   let t = Date.parse(start + "T12:00:00Z");
   for (let i = 0; i < 400 && out.length < count; i++, t += DAY) {
     const d = new Date(t), iso = d.toISOString().slice(0, 10);
-    if ((days.has(WEEKDAYS[d.getUTCDay()]) && !skip.has(iso)) || add.has(iso)) out.push(iso);
+    if ((has(WEEKDAYS[d.getUTCDay()], iso) && !skip.has(iso)) || add.has(iso)) out.push(iso);
   }
   return out;
 }
@@ -751,8 +752,9 @@ async function teacherEdit(req: Request) {
     if (!full?.pay_check_at) {
       if (P.pack && !P.pack.paid) P.pack = { ...P.pack, paid: today, ...(lessons ? { size: lessons } : {}) };
       else startNewPack(P, today, lessons);
-      P.paidClaimed = today;
     } else if (lessons && P.pack) P.pack = { ...P.pack, size: lessons };
+    P.paidConfirmed = today; // her page shows "payment received", not "Stacy will check"
+    if (P.paidClaimed === today) delete P.paidClaimed;
     P.nextPaymentManual = false;
     withAutoPayment(P);
     await db.from("students").update({ profile: P, pay_check_at: null }).eq("id", s.id);

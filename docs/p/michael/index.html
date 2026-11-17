@@ -920,7 +920,7 @@ html,body{overflow-x:clip}
   // ---- payment row: [Оплатить] [Я оплатила] under the payment text ----
   function todayIn(tz){ try{ return new Intl.DateTimeFormat("en-CA",{timeZone:tz||"Europe/Moscow"}).format(new Date()); }catch(e){ return new Date().toISOString().slice(0,10); } }
   window.__payUI = function(P){
-    var paidNow = P.paidClaimed && P.paidClaimed === todayIn(P.tzName);
+    var paidNow = P.paidClaimed && P.paidClaimed === todayIn(P.tzName) && P.paidConfirmed !== P.paidClaimed;
     [["payBar", true], ["planPay", false]].forEach(function(x){
       var el = document.getElementById(x[0]); if (!el || el.hidden) return;
       if (x[1] && el.classList.contains("pkgbar") && !el.querySelector(":scope > a")) return; // package bar with a Pay link (payment due) gets the buttons too
