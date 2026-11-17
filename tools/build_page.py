@@ -248,5 +248,16 @@ html,body{overflow-x:clip}
 i = s.index('<script type="text/plain" data-boot>')
 s = s[:i] + BOOT.replace("__EN__", "true" if EN else "false") + s[i:]
 if EN: s = s.replace('id="bootmsg">Загружаю…', 'id="bootmsg">Loading…')
+# 6) homework in the app opens in the SAME window and carries the login (Nov 17, 2026: target=_blank inside
+#    Telegram could leave the mini-app, so answers saved only on the phone — Inna's hw6). Old artifact links keep _blank.
+import re as _re
+HWHREF = ('const hwHref = h => { if(!hwInApp(h)) return h.url; let a=""; try{ const t=sessionStorage.getItem("tgInit"); '
+          'if(t) a="tgWebAppData="+encodeURIComponent(t); else { const k=localStorage.getItem("myKey"); if(k) a="k="+encodeURIComponent(k); } }catch(e){} return h.url+(a?"#"+a:""); };')
+INAPP = "const hwInApp = h => !!(h && h.url && !/^https?:/.test(h.url));"
+s, n = _re.subn(r"""'<a class="open" href="'\+esc\(h\.url\)\+'" target="_blank" rel="noopener">([^<]+)</a>'""",
+                lambda m: """'<a class="open" href="'+esc(hwHref(h))+'"'+(hwInApp(h)?'':' target="_blank" rel="noopener"')+'>""" + m.group(1) + """</a>'""", s)
+if n and "const hwHref" not in s:
+    s = s.replace(INAPP, INAPP + "\n" + HWHREF, 1) if INAPP in s else s.replace("function renderHomework", INAPP + "\n" + HWHREF + "\nfunction renderHomework", 1)
+if "esc(h.url)+'\" target=\"_blank\"" in s: print("WARNING: a homework link still opens in a new window — check it")
 open(out, "w", encoding="utf-8").write(s)
 print("ok", len(s))

@@ -114,3 +114,6 @@ Pages:
 - Teacher view: a paid package shows no "Payment received" button; "Next package paid already?" needs two taps.
 - Test a moved student with a temporary "<Name> TEST" row (remindersOff), then delete it and call /setup.
 - After every page or data change, run the page in jsdom with TODAY's date and read: next lesson, lessons done, payment, homework.
+
+## Homework links on student pages (Nov 17, 2026)
+In-app homework (`url` like `hw6/`) must open in the **same window** with the login in the hash (`hwHref(h)` on every student page; `tools/build_page.py` step 6 adds it). Never `target="_blank"` for in-app homework: inside Telegram it can leave the mini-app, the kit then has no login and answers stay on the phone only (Inna, hw6). The kit now shows a red-flag banner when it has no login.
