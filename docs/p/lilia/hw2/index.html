@@ -112,10 +112,10 @@ a{color:var(--brown)}
 <div class="wrap">
   <a class="back" href="../" data-hw-back>← My English</a>
   <div>
-    <p class="eyebrow">Homework · 19 Nov lesson · about 40 min</p>
+    <p class="eyebrow">Homework · 19 Nov lesson · about 35 min</p>
     <h1>The perfect mother</h1>
   </div>
-  <div class="how">Four parts: your summary, polished · the perfect mother · a reading · a summary and a voice message. Your answers save as you go, so you can stop and come back later.</div>
+  <div class="how">Four parts: your summary, polished · the perfect mother · a reading · a summary. Your answers save as you go, so you can stop and come back later.</div>
   <main id="app"></main>
 </div>
 <div class="sheet" id="sheet" hidden><div><b id="shW"></b><span id="shM"></span></div><button type="button" id="shX">Close</button></div>
@@ -198,7 +198,6 @@ const TALK = [
 const words = s => s.split(" ");
 const SUMSTEMS = ["The writer says that…","She thinks mothers should…","In the end, …"];
 const EXTRA = [];
-const VSTEMS = ["I've always / I've never felt…","Since I became a mum, I've noticed that…","Have you ever…? I have…"];
 
 /* ---------- state ---------- */
 const S = {
@@ -207,7 +206,7 @@ const S = {
   t2:{yn:["","",""], g:["","",""], ready:false},
   t4:QS.map(()=>({picks:[], ok:false, ans:""})),
   t5:{on:[], hl:TALK.map(()=>[])},
-  t6:[], t7:"", t8:false
+  t6:[], t7:""
 };
 let msg0 = "";
 const norm = s => String(s||"").toLowerCase().replace(/[‘’ʼ`]/g,"'").replace(/\s+/g," ").trim();
@@ -422,15 +421,6 @@ function part2(app){
   c7.append(ta7);
   part.append(c7);
 
-  /* task 8 */
-  part.append(el("h3",null,"8. Voice message: and you?"));
-  const c8=el("div","card");
-  c8.append(el("p",null,"Record a voice message for me in Telegram (1–2 minutes). Have you ever felt the pressure to be a perfect mother? What has helped you? And the “perfect” mothers on Instagram: are they real, or is it just a facade? Don't read aloud. Just talk."));
-  const rem=el("div","box"); rem.append(el("b",null,"Remember"), el("span",null,"This is about your life up to now, so try to use the present perfect: I've felt…, I've noticed…, I've never…"));
-  c8.append(rem, el("p","muted","You can start like this:"), starters(VSTEMS));
-  const b=el("button",S.t8?"on":"ghost",S.t8?"✓ I sent a voice message":"I sent a voice message"); b.type="button"; b.onclick=()=>{ S.t8=!S.t8; render(); };
-  const r=el("div","row"); r.append(b); c8.append(r);
-  part.append(c8);
   app.append(part);
   return true;
 }
@@ -482,8 +472,7 @@ function summary(){
   L.push("");
   const lo=S.t7.toLowerCase(), used=S.t6.filter(w=>lo.includes(w.toLowerCase())).concat(EXTRA.filter(([,re])=>re.test(lo)).map(x=>x[0]));
   L.push("Task 7 · Summary ("+used.length+" phrases: "+(used.join(", ")||"none")+")", S.t7.trim()||"—");
-  L.push("");
-  L.push("Task 8 · Voice message (present perfect): "+(S.t8?"she says she sent it":"not marked"));
+
   return L.join("\n");
 }
 
@@ -497,7 +486,7 @@ HW.start({
     if(Array.isArray(z.t4)&&z.t4.length===QS.length) S.t4=z.t4;
     if(z.t5&&Array.isArray(z.t5.hl)&&z.t5.hl.length===TALK.length) S.t5={on:(z.t5.on||[]).filter(i=>i<TALK.length), hl:z.t5.hl};
     if(Array.isArray(z.t6)) S.t6=z.t6.map(String).slice(0,4);
-    S.t7=String(z.t7||""); S.t8=!!z.t8;
+    S.t7=String(z.t7||"");
   },
   summary, render
 });
