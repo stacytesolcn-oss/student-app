@@ -1,6 +1,6 @@
 <!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
-<title>Trips and tours · Part 1 · Homework</title>
+<title>Trips and activities · Homework</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Raleway:wght@600;700&display=swap">
@@ -146,52 +146,51 @@ textarea.inp{min-height:150px;resize:vertical;line-height:1.5}
 <body>
 <div class="wrap">
   <a class="back" href="../" data-hw-back>← My English</a>
-  <div><p class="eyebrow">Домашнее задание · Часть 1 из 2 · до вторника, 24 ноября</p><h1>Trips and tours · Part 1</h1></div>
-  <p class="how" style="margin:0">Начните с этой части. Если будет время, сделайте и часть 2 — она отдельно на вашей странице.</p>
+  <div><p class="eyebrow">Домашнее задание · до вторника, 24 ноября</p><h1>Trips and activities</h1></div>
   <div class="tabs" id="tabs"></div>
   <main id="app" style="display:grid;gap:16px"></main>
 </div>
 <div class="pop" id="pop" hidden><div class="in"><img id="popImg" alt=""><b id="popTxt"></b><button type="button" id="popBtn">Next</button></div></div>
 <script src="../../../kit/hw.js"></script>
 <script>
-/* Inna · hw7 · Part 1 · lessons of 17 and 19 Nov 2026 */
-const HW_ID = "hw7", HW_TITLE = "Trips and tours · Part 1";
-const FINAL_NOTE = "Когда закончите часть 1, нажмите «Готово». Часть 2 — отдельная домашка на вашей странице.";
+/* Inna · hw7 · lessons of 17 and 19 Nov 2026 · activity collocations + would like to */
+const HW_ID = "hw7", HW_TITLE = "Trips and activities";
+const FINAL_NOTE = "Когда закончите все задания, нажмите «Готово».";
 const EX = [
   { num: 1, tab: "1 · Halves", name: "Sentence halves",
     how: "Соедините начало и конец. Нажмите на начало слева, потом на конец справа — получится предложение.",
     sections: [{ type: "match", items: [
       { l: "I like guided tours because I can", r: "learn interesting facts about the place and the culture." },
-      { l: "It's a good tour when we visit", r: "several popular sights." },
-      { l: "It's a good tour when the guide", r: "speaks Russian well and tells interesting stories." },
-      { l: "Ivan took a guided tour of Sagrada Família", r: "on his last trip to Barcelona." },
-      { l: "Roma and I rented bikes", r: "when we were in Kaliningrad." },
-      { l: "A driver picked Tom up", r: "at the hotel at 3 pm." }
+      { l: "Tom went on a desert safari", r: "and had dinner at a desert camp." },
+      { l: "Sam rented bikes", r: "and rode along the beach in Santa Monica." },
+      { l: "Lena went shopping in Covent Garden", r: "and saw a show in the West End." },
+      { l: "Maya visited the Grand Mosque", r: "and went to the Louvre Abu Dhabi." },
+      { l: "The next day, Tom tried", r: "skydiving. Never again!" }
     ] }] },
-  { num: 2, tab: "2 · Table", name: "Verb table",
-    how: "Нажмите на фразу, потом на глагол в таблице. Иногда подходят два глагола. Потом ответьте на 3 вопроса под таблицей.",
+  { num: 2, tab: "2 · Table", name: "Verb table + patterns",
+    how: "Нажмите на фразу, потом на глагол в таблице. Иногда подходят два глагола. Потом посмотрите на таблицу и ответьте на 3 вопроса.",
     sections: [
       { type: "sort", verbs: ["take", "go on", "go to", "go + -ing", "visit", "rent", "ride", "try", "see", "have"], items: [
-        { c: "a guided tour of the city", a: ["take"] }, { c: "a food tour", a: ["take"] }, { c: "photos", a: ["take"] },
+        { c: "a guided tour", a: ["take"] }, { c: "a food tour", a: ["take"] }, { c: "photos", a: ["take"] },
         { c: "a desert safari", a: ["go on"] }, { c: "a safari in Kenya", a: ["go on"] }, { c: "a boat trip", a: ["go on"] },
-        { c: "the Louvre", a: ["go to", "visit"] }, { c: "the beach", a: ["go to"] },
+        { c: "the beach", a: ["go to"] }, { c: "the Louvre", a: ["go to", "visit"] }, { c: "the Grand Mosque", a: ["visit", "go to"] },
         { c: "shopping", a: ["go + -ing"] }, { c: "snorkeling", a: ["go + -ing"] }, { c: "sightseeing", a: ["go + -ing"] },
-        { c: "the Grand Mosque", a: ["visit", "go to"] }, { c: "several popular sights", a: ["visit", "see"] },
         { c: "bikes", a: ["rent"] }, { c: "a car", a: ["rent"] }, { c: "a bike along the promenade", a: ["ride"] },
         { c: "skydiving", a: ["try"] }, { c: "the local food", a: ["try"] }, { c: "a show", a: ["see"] }, { c: "dinner at a desert camp", a: ["have"] }
       ] },
-      { type: "mcq", gate: true, title: "Look at your table", items: [
-        { qr: "Какой глагол мы используем с турами: a guided tour, a food tour?", a: "take", d: ["go on", "visit"] },
-        { qr: "Что идёт после go to?", a: "a place: the beach, the Louvre", d: ["a trip: a safari, a boat trip"] },
+      { type: "mcq", gate: true, title: "Patterns: look at your table", items: [
+        { qr: "Какой глагол мы используем с турами?", a: "take a guided tour, take a food tour", d: ["go a guided tour, visit a food tour"] },
+        { qr: "go on или go to?", a: "go on + a trip: a safari, a boat trip · go to + a place: the beach, the Louvre", d: ["go on + a place: the beach, the Louvre · go to + a trip: a safari, a boat trip"] },
         { qr: "go shopping, go snorkeling, go sightseeing: нужен ли to?", a: "go shopping", d: ["go to shopping"] }
       ] }
     ] },
   { num: 3, tab: "3 · What else?", name: "What else can you…?",
     how: "В каждой строке выберите ВСЕ слова, которые подходят к глаголу. Одно слово в строке лишнее. Потом нажмите Check.",
     sections: [{ type: "rows", items: [
-      { v: "rent", opts: ["bikes", "a car", "motorbikes", "along the beach"], ok: [0, 1, 2] },
-      { v: "take", opts: ["a guided tour", "a food tour", "a city tour", "a safari"], ok: [0, 1, 2] },
-      { v: "go on", opts: ["a desert safari", "a safari in Kenya", "a boat trip", "shopping"], ok: [0, 1, 2] },
+      { v: "rent", opts: ["bikes", "a car", "a scooter", "along the beach"], ok: [0, 1, 2] },
+      { v: "take", opts: ["a guided tour", "a food tour", "a walking tour", "a safari"], ok: [0, 1, 2] },
+      { v: "go on", opts: ["a desert safari", "a boat trip", "a day trip", "shopping"], ok: [0, 1, 2] },
+      { v: "go + -ing", opts: ["shopping", "snorkeling", "sightseeing", "the beach"], ok: [0, 1, 2] },
       { v: "try", opts: ["skydiving", "shrimp", "the local food", "a show"], ok: [0, 1, 2] }
     ] }] },
   { num: 4, tab: "4 · Listen", name: "Listen and say",
@@ -200,17 +199,10 @@ const EX = [
       { type: "mcq", title: "desert or dessert?", items: [
         { say: "desert", a: "desert", d: ["dessert"] }, { say: "dessert", a: "dessert", d: ["desert"] },
         { say: "a desert safari", a: "desert", d: ["dessert"] }, { say: "dessert", a: "dessert", d: ["desert"] }
-      ] },
-      { type: "mcq", title: "Which phrase do you hear?", items: [
-        { say: "We rode along the promenade.", a: "rode along the promenade", d: ["rented bikes", "rode along the beach"] },
-        { say: "He went on a desert safari.", a: "went on a desert safari", d: ["went on a safari in Kenya", "went on a boat trip"] },
-        { say: "I took a guided tour of the city.", a: "took a guided tour of the city", d: ["took a food tour", "took photos"] },
-        { say: "Tom tried skydiving.", a: "tried skydiving", d: ["tried the local food", "tried shrimp"] },
-        { say: "We visited several popular sights.", a: "visited several popular sights", d: ["saw the sights", "visited the Grand Mosque"] }
       ] }
     ],
     voice: { text: "Послушайте каждую фразу и повторите 2–3 раза. Потом запишите голосовое сообщение в Telegram с этими тремя фразами.",
-      play: ["went on a desert safari", "rode along the promenade", "took a guided tour of the city"] } },
+      play: ["went on a desert safari", "rode along the promenade", "took a guided tour"] } },
   { num: 5, tab: "5 · Your people", name: "Chunks: your people",
     how: "Вставьте фразы из рамки. Нажмите на пропуск, потом на фразу. В конце нажмите Check.",
     sections: [{ type: "fill", items: [
@@ -220,11 +212,11 @@ const EX = [
       { pre: "Roma and I ", a: "rented bikes", post: " in Kaliningrad." },
       { pre: "Then we ", a: "rode along the promenade", post: "." },
       { pre: "I ", a: "tried shrimp", post: " in Goa. They were the best!" },
-      { pre: "Ivan ", a: "took a guided tour", post: " of Sagrada Família on his last trip to Barcelona." },
+      { pre: "Ivan ", a: "took a guided tour", post: " of Sagrada Família." },
       { pre: "Ivan and Victoria ", a: "had dinner", post: " at Zorro restaurant in Dubai." }
     ] }] },
-  { num: 6, tab: "6 · Would like", name: "like / would like / interested in",
-    how: "Посмотрите на два предложения и ответьте на вопросы. Потом выберите правильный вариант и заполните карточки.",
+  { num: 6, tab: "6 · Would like", name: "like / would like to",
+    how: "Посмотрите на два предложения и ответьте на вопросы. Потом выберите правильный вариант. В конце решите, кто что хотел бы сделать.",
     sections: [
       { type: "mcq", title: "Two sentences", items: [
         { qr: "Какое предложение о том, что нравится всегда?", a: "I like guided tours.", d: ["I'd like to go on a safari in Kenya."] },
@@ -237,13 +229,12 @@ const EX = [
         { pre: "Would you like to go on a desert safari? — Yes, ", post: "", a: "I'd like to.", d: ["I like to."] },
         { pre: "Roma ", post: " riding his bike.", a: "likes", d: ["would like to"] }
       ] },
-      { type: "fill", gate: true, title: "Profile cards", how: "Нажмите на пропуск, потом на фразу из рамки.", items: [
-        { card: "Ivan", pre: "Ivan is interested in ", a: "adventure", post: "." },
-        { pre: "He would like to ", a: "go on a desert safari", post: "." },
-        { card: "Victoria", pre: "Victoria is interested in ", a: "shopping and shows", post: "." },
-        { pre: "She would like to ", a: "go shopping in London", post: "." },
-        { card: "Me", pre: "I'm interested in ", a: "art and history", post: "." },
-        { pre: "I'd like to ", a: "visit the Grand Mosque", post: " in Abu Dhabi." }
+      { type: "fill", gate: true, title: "Who would like to do what?", how: "Нажмите на пропуск, потом на фразу из рамки.", items: [
+        { pre: "Anna would like to ", a: "try skydiving", post: "." },
+        { pre: "Ivan would like to ", a: "go on a desert safari", post: " in Dubai." },
+        { pre: "Victoria would like to ", a: "go shopping", post: " in London." },
+        { pre: "I'd like to ", a: "go on a safari", post: " in Kenya." },
+        { pre: "Roma and I would like to ", a: "rent bikes", post: " in Santa Monica." }
       ] }
     ] }
 ];
@@ -452,13 +443,6 @@ $("app").addEventListener("input", ev => {
   const t = ev.target; if (!t.dataset || !t.dataset.in || HW.preview) return;
   const ss = S.ex[S.tab][+t.dataset.s], st = ss.items[+t.dataset.i];
   if (t.dataset.in === "type") st.val = t.value; else st.text = t.value;
-  const e = S.tab;
-  if (t.dataset.in === "write" && !S.fin[e] && stopDone(e)) {
-    S.fin[e] = true; renderTabs();
-    if (e < EX.length - 1 && !$("go")) { const nv = document.createElement("div"); nv.className = "nav"; nv.innerHTML = '<button type="button" id="go">Next task →</button>';
-      nv.firstChild.onclick = () => { S.tab = e + 1; render(); window.scrollTo(0, 0); }; $("app").appendChild(nv); }
-    reward();
-  }
   HW.save();
 });
 $("app").addEventListener("keydown", ev => { const t = ev.target; if (ev.key === "Enter" && t.dataset && t.dataset.in === "type") { const b = t.parentNode.querySelector("[data-act]"); if (b) b.click(); } });
