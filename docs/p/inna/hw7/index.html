@@ -1,6 +1,6 @@
 <!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
-<title>Trips, tours and activities · Homework</title>
+<title>Trips and tours · Part 1 · Homework</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Raleway:wght@600;700&display=swap">
@@ -105,162 +105,186 @@ textarea.inp{min-height:150px;resize:vertical;line-height:1.5}
 .profile b{font-size:1.1rem}
 .small{font-size:.92rem;color:var(--muted)}
 .btn.primary[disabled]{opacity:.4;cursor:default}
+.mcol{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:start}
+.mcol>div{display:grid;gap:8px}
+.mb{min-height:52px;border-radius:14px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-size:.95rem;line-height:1.3;padding:8px 10px;text-align:left;touch-action:manipulation}
+.mb.sel,.chip.sel,.gapb.sel{border-color:var(--brown);background:var(--butter-soft)}
+.made{display:grid;gap:6px}
+.made p{border-radius:12px;padding:8px 12px;font-weight:600}
+.made p.ok{background:var(--good-soft);color:var(--good)}
+.made p.no{background:var(--butter-soft);color:var(--ink)}
+.bank{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:44px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-weight:600;font-size:.98rem;padding:6px 12px;touch-action:manipulation}
+.chip.big{min-height:50px;font-size:1.02rem}
+.chip.right{border-color:var(--good);background:var(--good-soft);color:var(--good)}
+.chip.wrong{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}
+.chip[disabled]{cursor:default}
+.chip[disabled]:not(.right):not(.wrong){opacity:.3}
+.vt{display:grid;gap:6px}
+.vrow{display:grid;grid-template-columns:5.6em 1fr;gap:8px;align-items:start;text-align:left;min-height:46px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);padding:8px 10px}
+.vrow b{color:var(--brown)}
+.vrow span{display:flex;flex-wrap:wrap;gap:4px}
+.vrow i{font-style:normal;background:var(--good-soft);color:var(--good);border-radius:8px;padding:1px 7px;font-size:.92rem}
+.vrow i.shown{background:var(--butter-soft);color:var(--ink)}
+.rrow{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:10px}
+.rrow b{color:var(--brown);font-size:1.1rem}
+.item{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:12px}
+.num{display:inline-block;min-width:1.6em;color:var(--muted);font-weight:700;font-size:.9rem}
+.qr{font-weight:600}
+.sent{font-size:1.1rem}
+.gapb{display:inline-block;vertical-align:baseline;min-width:5em;min-height:36px;border:none;border-bottom:2px solid var(--muted);border-radius:6px 6px 0 0;background:transparent;color:var(--ink);font-weight:700;padding:0 6px;margin:0 2px}
+.gapb.full{background:var(--blue-soft);color:var(--blue-ink)}
+.fill.shownf{background:var(--butter-soft);color:var(--ink)}
+.row{display:flex;gap:8px}
+.row .inp{flex:1}
+.check.sm{min-height:44px;padding:0 18px;flex:0 0 auto}
+.stab{width:100%;border-collapse:collapse;font-size:.88rem;background:var(--blue-soft);color:var(--blue-ink);border-radius:12px;overflow:hidden}
+.stab th,.stab td{padding:6px;text-align:left;vertical-align:top;border:1px solid var(--bg)}
+.stab th{font-weight:700}
 </style>
 </head>
 <body>
 <div class="wrap">
   <a class="back" href="../" data-hw-back>← My English</a>
-  <div><p class="eyebrow">Домашнее задание · до вторника, 24 ноября</p><h1>Trips, tours and activities</h1></div>
-  <p class="how" style="margin:0">Домашка из двух частей. Начните с части 1. Если успеете — сделайте и часть 2; если нет, ничего страшного, сделаем её на уроке.</p>
-  <div class="parts" id="parts"></div>
+  <div><p class="eyebrow">Домашнее задание · Часть 1 из 2 · до вторника, 24 ноября</p><h1>Trips and tours · Part 1</h1></div>
+  <p class="how" style="margin:0">Начните с этой части. Если будет время, сделайте и часть 2 — она отдельно на вашей странице.</p>
   <div class="tabs" id="tabs"></div>
   <main id="app" style="display:grid;gap:16px"></main>
 </div>
 <div class="pop" id="pop" hidden><div class="in"><img id="popImg" alt=""><b id="popTxt"></b><button type="button" id="popBtn">Next</button></div></div>
 <script src="../../../kit/hw.js"></script>
 <script>
-/* Inna · hw7 · lessons of 17 and 19 Nov 2026 (trips, tours, activities) */
-const VERBS = ["take", "go on", "go to", "go + -ing", "visit", "rent", "ride", "try", "see", "have"];
+/* Inna · hw7 · Part 1 · lessons of 17 and 19 Nov 2026 */
+const HW_ID = "hw7", HW_TITLE = "Trips and tours · Part 1";
+const FINAL_NOTE = "Когда закончите часть 1, нажмите «Готово». Часть 2 — отдельная домашка на вашей странице.";
 const EX = [
-  /* ---------- PART 1 ---------- */
-  { part: 0, tab: "1 · Halves", name: "Sentence halves", type: "mcq",
-    how: "Соедините начало и конец предложения. Это фразы с наших уроков.",
-    items: [
-      { q: "I like guided tours because I can …", a: "learn interesting facts about the place and the culture.", d: ["rode along the promenade.", "on his last trip to Barcelona."] },
-      { q: "It's a good tour when we visit …", a: "several popular sights.", d: ["learn interesting facts.", "at the hotel at 3 pm."] },
-      { q: "It's a good tour when the guide …", a: "speaks Russian well and tells interesting stories.", d: ["several popular sights.", "when we were in Kaliningrad."] },
-      { q: "Ivan took a guided tour of Sagrada Família …", a: "on his last trip to Barcelona.", d: ["at the hotel at 3 pm.", "several popular sights."] },
-      { q: "Roma and I rented bikes …", a: "when we were in Kaliningrad.", d: ["on his last trip to Barcelona.", "speaks Russian well."] },
-      { q: "A driver picked Tom up …", a: "at the hotel at 3 pm.", d: ["when we were in Kaliningrad.", "along the promenade."] }
+  { num: 1, tab: "1 · Halves", name: "Sentence halves",
+    how: "Соедините начало и конец. Нажмите на начало слева, потом на конец справа — получится предложение.",
+    sections: [{ type: "match", items: [
+      { l: "I like guided tours because I can", r: "learn interesting facts about the place and the culture." },
+      { l: "It's a good tour when we visit", r: "several popular sights." },
+      { l: "It's a good tour when the guide", r: "speaks Russian well and tells interesting stories." },
+      { l: "Ivan took a guided tour of Sagrada Família", r: "on his last trip to Barcelona." },
+      { l: "Roma and I rented bikes", r: "when we were in Kaliningrad." },
+      { l: "A driver picked Tom up", r: "at the hotel at 3 pm." }
+    ] }] },
+  { num: 2, tab: "2 · Table", name: "Verb table",
+    how: "Нажмите на фразу, потом на глагол в таблице. Иногда подходят два глагола. Потом ответьте на 3 вопроса под таблицей.",
+    sections: [
+      { type: "sort", verbs: ["take", "go on", "go to", "go + -ing", "visit", "rent", "ride", "try", "see", "have"], items: [
+        { c: "a guided tour of the city", a: ["take"] }, { c: "a food tour", a: ["take"] }, { c: "photos", a: ["take"] },
+        { c: "a desert safari", a: ["go on"] }, { c: "a safari in Kenya", a: ["go on"] }, { c: "a boat trip", a: ["go on"] },
+        { c: "the Louvre", a: ["go to", "visit"] }, { c: "the beach", a: ["go to"] },
+        { c: "shopping", a: ["go + -ing"] }, { c: "snorkeling", a: ["go + -ing"] }, { c: "sightseeing", a: ["go + -ing"] },
+        { c: "the Grand Mosque", a: ["visit", "go to"] }, { c: "several popular sights", a: ["visit", "see"] },
+        { c: "bikes", a: ["rent"] }, { c: "a car", a: ["rent"] }, { c: "a bike along the promenade", a: ["ride"] },
+        { c: "skydiving", a: ["try"] }, { c: "the local food", a: ["try"] }, { c: "a show", a: ["see"] }, { c: "dinner at a desert camp", a: ["have"] }
+      ] },
+      { type: "mcq", gate: true, title: "Look at your table", items: [
+        { qr: "Какой глагол мы используем с турами: a guided tour, a food tour?", a: "take", d: ["go on", "visit"] },
+        { qr: "Что идёт после go to?", a: "a place: the beach, the Louvre", d: ["a trip: a safari, a boat trip"] },
+        { qr: "go shopping, go snorkeling, go sightseeing: нужен ли to?", a: "go shopping", d: ["go to shopping"] }
+      ] }
     ] },
-  { part: 0, tab: "2 · Table", name: "Verb table + patterns", type: "mcq", table: true,
-    how: "Какой глагол подходит? Выберите глагол — фраза встанет в таблицу. Иногда подходят два глагола. В конце — 3 вопроса про таблицу.",
-    items: [
-      { c: "a guided tour of the city", a: ["take"] }, { c: "a desert safari", a: ["go on"] }, { c: "shopping", a: ["go + -ing"] },
-      { c: "the Grand Mosque", a: ["visit", "go to"] }, { c: "bikes", a: ["rent"] }, { c: "skydiving", a: ["try"] },
-      { c: "a show", a: ["see"] }, { c: "dinner at a desert camp", a: ["have"] }, { c: "a food tour", a: ["take"] },
-      { c: "a safari in Kenya", a: ["go on"] }, { c: "the beach", a: ["go to"] }, { c: "snorkeling", a: ["go + -ing"] },
-      { c: "a bike along the promenade", a: ["ride"] }, { c: "the local food", a: ["try"] }, { c: "a boat trip", a: ["go on"] },
-      { c: "several popular sights", a: ["visit", "see"] }, { c: "a car", a: ["rent"] }, { c: "photos", a: ["take"] },
-      { c: "the Louvre", a: ["go to", "visit"] }, { c: "sightseeing", a: ["go + -ing"] },
-      { qr: "Посмотрите на таблицу. Какой глагол мы используем с турами (a guided tour, a food tour)?", a: "take", d: ["go on", "visit"] },
-      { qr: "go on или go to: что идёт после go to?", a: "место: the beach, the Louvre", d: ["поездка или активность: a safari, a boat trip"] },
-      { qr: "go shopping, go snorkeling, go sightseeing: нужен ли «to»?", a: "Нет: go shopping", d: ["Да: go to shopping"] }
-    ] },
-  { part: 0, tab: "3 · What else?", name: "What else can you…?", type: "multi",
-    how: "Выберите ВСЕ варианты, которые подходят к глаголу. Один вариант лишний.",
-    items: [
-      { q: "What can you rent?", opts: ["bikes", "a car", "motorbikes", "along the beach"], ok: [0, 1, 2] },
-      { q: "What tours can you take?", opts: ["a guided tour", "a food tour", "a city tour", "a safari"], ok: [0, 1, 2] },
-      { q: "What can you go on?", opts: ["a desert safari", "a safari in Kenya", "a boat trip", "shopping"], ok: [0, 1, 2] },
-      { q: "What can you try?", opts: ["skydiving", "shrimp", "the local food", "a show"], ok: [0, 1, 2] }
-    ] },
-  { part: 0, tab: "4 · Listen", name: "Listen and say", type: "mcq", listen: true,
-    how: "Нажмите ▶, послушайте и выберите, что вы услышали. Можно слушать сколько угодно раз. Обратите внимание: desert и dessert звучат по-разному.",
-    items: [
-      { say: "desert", a: "desert (пустыня)", d: ["dessert (десерт)"] },
-      { say: "dessert", a: "dessert (десерт)", d: ["desert (пустыня)"] },
-      { say: "a desert safari", a: "desert (пустыня)", d: ["dessert (десерт)"] },
-      { say: "dessert", a: "dessert (десерт)", d: ["desert (пустыня)"] },
-      { say: "We rode along the promenade.", a: "rode along the promenade", d: ["rented bikes", "rode along the beach"] },
-      { say: "He went on a desert safari.", a: "went on a desert safari", d: ["went on a safari in Kenya", "went on a boat trip"] },
-      { say: "I took a guided tour of the city.", a: "took a guided tour of the city", d: ["took a food tour", "took photos"] },
-      { say: "Tom tried skydiving.", a: "tried skydiving", d: ["tried the local food", "tried shrimp"] },
-      { say: "We visited several popular sights.", a: "visited several popular sights", d: ["saw the sights", "visited the Grand Mosque"] }
+  { num: 3, tab: "3 · What else?", name: "What else can you…?",
+    how: "В каждой строке выберите ВСЕ слова, которые подходят к глаголу. Одно слово в строке лишнее. Потом нажмите Check.",
+    sections: [{ type: "rows", items: [
+      { v: "rent", opts: ["bikes", "a car", "motorbikes", "along the beach"], ok: [0, 1, 2] },
+      { v: "take", opts: ["a guided tour", "a food tour", "a city tour", "a safari"], ok: [0, 1, 2] },
+      { v: "go on", opts: ["a desert safari", "a safari in Kenya", "a boat trip", "shopping"], ok: [0, 1, 2] },
+      { v: "try", opts: ["skydiving", "shrimp", "the local food", "a show"], ok: [0, 1, 2] }
+    ] }] },
+  { num: 4, tab: "4 · Listen", name: "Listen and say",
+    how: "Нажмите ▶, послушайте и выберите, что вы услышали. Можно слушать сколько угодно раз.",
+    sections: [
+      { type: "mcq", title: "desert or dessert?", items: [
+        { say: "desert", a: "desert", d: ["dessert"] }, { say: "dessert", a: "dessert", d: ["desert"] },
+        { say: "a desert safari", a: "desert", d: ["dessert"] }, { say: "dessert", a: "dessert", d: ["desert"] }
+      ] },
+      { type: "mcq", title: "Which phrase do you hear?", items: [
+        { say: "We rode along the promenade.", a: "rode along the promenade", d: ["rented bikes", "rode along the beach"] },
+        { say: "He went on a desert safari.", a: "went on a desert safari", d: ["went on a safari in Kenya", "went on a boat trip"] },
+        { say: "I took a guided tour of the city.", a: "took a guided tour of the city", d: ["took a food tour", "took photos"] },
+        { say: "Tom tried skydiving.", a: "tried skydiving", d: ["tried the local food", "tried shrimp"] },
+        { say: "We visited several popular sights.", a: "visited several popular sights", d: ["saw the sights", "visited the Grand Mosque"] }
+      ] }
     ],
-    voice: ["went on a desert safari", "rode along the promenade", "took a guided tour of the city"] },
-  { part: 0, tab: "5 · Your people", name: "Past simple: your people", type: "type",
-    how: "Напишите глагол в прошедшем времени. Это истории ваших людей с урока.",
-    items: [
-      { pre: "Victoria ", hint: "go", post: " snorkeling in the Maldives.", a: ["went"] },
-      { pre: "Ivan and his partners ", hint: "go", post: " on a desert safari in Dubai.", a: ["went"] },
-      { pre: "Victoria and her friend ", hint: "see", post: " a beautiful show in Moscow.", a: ["saw"] },
-      { pre: "Roma and I ", hint: "rent", post: " bikes in Kaliningrad.", a: ["rented"] },
-      { pre: "Then we ", hint: "ride", post: " along the promenade.", a: ["rode"] },
-      { pre: "I ", hint: "try", post: " shrimp in Goa. They were the best!", a: ["tried"] },
-      { pre: "Ivan ", hint: "take", post: " a guided tour of Sagrada Família on his last trip to Barcelona.", a: ["took"] },
-      { pre: "Ivan and Victoria ", hint: "have", post: " dinner at Zorro restaurant in Dubai.", a: ["had"] }
-    ] },
-  { part: 0, tab: "6 · Would like", name: "like / would like / interested in", type: "mcq",
-    how: "Сначала 2 вопроса: в чём разница? Потом выберите правильный вариант.",
-    items: [
-      { qr: "«I like guided tours.» Что это значит?", a: "Мне нравятся экскурсии (вообще, всегда)", d: ["Я хотела бы на экскурсию (в будущем)"] },
-      { qr: "«I'd like to go on a safari in Kenya.» Что это значит?", a: "Я хотела бы поехать (в будущем)", d: ["Мне нравится ездить (всегда)"] },
-      { pre: "Victoria ", post: " go snorkeling on her next trip.", a: "would like to", d: ["likes", "would like"] },
-      { pre: "I ", post: " guided tours because I can learn interesting facts.", a: "like", d: ["would like", "'d like to"] },
-      { pre: "Ivan ", post: " go on a desert safari next year.", a: "would like to", d: ["likes to", "will like"] },
-      { pre: "Would you like to go on a desert safari? — Yes, ", post: "", a: "I'd like to.", d: ["I like to.", "I like."] },
-      { pre: "Roma ", post: " riding his bike.", a: "likes", d: ["would like", "would like to"] },
-      { pre: "Tom is interested ", post: " adventure.", a: "in", d: ["of", "to"] },
-      { pre: "Lena is interested in ", post: ".", a: "shopping and shows", d: ["go shopping", "to go shopping"] },
-      { pre: "Sam would like to ", post: " again.", a: "ride along the beach", d: ["riding along the beach", "rode along the beach"] }
-    ] },
-  /* ---------- PART 2 ---------- */
-  { part: 1, tab: "7 · Letters", name: "Remember the words", type: "type", letters: true,
-    how: "Без подсказок из таблицы: вспомните слово. Даны первая и последняя буквы, каждая черта — одна буква.",
-    items: [
-      { pre: "I like guided tours because I can ", post: " interesting facts.", a: ["learn"] },
-      { pre: "I can learn interesting ", post: " about the place and the culture.", a: ["facts"] },
-      { pre: "It's a good tour when we visit several popular ", post: ".", a: ["sights"] },
-      { pre: "It's a good tour when the guide ", post: " interesting stories.", a: ["tells"] },
-      { pre: "Ivan ", post: " a guided tour of Sagrada Família.", a: ["took"] },
-      { pre: "He took it on his last ", post: " to Barcelona.", a: ["trip"] },
-      { pre: "Tom went on a desert ", post: ".", a: ["safari"] },
-      { pre: "Sam ", post: " bikes and rode along the beach.", a: ["rented"] },
-      { pre: "Roma and I rode along the ", post: " in Kaliningrad.", a: ["promenade"] },
-      { pre: "Victoria went ", post: " in the Maldives.", a: ["snorkeling", "snorkelling"] }
-    ] },
-  { part: 1, tab: "8 · Build", name: "Build the sentence", type: "order",
-    how: "Нажимайте на слова по порядку и соберите предложение. Потом — голосовое сообщение.",
-    items: [
-      { cue: "Ivan · Sagrada Família · Barcelona", a: "Ivan took a guided tour of Sagrada Família on his last trip to Barcelona." },
-      { cue: "Stacy · the city · Tbilisi", a: "Stacy took a guided tour of the city on her last trip to Tbilisi." },
-      { cue: "Maya · the Grand Mosque · Abu Dhabi", a: "Maya took a guided tour of the Grand Mosque on her last trip to Abu Dhabi." }
-    ],
-    voice: "Запишите голосовое сообщение в Telegram: 2 предложения по этой модели — про Ивана и про себя (ваша последняя поездка). Не читайте с экрана — говорите." },
-  { part: 1, tab: "9 · Text", name: "Text a travel agency", type: "write",
-    how: "Вы пишете турагентству для клиента. Напишите 3 коротких сообщения (по одному на каждого клиента). Используйте фразы ниже.",
-    stems: ["Hello, my name is Inna. I'm a personal assistant.", "My client is interested in … He'd / She'd like to …", "What would you recommend?"],
-    items: [
-      { who: "Ivan · Dubai", facts: "Interested in: adventure. Wants: a desert safari." },
-      { who: "Victoria · her next holiday", facts: "Interested in: snorkeling, shopping and shows." },
-      { who: "Roma and me · Los Angeles", facts: "Interested in: the beach, bikes. Want: to visit Santa Monica, rent bikes. (My son and I are interested in … We'd like to …)" }
-    ] },
-  { part: 1, tab: "10 · Voice", name: "Final voice message", type: "final",
-    how: "Запишите голосовое сообщение (около 1–2 минут) в Telegram и ответьте на 3 вопроса. Не читайте с экрана — говорите. Подсказка — только если совсем не вспоминается.",
-    qs: ["What makes a good tour?", "What did you do on your last trip?", "What would Victoria like to do on her next trip?"],
-    bank: ["It's a good tour when …", "visit several popular sights", "the guide speaks Russian well", "tells interesting stories", "learn interesting facts about the place and the culture", "went on / took / rented / rode along / tried / saw", "She'd like to …"] }
+    voice: { text: "Послушайте каждую фразу и повторите 2–3 раза. Потом запишите голосовое сообщение в Telegram с этими тремя фразами.",
+      play: ["went on a desert safari", "rode along the promenade", "took a guided tour of the city"] } },
+  { num: 5, tab: "5 · Your people", name: "Chunks: your people",
+    how: "Вставьте фразы из рамки. Нажмите на пропуск, потом на фразу. В конце нажмите Check.",
+    sections: [{ type: "fill", items: [
+      { pre: "Victoria ", a: "went snorkeling", post: " in the Maldives." },
+      { pre: "Ivan and his partners ", a: "went on a desert safari", post: " in Dubai." },
+      { pre: "Victoria and her friend ", a: "saw a beautiful show", post: " in Moscow." },
+      { pre: "Roma and I ", a: "rented bikes", post: " in Kaliningrad." },
+      { pre: "Then we ", a: "rode along the promenade", post: "." },
+      { pre: "I ", a: "tried shrimp", post: " in Goa. They were the best!" },
+      { pre: "Ivan ", a: "took a guided tour", post: " of Sagrada Família on his last trip to Barcelona." },
+      { pre: "Ivan and Victoria ", a: "had dinner", post: " at Zorro restaurant in Dubai." }
+    ] }] },
+  { num: 6, tab: "6 · Would like", name: "like / would like / interested in",
+    how: "Посмотрите на два предложения и ответьте на вопросы. Потом выберите правильный вариант и заполните карточки.",
+    sections: [
+      { type: "mcq", title: "Two sentences", items: [
+        { qr: "Какое предложение о том, что нравится всегда?", a: "I like guided tours.", d: ["I'd like to go on a safari in Kenya."] },
+        { qr: "Какое предложение о желании, о будущем?", a: "I'd like to go on a safari in Kenya.", d: ["I like guided tours."] }
+      ] },
+      { type: "mcq", gate: true, title: "Choose", items: [
+        { pre: "Victoria ", post: " go snorkeling on her next trip.", a: "would like to", d: ["likes"] },
+        { pre: "I ", post: " guided tours because I can learn interesting facts.", a: "like", d: ["'d like to"] },
+        { pre: "Ivan ", post: " go on a desert safari next year.", a: "would like to", d: ["likes to"] },
+        { pre: "Would you like to go on a desert safari? — Yes, ", post: "", a: "I'd like to.", d: ["I like to."] },
+        { pre: "Roma ", post: " riding his bike.", a: "likes", d: ["would like to"] }
+      ] },
+      { type: "fill", gate: true, title: "Profile cards", how: "Нажмите на пропуск, потом на фразу из рамки.", items: [
+        { card: "Ivan", pre: "Ivan is interested in ", a: "adventure", post: "." },
+        { pre: "He would like to ", a: "go on a desert safari", post: "." },
+        { card: "Victoria", pre: "Victoria is interested in ", a: "shopping and shows", post: "." },
+        { pre: "She would like to ", a: "go shopping in London", post: "." },
+        { card: "Me", pre: "I'm interested in ", a: "art and history", post: "." },
+        { pre: "I'd like to ", a: "visit the Grand Mosque", post: " in Abu Dhabi." }
+      ] }
+    ] }
 ];
+
 const POPS = [
   { img: "../cats/miso.webp", lines: ["Good job, Inna!", "Miso approves."] },
   { img: "../cats/nori.webp", lines: ["Keep going!", "Nori is impressed!"] },
   { img: "../cats/miso-study.webp", lines: ["Great work, Inna!", "Miso is taking notes."] },
   { img: "../cats/nori-sleep.webp", lines: ["Well done!", "Nori can relax now."] }
 ];
-
 const shuffle = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
 const $ = id => document.getElementById(id);
 const esc = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const norm = t => String(t).trim().toLowerCase().replace(/[’`]/g, "'").replace(/\s+/g, " ").replace(/[.!?,]+$/, "");
-const words = s => s.split(" ");
-
-function newState(ex) {
-  if (ex.type === "write") return ex.items.map(() => ({ text: "" }));
-  if (ex.type === "final") return [{ hint: false }];
-  return ex.items.map(it => {
-    if (ex.type === "mcq") return { order: it.c ? VERBS.slice() : shuffle([it.a].concat(it.d)), tries: [], ok: false, shown: false };
-    if (ex.type === "multi") return { order: shuffle(it.opts.map((o, k) => k)), sel: [], tries: [], ok: false, shown: false };
-    if (ex.type === "type") return { val: "", tries: [], ok: false, shown: false };
-    if (ex.type === "order") return { tiles: shuffle(words(it.a).map((w, k) => k)), picked: [], tries: [], ok: false, shown: false };
-  });
-}
-const S = { part: 0, tab: 0, pos: EX.map(() => 0), ex: EX.map(newState), fin: EX.map(() => false), voice: EX.map(() => false), pops: 0 };
-
+const it0 = () => ({ tries: [], ok: false, shown: false });
 const answered = st => st.ok || st.shown;
-const itemsDone = e => !EX[e].items || ["write", "final"].includes(EX[e].type) || S.ex[e].every(answered);
-const isRight = (it, opt) => Array.isArray(it.a) ? it.a.includes(opt) : opt === it.a;
-const ansText = it => Array.isArray(it.a) ? it.a.join(" / ") : it.a;
-const MAXT = 2;
+function attempt(st, val, right) { st.tries.push(val); if (right) st.ok = true; else if (st.tries.length >= 2) st.shown = true; }
+
+function newSec(sec) {
+  const n = (sec.items || []).length, idx = [...Array(n).keys()];
+  switch (sec.type) {
+    case "match": return { right: shuffle(idx), sel: -1, msg: "", items: idx.map(it0) };
+    case "sort": return { order: shuffle(idx), sel: -1, msg: "", items: idx.map(() => Object.assign(it0(), { v: "" })) };
+    case "rows": return { items: sec.items.map(it => Object.assign(it0(), { sel: [], order: shuffle(it.opts.map((o, k) => k)) })) };
+    case "mcq": return { items: sec.items.map(it => Object.assign(it0(), { order: shuffle([it.a].concat(it.d)) })) };
+    case "fill": return { sel: -1, msg: "", bank: shuffle(idx), items: idx.map(() => Object.assign(it0(), { val: "" })) };
+    case "type": return { items: idx.map(() => Object.assign(it0(), { val: "" })) };
+    case "subst": return { items: idx.map(() => Object.assign(it0(), { pick: sec.cols.map(() => "") })) };
+    case "write": return { items: idx.map(() => ({ text: "" })) };
+    case "final": return { hint: false };
+  }
+}
+const S = { tab: 0, ex: EX.map(x => x.sections.map(newSec)), fin: EX.map(() => false), voice: EX.map(() => false), pops: 0 };
+
+function secDone(e, s) {
+  const sec = EX[e].sections[s], ss = S.ex[e][s];
+  if (sec.type === "write") return ss.items.every(x => x.text.trim().length > 15);
+  if (sec.type === "final") return S.voice[e];
+  return ss.items.every(answered);
+}
+const stopDone = e => EX[e].sections.every((x, s) => secDone(e, s)) && (!EX[e].voice || S.voice[e]);
 
 function reward() {
   const p = POPS[S.pops % POPS.length]; S.pops++; HW.save();
@@ -268,9 +292,8 @@ function reward() {
   $("pop").hidden = false;
 }
 $("popBtn").onclick = () => { $("pop").hidden = true; };
-function finish(e) { if (!S.fin[e]) { S.fin[e] = true; render(); reward(); } }
+function act() { const e = S.tab; render(); if (!S.fin[e] && stopDone(e)) { S.fin[e] = true; render(); reward(); } }
 
-/* text to speech (phone's own English voice) */
 let VOICE = null;
 function pickVoice() { try { const vs = speechSynthesis.getVoices(); VOICE = vs.find(v => /en[-_]US/i.test(v.lang)) || vs.find(v => /^en/i.test(v.lang)) || null; } catch (e) {} }
 try { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; } catch (e) {}
@@ -279,228 +302,197 @@ function speak(t) {
   catch (e) { alert("Звук не работает в этом браузере. Откройте домашку в Chrome или Safari."); }
 }
 
-/* ---------- navigation ---------- */
-const tabsOf = p => EX.map((x, k) => k).filter(k => EX[k].part === p);
-function stopDone(e) { return S.fin[e]; }
-function renderParts() {
-  const lbl = [["Часть 1", "Тренируем · 6 заданий"], ["Часть 2", "Вспоминаем и говорим · 4"]];
-  $("parts").innerHTML = lbl.map((l, p) => '<button type="button" data-p="' + p + '" class="' + (S.part === p ? "on" : "") + '">' + l[0] +
-    (tabsOf(p).every(stopDone) ? " ✓" : "") + '<small>' + l[1] + '</small></button>').join("");
-  $("parts").querySelectorAll("button").forEach(b => b.onclick = () => { S.part = +b.dataset.p; S.tab = tabsOf(S.part)[0]; render(); });
+/* ---------- section HTML ---------- */
+const fbHTML = (st, ans) => st.ok ? '<p class="fb good" lang="en">' + (st.tries.length === 1 ? "Correct!" : "Yes, that's it!") + '</p>'
+  : st.shown ? '<p class="fb bad" lang="en">The answer is: <b>' + esc(ans) + '</b></p>'
+  : st.tries.length ? '<p class="fb bad" lang="en">Not quite. Try again.</p>' : "";
+const A = (act, e, s, i, x) => ' data-act="' + act + '" data-s="' + s + '" data-i="' + (i == null ? "" : i) + '"' + (x != null ? ' data-x="' + esc(x) + '"' : "");
+
+function secHTML(e, s) {
+  const sec = EX[e].sections[s], ss = S.ex[e][s];
+  let h = sec.title ? '<p class="eyebrow">' + esc(sec.title) + '</p>' : "";
+  if (sec.how) h += '<p class="small">' + esc(sec.how) + '</p>';
+  if (sec.gate && !EX[e].sections.slice(0, s).every((x, k) => secDone(e, k))) return '<div class="card" style="gap:8px">' + h + '<p class="small">Откроется, когда закончите задание выше.</p></div>';
+
+  if (sec.type === "match") {
+    const done = sec.items.map((it, i) => i).filter(i => answered(ss.items[i]));
+    if (done.length) h += '<div class="made" lang="en">' + done.map(i => '<p class="' + (ss.items[i].ok ? "ok" : "no") + '">' + esc(sec.items[i].l + " " + sec.items[i].r) + '</p>').join("") + '</div>';
+    if (done.length < sec.items.length) h += '<div class="mcol" lang="en"><div>' + sec.items.map((it, i) => answered(ss.items[i]) ? "" :
+        '<button type="button" class="mb' + (ss.sel === i ? " sel" : "") + '"' + A("ml", e, s, i) + '>' + esc(it.l) + '</button>').join("") +
+      '</div><div>' + ss.right.map(i => answered(ss.items[i]) ? "" : '<button type="button" class="mb"' + A("mr", e, s, i) + '>' + esc(sec.items[i].r) + '</button>').join("") + '</div></div>';
+    if (ss.msg) h += '<p class="fb bad" lang="en">' + esc(ss.msg) + '</p>';
+  }
+  if (sec.type === "sort") {
+    const left = ss.order.filter(i => !answered(ss.items[i]));
+    if (left.length) h += '<div class="bank" lang="en">' + left.map(i => '<button type="button" class="chip' + (ss.sel === i ? " sel" : "") + '"' + A("sc", e, s, i) + '>' + esc(sec.items[i].c) + '</button>').join("") + '</div>';
+    if (ss.msg) h += '<p class="fb bad" lang="en">' + esc(ss.msg) + '</p>';
+    h += '<div class="vt" lang="en">' + sec.verbs.map(v => '<button type="button" class="vrow"' + A("sv", e, s, null, v) + '><b>' + esc(v) + '</b><span>' +
+      sec.items.map((it, i) => answered(ss.items[i]) && ss.items[i].v === v ? '<i class="' + (ss.items[i].ok ? "" : "shown") + '">' + esc(it.c) + '</i>' : "").join("") + '</span></button>').join("") + '</div>';
+  }
+  if (sec.type === "rows") {
+    h += '<div class="vt" lang="en">' + sec.items.map((it, i) => { const st = ss.items[i], fin = answered(st);
+      return '<div class="rrow"><b>' + esc(it.v) + '</b><div class="bank">' + st.order.map(k => { const good = it.ok.includes(k);
+        const cls = fin ? (good ? " right" : " wrong") : (st.sel.includes(k) ? " sel" : "");
+        return '<button type="button" class="chip' + cls + '"' + A("rc", e, s, i, k) + (fin ? " disabled" : "") + '>' + (fin && !good ? "✗ " : "") + esc(it.opts[k]) + '</button>'; }).join("") + '</div>' +
+        (fin ? "" : '<button type="button" class="check sm"' + A("rk", e, s, i) + (st.sel.length ? "" : " disabled") + '>Check</button>') +
+        fbHTML(st, "the odd one out is “" + it.opts.find((o, k) => !it.ok.includes(k)) + "”") + '</div>'; }).join("") + '</div>';
+  }
+  if (sec.type === "mcq") {
+    h += sec.items.map((it, i) => { const st = ss.items[i], fin = answered(st);
+      const prompt = it.say ? '<button type="button" class="play"' + A("say", e, s, i, it.say) + '>▶ Listen</button>'
+        : it.qr ? '<p class="qr">' + esc(it.qr) + '</p>'
+        : '<p class="sent" lang="en">' + esc(it.pre) + (fin ? '<span class="fill">' + esc(it.a) + '</span>' : '<span class="gap">___</span>') + esc(it.post || "") + '</p>';
+      return '<div class="item"><span class="num">' + (i + 1) + '</span>' + prompt + '<div class="bank" lang="en">' + st.order.map((o, k) => {
+        const tried = st.tries.includes(o), cls = (o === it.a && fin) ? " right" : (tried ? " wrong" : "");
+        return '<button type="button" class="chip big' + cls + '"' + A("mo", e, s, i, k) + (fin || tried ? " disabled" : "") + '>' + esc(o) + '</button>'; }).join("") + '</div>' + fbHTML(st, it.a) + '</div>'; }).join("");
+  }
+  if (sec.type === "fill") {
+    const used = new Set(ss.items.map((st, i) => answered(st) ? sec.items[i].a : st.val).filter(Boolean));
+    h += '<div class="bank" lang="en">' + ss.bank.map(k => '<button type="button" class="chip"' + A("fb", e, s, k) + (used.has(sec.items[k].a) ? " disabled" : "") + '>' + esc(sec.items[k].a) + '</button>').join("") + '</div>';
+    h += sec.items.map((it, i) => { const st = ss.items[i], fin = answered(st);
+      const gap = fin ? '<span class="fill' + (st.ok ? "" : " shownf") + '">' + esc(it.a) + '</span>'
+        : '<button type="button" class="gapb' + (ss.sel === i ? " sel" : "") + (st.val ? " full" : "") + '"' + A("fg", e, s, i) + '>' + (st.val ? esc(st.val) : "&nbsp;") + '</button>';
+      return '<div class="item">' + (it.card ? '<div class="profile" lang="en"><b>' + esc(it.card) + '</b></div>' : "") + '<p class="sent" lang="en"><span class="num">' + (i + 1) + '</span>' + esc(it.pre) + gap + esc(it.post || "") + '</p>' +
+        (st.tries.length && !st.ok && !st.shown ? '<p class="fb bad" lang="en">Not quite. Try again.</p>' : "") + '</div>'; }).join("");
+    if (!ss.items.every(answered)) h += '<button type="button" class="check"' + A("fk", e, s) + (ss.items.some(st => !answered(st) && st.val) ? "" : " disabled") + '>Check</button>';
+    if (ss.msg) h += '<p class="fb ' + (/^All/.test(ss.msg) ? "good" : "bad") + '" lang="en">' + esc(ss.msg) + '</p>';
+  }
+  if (sec.type === "type") {
+    const hintw = w => w.length <= 2 ? w : w[0] + " " + "_ ".repeat(w.length - 2) + w[w.length - 1];
+    h += sec.items.map((it, i) => { const st = ss.items[i], fin = answered(st);
+      return '<div class="item"><p class="sent" lang="en"><span class="num">' + (i + 1) + '</span>' + esc(it.pre) +
+        (fin ? '<span class="fill">' + esc(st.ok ? st.tries[st.tries.length - 1] : it.a[0]) + '</span>' : '<span class="hintw">' + esc(hintw(it.a[0])) + '</span>') + esc(it.post) + '</p>' +
+        (fin ? "" : '<div class="row"><input class="inp" lang="en" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Type the word" data-in="type" data-s="' + s + '" data-i="' + i + '" value="' + esc(st.val) + '">' +
+          '<button type="button" class="check sm"' + A("tk", e, s, i) + '>Check</button></div>') + fbHTML(st, it.a[0]) + '</div>'; }).join("");
+  }
+  if (sec.type === "subst") {
+    h += '<table class="stab" lang="en"><tr>' + sec.cols.map((c, k) => '<th>' + esc(sec.heads[k]) + '</th>').join("") + '</tr><tr>' +
+      sec.cols.map(c => '<td>' + c.map(o => esc(o)).join("<br>") + '</td>').join("") + '</tr></table>';
+    h += sec.items.map((it, i) => { const st = ss.items[i], fin = answered(st);
+      const sentence = sec.frame(fin && !st.ok ? it.ans : st.pick);
+      return '<div class="item"><div class="profile" lang="en"><b>' + esc(it.cue) + '</b></div>' +
+        (fin ? "" : sec.cols.map((c, k) => '<div class="bank" lang="en">' + c.map(o => '<button type="button" class="chip' + (st.pick[k] === o ? " sel" : "") + '"' + A("sp", e, s, i, k + "|" + o) + '>' + esc(o) + '</button>').join("") + '</div>').join("")) +
+        '<p class="line" lang="en">' + (fin ? '<span class="fill">' + esc(sentence) + '</span>' : esc(sentence)) + '</p>' +
+        (fin ? "" : '<button type="button" class="check"' + A("sk", e, s, i) + (st.pick.every(Boolean) ? "" : " disabled") + '>Check</button>') + fbHTML(st, sec.frame(it.ans)) + '</div>'; }).join("");
+  }
+  if (sec.type === "write") {
+    h += '<div class="stems" lang="en"><b>You can use</b>' + sec.stems.map(x => '<span>' + esc(x) + '</span>').join("") + '</div>';
+    h += sec.items.map((it, i) => '<div class="item"><div class="profile" lang="en"><b>' + esc(it.who) + '</b><span>' + esc(it.facts) + '</span></div>' +
+      '<textarea class="inp" lang="en" data-in="write" data-s="' + s + '" data-i="' + i + '" placeholder="Hello, my name is Inna…">' + esc(ss.items[i].text) + '</textarea></div>').join("");
+  }
+  if (sec.type === "final") {
+    h += '<ol class="qs" lang="en">' + sec.qs.map(q => '<li>' + esc(q) + '</li>').join("") + '</ol>' +
+      (ss.hint ? '<div class="stems" lang="en"><b>Word bank</b>' + sec.bank.map(x => '<span>' + esc(x) + '</span>').join("") + '</div>'
+        : '<button type="button" class="check"' + A("hint", e, s) + '>Показать подсказку</button>');
+  }
+  return '<div class="card">' + h + '</div>';
 }
+
+function voiceHTML(e) {
+  const v = EX[e].voice; if (!v) return "";
+  return '<div class="card" style="gap:10px"><p class="eyebrow">Voice message</p><p class="small">' + esc(v.text) + '</p>' +
+    (v.play ? v.play.map(t => '<button type="button" class="play sm"' + A("say", e, 0, null, t) + ' lang="en">▶ ' + esc(t) + '</button>').join("") : "") +
+    (v.stems ? '<div class="stems" lang="en"><b>Model</b>' + v.stems.map(x => '<span>' + esc(x) + '</span>').join("") + '</div>' : "") +
+    '<button type="button" class="tick' + (S.voice[e] ? " on" : "") + '"' + A("vt", e, 0) + '>' + (S.voice[e] ? "✓ Голосовое отправлено" : "Я отправила голосовое") + '</button></div>';
+}
+
 function renderTabs() {
-  $("tabs").innerHTML = tabsOf(S.part).map(k => '<button type="button" data-t="' + k + '" class="' + (S.tab === k ? "on " : "") + (S.fin[k] ? "fin" : "") + '">' +
-    EX[k].tab + (S.fin[k] ? " ✓" : "") + '</button>').join("");
-  $("tabs").querySelectorAll("button").forEach(b => b.onclick = () => { S.tab = +b.dataset.t; render(); });
+  $("tabs").innerHTML = EX.map((x, k) => '<button type="button" data-t="' + k + '" class="' + (S.tab === k ? "on " : "") + (S.fin[k] ? "fin" : "") + '">' + x.tab + (S.fin[k] ? " ✓" : "") + '</button>').join("");
+  $("tabs").querySelectorAll("button").forEach(b => b.onclick = () => { S.tab = +b.dataset.t; render(); window.scrollTo(0, 0); });
 }
-function goNextStop(e) {
-  const nx = e + 1;
-  if (nx < EX.length) { S.tab = nx; S.part = EX[nx].part; }
-  render(); window.scrollTo(0, 0);
-}
-
-/* ---------- shared pieces ---------- */
-function progress(pos, n) { return '<div style="display:grid;gap:6px"><span class="count">' + (pos + 1) + ' / ' + n + '</span><div class="bar"><i style="width:' + Math.round(pos / n * 100) + '%"></i></div></div>'; }
-function feedback(st, it, okMsg) {
-  if (st.ok) return '<p class="fb good" lang="en">' + (okMsg || (st.tries.length === 1 ? "Correct!" : "Yes, that's it!")) + '</p>';
-  if (st.shown) return '<p class="fb bad" lang="en">Not quite. The answer is: <b>' + esc(ansText(it)) + '</b></p>';
-  if (st.tries.length) return '<p class="fb bad" lang="en">Not quite. Try again.</p>';
-  return "";
-}
-function navHTML(pos, n, fin) {
-  return '<div class="nav"><button type="button" class="ghost" id="prev"' + (pos ? "" : " disabled") + '>←</button>' +
-    '<button type="button" id="nx"' + (fin ? "" : " disabled") + '>' + (pos === n - 1 ? "Finish" : "Next →") + '</button></div>';
-}
-function wireNav(e, pos) {
-  $("prev").onclick = () => { if (S.pos[e] > 0) { S.pos[e]--; render(); } };
-  $("nx").onclick = () => { const n = EX[e].items.length; if (S.pos[e] < n - 1) { S.pos[e]++; render(); } else { S.pos[e] = n; if (!EX[e].voice) finish(e); else render(); } };
-}
-function firstTime(e) { return S.ex[e].filter(st => st.ok && st.tries.length === 1).length; }
-function doneCard(e, extra) {
-  const n = EX[e].items.length, last = e === EX.length - 1;
-  return '<div class="card done"><b>Finished!</b><p>' + firstTime(e) + ' of ' + n + ' right first time.</p>' + (extra || "") +
-    '<div class="nav"><button type="button" class="ghost" id="again">Look again</button>' +
-    (last ? "" : '<button type="button" id="go">' + (e === 5 ? "Part 2 →" : "Next task →") + '</button>') + '</div></div>';
-}
-function wireDone(e) { $("again").onclick = () => { S.pos[e] = 0; render(); }; if ($("go")) $("go").onclick = () => goNextStop(e); }
-function sendHTML(e) {
-  if (e === 5) return '<div class="card" style="gap:10px"><p class="small">Часть 1 готова? Если на часть 2 нет времени — отправьте сейчас, часть 2 сделаем на уроке. Если сделаете часть 2 потом, ответы всё равно сохранятся.</p><div id="send"></div></div>';
-  return '<div id="send"></div>';
-}
-function mountSend() { const box = $("send"); if (!box) return; const sb = HW.sendBlock(); if (sb.className === "hw-sent") sb.textContent = "Отправлено ✓ Stacy видит ваши ответы."; box.appendChild(sb); }
-
-/* ---------- verb table ---------- */
-function tableHTML(e) {
-  const ex = EX[e], rows = VERBS.map(v => ({ v, c: [] }));
-  ex.items.forEach((it, i) => { if (!it.c) return; const st = S.ex[e][i]; if (!answered(st)) return;
-    const v = st.ok ? st.tries[st.tries.length - 1] : it.a[0]; rows[VERBS.indexOf(v)].c.push(it.c); });
-  return '<div class="card" style="gap:8px"><p class="eyebrow">Your table</p><table class="vtab" lang="en">' +
-    rows.map(r => '<tr><td>' + esc(r.v) + '</td><td class="chips">' + r.c.map(c => '<span>' + esc(c) + '</span>').join("") + '</td></tr>').join("") + '</table></div>';
-}
-
-/* ---------- renderers ---------- */
-function renderMCQ(e) {
-  const app = $("app"), ex = EX[e], n = ex.items.length, pos = Math.min(S.pos[e], n);
-  let h = '<p class="how">' + esc(ex.how) + '</p>';
-  if (pos >= n) {
-    let extra = "";
-    if (ex.voice) extra = '<div style="display:grid;gap:8px;text-align:left"><p class="small">Теперь послушайте каждую фразу и повторите 2–3 раза. Потом запишите голосовое сообщение в Telegram с этими тремя фразами.</p>' +
-      ex.voice.map((t, k) => '<button type="button" class="play sm" data-say="' + esc(t) + '" lang="en">▶ ' + esc(t) + '</button>').join("") +
-      '<button type="button" class="tick' + (S.voice[e] ? " on" : "") + '" id="vt">' + (S.voice[e] ? "✓ Голосовое отправлено" : "Я отправила голосовое") + '</button></div>';
-    app.innerHTML = h + (ex.table ? tableHTML(e) : "") + doneCard(e, extra) + (e === 5 ? sendHTML(e) : "");
-    wireDone(e); app.querySelectorAll("[data-say]").forEach(b => b.onclick = () => speak(b.dataset.say));
-    if ($("vt")) $("vt").onclick = () => { if (HW.preview) return; S.voice[e] = !S.voice[e]; if (S.voice[e] && !S.fin[e]) { finish(e); return; } render(); };
-    mountSend(); return;
-  }
-  const it = ex.items[pos], st = S.ex[e][pos], fin = answered(st);
-  let sent;
-  if (it.c) sent = '<p class="sent" lang="en"><span class="gap">___</span> <b>' + esc(it.c) + '</b></p>';
-  else if (it.q) sent = '<p class="sent" lang="en">' + esc(it.q) + '</p>';
-  else if (it.qr) sent = '<p class="sent" style="font-size:1.1rem">' + esc(it.qr) + '</p>';
-  else if (it.say) sent = '<button type="button" class="play" id="say">▶ Listen</button>';
-  else sent = '<p class="sent" lang="en">' + esc(it.pre) + (fin ? '<span class="fill">' + esc(it.a) + '</span>' : '<span class="gap">___</span>') + esc(it.post) + '</p>';
-  h += (ex.table && pos > 0 ? tableHTML(e) : "") + '<div class="card">' + progress(pos, n) + sent +
-    '<div class="opts' + (it.c ? " vbtns" : "") + '" lang="en">' +
-    st.order.map(o => { const tried = st.tries.indexOf(o) >= 0, cls = (isRight(it, o) && fin) ? "right" : (tried && !isRight(it, o)) ? "wrong" : "";
-      return '<button type="button" class="opt ' + cls + '" data-o="' + esc(o) + '"' + (fin || tried ? " disabled" : "") + '>' + esc(o) + '</button>'; }).join("") + '</div>' +
-    feedback(st, it, it.c && it.a.length > 1 && st.ok ? "Yes! " + it.a.join(" and ") + " both work here." : null) + navHTML(pos, n, fin) + '</div>';
-  app.innerHTML = h;
-  app.querySelectorAll(".opt").forEach(b => b.onclick = () => {
-    if (answered(st) || HW.preview) return; const o = b.dataset.o; if (st.tries.indexOf(o) >= 0) return;
-    st.tries.push(o); if (isRight(it, o)) st.ok = true; else if (st.tries.length >= MAXT) st.shown = true; render(); });
-  if ($("say")) { $("say").onclick = () => speak(it.say); }
-  wireNav(e, pos);
-}
-
-function renderMulti(e) {
-  const app = $("app"), ex = EX[e], n = ex.items.length, pos = Math.min(S.pos[e], n);
-  let h = '<p class="how">' + esc(ex.how) + '</p>';
-  if (pos >= n) { app.innerHTML = h + doneCard(e); wireDone(e); return; }
-  const it = ex.items[pos], st = S.ex[e][pos], fin = answered(st);
-  h += '<div class="card">' + progress(pos, n) + '<p class="sent" lang="en">' + esc(it.q) + '</p><div class="opts multi" lang="en">' +
-    st.order.map(k => { const good = it.ok.includes(k), cls = fin ? (good ? "right" : "wrong") : (st.sel.includes(k) ? "sel" : "");
-      return '<button type="button" class="opt ' + cls + '" data-k="' + k + '"' + (fin ? " disabled" : "") + '>' + (fin && !good ? "✗ " : "") + esc(it.opts[k]) + '</button>'; }).join("") + '</div>';
-  if (!fin) h += '<button type="button" class="check" id="chk"' + (st.sel.length ? "" : " disabled") + '>Check</button>';
-  if (st.ok) h += '<p class="fb good" lang="en">' + (st.tries.length === 1 ? "Correct!" : "Yes, that's it!") + '</p>';
-  else if (st.shown) h += '<p class="fb bad" lang="en">The odd one out: <b>' + esc(it.opts.find((o, k) => !it.ok.includes(k))) + '</b></p>';
-  else if (st.tries.length) h += '<p class="fb bad" lang="en">Not quite. Try again.</p>';
-  h += navHTML(pos, n, fin) + '</div>';
-  app.innerHTML = h;
-  app.querySelectorAll(".opt").forEach(b => b.onclick = () => { if (fin || HW.preview) return; const k = +b.dataset.k, i = st.sel.indexOf(k); if (i >= 0) st.sel.splice(i, 1); else st.sel.push(k); render(); });
-  if ($("chk")) $("chk").onclick = () => {
-    if (HW.preview) return; const sel = st.sel.slice().sort();
-    st.tries.push(sel.map(k => it.opts[k]).join(", "));
-    if (sel.length === it.ok.length && sel.every((k, i) => k === it.ok.slice().sort()[i])) st.ok = true; else if (st.tries.length >= MAXT) st.shown = true;
-    render(); };
-  wireNav(e, pos);
-}
-
-function lettersHint(w) { return w.length <= 2 ? w : w[0] + " " + "_ ".repeat(w.length - 2) + w[w.length - 1]; }
-function renderType(e) {
-  const app = $("app"), ex = EX[e], n = ex.items.length, pos = Math.min(S.pos[e], n);
-  let h = '<p class="how">' + esc(ex.how) + '</p>';
-  if (pos >= n) { app.innerHTML = h + doneCard(e); wireDone(e); return; }
-  const it = ex.items[pos], st = S.ex[e][pos], fin = answered(st);
-  const gap = fin ? '<span class="fill">' + esc(st.ok ? st.tries[st.tries.length - 1] : it.a[0]) + '</span>'
-    : ex.letters ? '<span class="hintw">' + esc(lettersHint(it.a[0])) + '</span>' : '<span class="gap">___</span> <span class="small">(' + esc(it.hint) + ')</span>';
-  h += '<div class="card">' + progress(pos, n) + '<p class="sent" lang="en">' + esc(it.pre) + gap + esc(it.post) + '</p>';
-  if (!fin) h += '<input class="inp" id="inp" lang="en" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Type here" value="' + esc(st.val) + '">' +
-    '<button type="button" class="check" id="chk">Check</button>';
-  h += feedback(st, { a: it.a[0] }) + navHTML(pos, n, fin) + '</div>';
-  app.innerHTML = h;
-  if ($("inp")) {
-    $("inp").oninput = ev => { st.val = ev.target.value; HW.save(); };
-    $("inp").onkeydown = ev => { if (ev.key === "Enter") $("chk").click(); };
-    $("chk").onclick = () => { if (HW.preview) return; const v = norm(st.val); if (!v) return;
-      st.tries.push(st.val.trim()); if (it.a.map(norm).includes(v)) st.ok = true; else if (st.tries.length >= MAXT) st.shown = true; else st.val = ""; render(); };
-  }
-  wireNav(e, pos);
-}
-
-function renderOrder(e) {
-  const app = $("app"), ex = EX[e], n = ex.items.length, pos = Math.min(S.pos[e], n);
-  let h = '<p class="how">' + esc(ex.how) + '</p>';
-  if (pos >= n) {
-    const extra = '<div style="display:grid;gap:8px;text-align:left"><p class="small">' + esc(ex.voice) + '</p><div class="stems" lang="en"><b>Model</b><span>Ivan took a guided tour of … on his last trip to …</span><span>I took a … tour of … on my last trip to …</span></div>' +
-      '<button type="button" class="tick' + (S.voice[e] ? " on" : "") + '" id="vt">' + (S.voice[e] ? "✓ Голосовое отправлено" : "Я отправила голосовое") + '</button></div>';
-    app.innerHTML = h + doneCard(e, extra); wireDone(e);
-    $("vt").onclick = () => { if (HW.preview) return; S.voice[e] = !S.voice[e]; if (S.voice[e] && !S.fin[e]) { finish(e); return; } render(); };
-    return;
-  }
-  const it = ex.items[pos], st = S.ex[e][pos], fin = answered(st), w = words(it.a);
-  h += '<div class="card">' + progress(pos, n) + '<div class="profile" lang="en"><b>' + esc(it.cue) + '</b></div>' +
-    '<div class="line" lang="en">' + (fin ? '<span class="fill">' + esc(it.a) + '</span>' : esc(st.picked.map(k => w[k]).join(" ")) || '<span class="small">Tap the words…</span>') + '</div>';
-  if (!fin) h += '<div class="tiles" lang="en">' + st.tiles.map(k => '<button type="button" class="tile" data-k="' + k + '"' + (st.picked.includes(k) ? " disabled" : "") + '>' + esc(w[k]) + '</button>').join("") + '</div>' +
-    '<div class="nav"><button type="button" class="ghost" id="undo"' + (st.picked.length ? "" : " disabled") + '>Undo</button><button type="button" id="chk"' + (st.picked.length === w.length ? "" : " disabled") + '>Check</button></div>';
-  h += feedback(st, it) + navHTML(pos, n, fin) + '</div>';
-  app.innerHTML = h;
-  app.querySelectorAll(".tile").forEach(b => b.onclick = () => { if (HW.preview) return; st.picked.push(+b.dataset.k); render(); });
-  if ($("undo")) $("undo").onclick = () => { st.picked.pop(); render(); };
-  if ($("chk")) $("chk").onclick = () => { if (HW.preview) return; const said = st.picked.map(k => w[k]).join(" ");
-    st.tries.push(said); if (said === it.a) st.ok = true; else if (st.tries.length >= MAXT) st.shown = true; else st.picked = []; render(); };
-  wireNav(e, pos);
-}
-
-function renderWrite(e) {
-  const app = $("app"), ex = EX[e];
-  let h = '<p class="how">' + esc(ex.how) + '</p><div class="stems" lang="en"><b>You can use</b>' + ex.stems.map(s => '<span>' + esc(s) + '</span>').join("") + '</div>';
-  ex.items.forEach((it, i) => { h += '<div class="card" style="gap:10px"><div class="profile" lang="en"><b>' + esc(it.who) + '</b><span>' + esc(it.facts) + '</span></div>' +
-    '<textarea class="inp" lang="en" data-i="' + i + '" placeholder="Hello, my name is Inna…">' + esc(S.ex[e][i].text) + '</textarea></div>'; });
-  const ready = S.ex[e].every(x => x.text.trim().length > 15);
-  h += '<button type="button" class="btn primary" id="wdone"' + (ready ? "" : " disabled") + '>' + (S.fin[e] ? "✓ Done — next task →" : "Done →") + '</button>';
-  app.innerHTML = h;
-  app.querySelectorAll("textarea").forEach(t => t.oninput = () => { S.ex[e][+t.dataset.i].text = t.value; HW.save();
-    $("wdone").disabled = !S.ex[e].every(x => x.text.trim().length > 15); });
-  $("wdone").onclick = () => { if (!S.fin[e]) { S.fin[e] = true; S.tab = e + 1; render(); window.scrollTo(0, 0); reward(); } else goNextStop(e); };
-}
-
-function renderFinal(e) {
-  const app = $("app"), ex = EX[e], st = S.ex[e][0];
-  app.innerHTML = '<p class="how">' + esc(ex.how) + '</p><div class="card"><ol class="qs" lang="en">' + ex.qs.map(q => '<li>' + esc(q) + '</li>').join("") + '</ol>' +
-    (st.hint ? '<div class="stems" lang="en"><b>Word bank</b>' + ex.bank.map(s => '<span>' + esc(s) + '</span>').join("") + '</div>'
-      : '<button type="button" class="check" id="hint">Показать подсказку</button>') +
-    '<button type="button" class="tick' + (S.voice[e] ? " on" : "") + '" id="vt">' + (S.voice[e] ? "✓ Голосовое отправлено" : "Я отправила голосовое") + '</button></div>' +
-    sendHTML(e) + (!HW.submitted ? '<p class="note">Когда закончите, нажмите «Готово».</p>' : "");
-  if ($("hint")) $("hint").onclick = () => { if (HW.preview) return; st.hint = true; render(); };
-  $("vt").onclick = () => { if (HW.preview) return; S.voice[e] = !S.voice[e]; if (S.voice[e] && !S.fin[e]) { finish(e); return; } S.fin[e] = S.voice[e]; render(); };
-  mountSend();
-}
-
 function render() {
-  if (EX[S.tab].part !== S.part) S.part = EX[S.tab].part;
-  renderParts(); renderTabs();
-  const t = EX[S.tab].type;
-  ({ mcq: renderMCQ, multi: renderMulti, type: renderType, order: renderOrder, write: renderWrite, final: renderFinal })[t](S.tab);
+  renderTabs();
+  const e = S.tab, ex = EX[e], last = e === EX.length - 1;
+  let h = '<p class="how">' + esc(ex.how) + '</p>' + ex.sections.map((x, s) => secHTML(e, s)).join("") + voiceHTML(e);
+  if (S.fin[e] && !last) h += '<div class="nav"><button type="button" id="go">Next task →</button></div>';
+  if (last) h += '<div id="send"></div>' + (!HW.submitted ? '<p class="note">' + esc(FINAL_NOTE) + '</p>' : "");
+  $("app").innerHTML = h;
+  if ($("go")) $("go").onclick = () => { S.tab = e + 1; render(); window.scrollTo(0, 0); };
+  if ($("send")) { const sb = HW.sendBlock(); if (sb.className === "hw-sent") sb.textContent = "Отправлено ✓ Stacy видит ваши ответы."; $("send").appendChild(sb); }
   HW.save();
 }
 
-/* ---------- summary for Stacy ---------- */
-function tries(st) { return st.tries.join(" → ") + " (" + st.tries.length + (st.tries.length === 1 ? " try" : " tries") + ")" + (st.shown ? ", answer shown" : ""); }
-function exSummary(e) {
-  const ex = EX[e], sts = S.ex[e], head = "Task " + (e + 1) + " · " + ex.name + (ex.part ? " (part 2)" : " (part 1)");
-  if (ex.type === "write") return [head].concat(ex.items.map((it, i) => (sts[i].text.trim() ? "✓ " : "✗ ") + it.who + ": " + (sts[i].text.trim() || "—")));
-  if (ex.type === "final") return [head, (S.voice[e] ? "✓ She ticked: voice message sent in Telegram" : "✗ Not ticked as sent yet") + " — check your Telegram", "Word bank opened: " + (sts[0].hint ? "yes" : "no")];
-  const lines = [head, firstTime(e) + " of " + ex.items.length + " right first time"];
-  ex.items.forEach((it, i) => { const st = sts[i];
-    const label = it.c ? "___ " + it.c : it.q ? it.q : it.qr ? it.qr : it.say ? "🔊 " + it.say : it.cue ? it.cue : (it.pre + "[" + ansText(it) + "]" + (it.post || "")).trim();
-    lines.push((i + 1) + ". " + label + " → " + (!st.tries.length ? "— not answered" : (st.ok ? "✓ " : "✗ ") + tries(st))); });
-  if (ex.voice) lines.push((S.voice[e] ? "✓ She ticked: voice message sent" : "✗ Voice message not ticked yet") + " — check your Telegram");
-  return lines;
-}
+$("app").addEventListener("click", ev => {
+  const b = ev.target.closest("[data-act]"); if (!b || b.disabled) return;
+  const a = b.dataset.act, e = S.tab, s = +b.dataset.s, i = b.dataset.i === "" ? -1 : +b.dataset.i, x = b.dataset.x;
+  if (a === "say") { speak(x); return; }
+  if (HW.preview) return;
+  const sec = EX[e].sections[s], ss = S.ex[e][s];
+  if (a === "ml") { ss.sel = i; ss.msg = ""; }
+  if (a === "mr") {
+    if (ss.sel < 0) { ss.msg = "Сначала выберите начало предложения слева."; }
+    else { const st = ss.items[ss.sel]; attempt(st, sec.items[i].r, i === ss.sel); ss.msg = answered(st) ? "" : "Not quite. Try again."; if (answered(st)) ss.sel = -1; }
+  }
+  if (a === "sc") { ss.sel = i; ss.msg = ""; }
+  if (a === "sv") {
+    if (ss.sel < 0) { ss.msg = "Сначала выберите фразу, потом глагол."; }
+    else { const st = ss.items[ss.sel], it = sec.items[ss.sel]; attempt(st, x, it.a.includes(x));
+      if (st.ok) st.v = x; else if (st.shown) st.v = it.a[0];
+      ss.msg = answered(st) ? "" : "Not quite. Try another verb."; if (answered(st)) ss.sel = -1; }
+  }
+  if (a === "rc") { const st = ss.items[i], k = +x, p = st.sel.indexOf(k); if (p >= 0) st.sel.splice(p, 1); else st.sel.push(k); }
+  if (a === "rk") { const st = ss.items[i], it = sec.items[i], sel = st.sel.slice().sort(), okk = it.ok.slice().sort();
+    attempt(st, sel.map(k => it.opts[k]).join(", "), sel.length === okk.length && sel.every((k, j) => k === okk[j])); if (!answered(st)) st.sel = []; }
+  if (a === "mo") { const st = ss.items[i], o = st.order[+x]; attempt(st, o, o === sec.items[i].a); }
+  if (a === "fg") { const st = ss.items[i]; st.val = ""; ss.sel = i; ss.msg = ""; }
+  if (a === "fb") { const chunk = sec.items[i].a;
+    let t = ss.sel >= 0 && !answered(ss.items[ss.sel]) ? ss.sel : ss.items.findIndex(st => !answered(st) && !st.val);
+    if (t >= 0) { ss.items[t].val = chunk; ss.sel = -1; ss.msg = ""; } }
+  if (a === "fk") { let wrong = 0;
+    ss.items.forEach((st, k) => { if (answered(st) || !st.val) return; attempt(st, st.val, st.val === sec.items[k].a); if (!st.ok) { wrong++; st.val = ""; } });
+    ss.msg = ss.items.every(answered) ? "All done!" : wrong ? wrong + (wrong === 1 ? " gap is" : " gaps are") + " not right yet. Try again." : ""; }
+  if (a === "tk") { const st = ss.items[i], v = norm(st.val); if (!v) return; attempt(st, st.val.trim(), sec.items[i].a.map(norm).includes(v)); if (!answered(st)) st.val = ""; }
+  if (a === "sp") { const [k, o] = x.split("|"); ss.items[i].pick[+k] = o; }
+  if (a === "sk") { const st = ss.items[i], it = sec.items[i]; attempt(st, sec.frame(st.pick), st.pick.every((p, k) => p === it.ans[k])); if (!answered(st)) st.pick = sec.cols.map(() => ""); }
+  if (a === "hint") ss.hint = true;
+  if (a === "vt") S.voice[e] = !S.voice[e];
+  act();
+});
+$("app").addEventListener("input", ev => {
+  const t = ev.target; if (!t.dataset || !t.dataset.in || HW.preview) return;
+  const ss = S.ex[S.tab][+t.dataset.s], st = ss.items[+t.dataset.i];
+  if (t.dataset.in === "type") st.val = t.value; else st.text = t.value;
+  const e = S.tab;
+  if (t.dataset.in === "write" && !S.fin[e] && stopDone(e)) {
+    S.fin[e] = true; renderTabs();
+    if (e < EX.length - 1 && !$("go")) { const nv = document.createElement("div"); nv.className = "nav"; nv.innerHTML = '<button type="button" id="go">Next task →</button>';
+      nv.firstChild.onclick = () => { S.tab = e + 1; render(); window.scrollTo(0, 0); }; $("app").appendChild(nv); }
+    reward();
+  }
+  HW.save();
+});
+$("app").addEventListener("keydown", ev => { const t = ev.target; if (ev.key === "Enter" && t.dataset && t.dataset.in === "type") { const b = t.parentNode.querySelector("[data-act]"); if (b) b.click(); } });
 
+/* ---------- summary for Stacy ---------- */
+const triesTxt = st => !st.tries.length ? "— not answered" : (st.ok ? "✓ " : "✗ ") + st.tries.join(" → ") + " (" + st.tries.length + (st.tries.length === 1 ? " try" : " tries") + ")" + (st.shown ? ", answer shown" : "");
+function secSummary(e, s) {
+  const sec = EX[e].sections[s], ss = S.ex[e][s], L = [];
+  if (sec.type === "write") return sec.items.map((it, i) => (ss.items[i].text.trim() ? "✓ " : "✗ ") + it.who + ": " + (ss.items[i].text.trim() || "—"));
+  if (sec.type === "final") return ["Word bank opened: " + (ss.hint ? "yes" : "no")];
+  const first = ss.items.filter(st => st.ok && st.tries.length === 1).length;
+  L.push((sec.title ? sec.title + ": " : "") + first + " of " + sec.items.length + " right first time");
+  sec.items.forEach((it, i) => { const st = ss.items[i];
+    const label = sec.type === "match" ? it.l + " …" : sec.type === "sort" ? "___ " + it.c : sec.type === "rows" ? it.v + ":" : sec.type === "subst" ? it.cue
+      : it.say ? "🔊 " + it.say : it.qr ? it.qr : (it.card ? it.card + " · " : "") + (it.pre + "[" + (Array.isArray(it.a) ? it.a[0] : it.a) + "]" + (it.post || "")).trim();
+    L.push((i + 1) + ". " + label + " → " + triesTxt(st)); });
+  return L;
+}
+function summary() {
+  return EX.map((x, e) => ["Task " + x.num + " · " + x.name].concat(...x.sections.map((y, s) => secSummary(e, s)),
+    x.voice || x.sections.some(y => y.type === "final") ? [(S.voice[e] ? "✓ She ticked: voice message sent" : "✗ Voice message not ticked yet") + " — check your Telegram"] : []).join("\n")).join("\n\n");
+}
 HW.start({
-  id: "hw7", title: "Trips, tours and activities",
+  id: HW_ID, title: HW_TITLE,
   get: () => S,
   set: z => {
     if (!z) return;
-    if (Array.isArray(z.ex) && z.ex.length === EX.length) z.ex.forEach((arr, e) => { if (Array.isArray(arr) && arr.length === S.ex[e].length) S.ex[e] = arr; });
-    if (Array.isArray(z.pos) && z.pos.length === EX.length) S.pos = z.pos.map((p, e) => Math.max(0, Math.min(+p || 0, (EX[e].items || []).length)));
+    if (Array.isArray(z.ex) && z.ex.length === EX.length) z.ex.forEach((secs, e) => { if (!Array.isArray(secs) || secs.length !== S.ex[e].length) return;
+      secs.forEach((ss, s) => { const cur = S.ex[e][s]; if (ss && (!cur.items || (Array.isArray(ss.items) && ss.items.length === cur.items.length))) S.ex[e][s] = ss; }); });
     if (Array.isArray(z.fin) && z.fin.length === EX.length) S.fin = z.fin.map(Boolean);
     if (Array.isArray(z.voice) && z.voice.length === EX.length) S.voice = z.voice.map(Boolean);
-    S.tab = (+z.tab >= 0 && +z.tab < EX.length) ? +z.tab : 0; S.part = EX[S.tab].part; S.pops = +z.pops || 0;
+    S.tab = (+z.tab >= 0 && +z.tab < EX.length) ? +z.tab : 0; S.pops = +z.pops || 0;
   },
-  summary: () => EX.map((x, e) => exSummary(e).join("\n")).join("\n\n"),
-  render
+  summary, render
 });
 </script>
 </body>
