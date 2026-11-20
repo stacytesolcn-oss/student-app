@@ -18,7 +18,7 @@ h1{font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;font-size:2.3r
 .dl{display:flex;align-items:center;justify-content:center;min-height:52px;border-radius:999px;background:var(--brown);color:var(--on-brown);font-weight:700;text-decoration:none}
 </style></head><body>
 <div class="wrap">
-  <a class="back" href="../">← My English</a>
+  <a class="back" id="back" href="../">← My English</a>
   <h1>Lesson board</h1>
   <p class="how" lang="ru">Здесь доска с наших уроков. Нажмите «Download», чтобы сохранить картинку. Если не скачивается, нажмите на картинку и удерживайте → «Сохранить».</p>
   <div class="card">
@@ -27,4 +27,5 @@ h1{font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;font-size:2.3r
     <a class="dl" href="2026-11-19-board.jpg" download="Lesson board 17-19 Nov.jpg">Download</a>
   </div>
 </div>
+<script>try{ document.getElementById("back").href = "../" + location.search + location.hash; }catch(e){}</script>
 </body></html>

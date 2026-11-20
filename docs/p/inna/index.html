@@ -1031,7 +1031,7 @@ function renderProfile(){
   if(MK){ mk.href = MK.url; mk.innerHTML = '<span class="hwt"><span class="pill">Tuesday lesson</span><b>'+esc(MK.title)+'</b><span class="hwnote" lang="ru">'+esc(MK.note)+'</span><span>'+esc(MK.mins||"")+'</span></span><i aria-hidden="true">→</i>'; }
   /* Lesson board pictures to download (profile.board = {title, note, url}) */
   const BD = P.board;
-  ["pcBoard","hwBoard"].forEach(id=>{ const el = $(id); if(!el) return; el.hidden = !BD; if(!BD) return; el.href = BD.url;
+  ["pcBoard","hwBoard"].forEach(id=>{ const el = $(id); if(!el) return; el.hidden = !BD; if(!BD) return; el.href = BD.url + location.search + location.hash;
     el.innerHTML = id==="pcBoard"
       ? '<span class="hwt"><span class="pill">Lesson board</span><b>'+esc(BD.title)+'</b>'+(BD.note?'<span class="hwnote" lang="ru">'+esc(BD.note)+'</span>':'')+'</span><i aria-hidden="true">↓</i>'
       : '<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg></span><span class="t"><strong>'+esc(BD.title)+'</strong><span>'+esc(BD.note||"")+'</span></span>'; });

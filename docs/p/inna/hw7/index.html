@@ -174,7 +174,7 @@ const EX = [
       { type: "sort", verbs: ["take", "go on", "go to", "go + -ing", "visit", "rent", "ride", "try", "see", "have"], items: [
         { c: "a guided tour", a: ["take"] }, { c: "a food tour", a: ["take"] }, { c: "photos", a: ["take"] },
         { c: "a desert safari", a: ["go on"] }, { c: "a safari in Kenya", a: ["go on"] }, { c: "a boat trip", a: ["go on"] },
-        { c: "the beach", a: ["go to"] }, { c: "the Louvre", a: ["go to", "visit"] }, { c: "the Grand Mosque", a: ["visit", "go to"] },
+        { c: "the beach", a: ["go to"] }, { c: "the Louvre", a: ["go to", "visit"] }, { c: "the Grand Mosque", a: ["visit", "go to"] }, { c: "several popular sights", a: ["visit", "see"] },
         { c: "shopping", a: ["go + -ing"] }, { c: "snorkeling", a: ["go + -ing"] }, { c: "sightseeing", a: ["go + -ing"] },
         { c: "bikes", a: ["rent"] }, { c: "a car", a: ["rent"] }, { c: "a bike along the promenade", a: ["ride"] },
         { c: "skydiving", a: ["try"] }, { c: "the local food", a: ["try"] }, { c: "a show", a: ["see"] }, { c: "dinner at a desert camp", a: ["have"] }
@@ -288,7 +288,7 @@ function newSec(sec) {
     case "bank": return { used: [] };
   }
 }
-const S = { v: 7, tab: 0, ex: EX.map(x => x.sections.map(newSec)), fin: EX.map(() => false), voice: EX.map(() => false), pops: 0 };
+const S = { v: 8, tab: 0, ex: EX.map(x => x.sections.map(newSec)), fin: EX.map(() => false), voice: EX.map(() => false), pops: 0 };
 
 function secDone(e, s) {
   const sec = EX[e].sections[s], ss = S.ex[e][s];
