@@ -124,7 +124,7 @@ textarea.qs{width:100%;min-height:150px;font:inherit;font-size:1rem;border:1.5px
 
 /* hw7 extras */
 .fullpic{border-radius:18px;overflow:hidden;background:var(--river-soft);display:flex;justify-content:center}
-.fullpic img{display:block;max-width:100%;max-height:300px;width:auto;height:auto}
+.fullpic img{display:block;width:100%;max-width:420px;aspect-ratio:1/1;object-fit:cover}
 .ph{display:grid;place-items:center;background:var(--river-soft);color:var(--river);font-size:2.2rem;width:100%;height:100%}
 .say{border:1px solid var(--line);background:var(--surface);border-radius:999px;min-height:36px;min-width:36px;padding:2px 10px;font-size:1rem}
 .wchips{display:flex;flex-wrap:wrap;gap:8px;position:sticky;top:calc(118px + env(safe-area-inset-top,0px));z-index:3;background:var(--bg);padding:8px 0}
@@ -302,7 +302,7 @@ const T3EXTRA=["fasting","makes a detox"];
 const T4=[
   {p:"do yoga",c:"u",g:"sport"},{p:"work out",c:"u",g:"sport"},{p:"skip a workout",c:"u",g:"sport"},{p:"do cardio",c:"u",g:"sport"},
   {p:"lift weights",c:"u",g:"sport"},{p:"go for a run",c:"u",g:"sport"},{p:"go to the gym",c:"u",g:"sport"},
-  {p:"see a doctor",c:"u",g:"sick"},{p:"have a headache",c:"u",g:"sick"},{p:"stay in bed",c:"u",g:"sick"},{p:"have a cough",c:"u",g:"sick"},
+  {p:"see a doctor",c:"u",g:"sick"},{p:"have a headache",c:"u",g:"sick"},{p:"have a cough",c:"u",g:"sick"},
   {p:"have a runny nose",c:"u",g:"sick"},{p:"have a sore throat",c:"u",g:"sick"},{p:"get tired",c:"u",g:"health"},{p:"get sick",c:"u",g:"sick"},
   {p:"take vitamins",c:"u",g:"health"},{p:"sleep well",c:"u",g:"health",yn:true},
   {p:"have breakfast",c:"u",g:"food"},{p:"skip breakfast",c:"u",g:"food"},{p:"finish your plate",c:"u",g:"food"},{p:"drink herbal tea",c:"u",g:"food"},
@@ -314,7 +314,7 @@ const T4=[
   {p:"run a marathon",c:"e",base:"run",rest:"a marathon",v3:"run",v:["run","ran","running"]},
   {p:"try to lose weight",c:"e",base:"try",rest:"to lose weight",v3:"tried",v:["tried","try","trying"]}
 ];
-const BUILD=["lift weights","sleep well","skip breakfast","take vitamins","get sick","eat red meat","be on a diet","try fasting","do a detox","have food poisoning","run a marathon","try to lose weight"].map(p=>T4.findIndex(t=>t.p===p));
+const BUILD=["skip breakfast","take vitamins","be on a diet","try fasting","do a detox","have food poisoning","run a marathon","try to lose weight"].map(p=>T4.findIndex(t=>t.p===p));
 const STEMS=["Do you","How often do you","Have you ever"];
 const GROUPS=[["sport","🏃 Sport"],["sick","🤒 Sickness"],["health","💚 Health"],["food","🍳 Food"]];
 /* Task 5: chat with Olivia */
@@ -459,7 +459,7 @@ const S={
   t1:{order:shuffle(WORDS.map((_,i)=>i)),chips:shuffle(WORDS.map((_,i)=>i)),res:WORDS.map(()=>({tries:[],ok:false,shown:false}))},
   t2:{chips:shuffle(T2.map((_,i)=>i)),res:T2.map(()=>({tries:[],ok:false,shown:false}))},
   t3:{chips:shuffle(T3.map(x=>x.a).concat(T3EXTRA)),res:T3.map(()=>({tries:[],ok:false,shown:false}))},
-  t4:{chips:shuffle(T4.map((_,i)=>i)),sort:T4.map(()=>({tries:[],ok:false,shown:false})),build:BUILD.map(()=>({stem:null,stemTries:[],v:null,vTries:[],ok:false,shown:false}))},
+  t4:{chips:shuffle(T4.map((_,i)=>i)),sort:T4.map(()=>({tries:[],ok:false,shown:false})),build:BUILD.map(()=>({val:"",tries:[],ok:false,shown:false}))},
   t5:{qs:[],keys:[],fb:CHAT.map(()=>({tries:[],ok:false,shown:false}))},
   t6:CHAT.map(()=>({tries:[],ok:false,shown:false}))
 };
@@ -578,9 +578,10 @@ function r3(){
 }
 
 function qText(it,b){
-  if(it.c==="u")return (b.stem||"…")+" "+it.p+"?";
+  if(it.c==="u")return b.ok?b.tries[b.tries.length-1]:(b.shown?"Do you / How often do you "+it.p+"?":"… "+it.p+"?");
   return "Have you ever "+(done(b)?it.v3:"___")+" "+it.rest+"?";
 }
+function routineOk(it,v){const t=norm(v);return new RegExp("^(do you|how often do you) (usually |often |always |sometimes )?"+it.p+"$").test(t);}
 /* ================= TASK 4 · routine / experience table ================= */
 function r4(){
   const box=el("section",{class:"stage"});
@@ -607,36 +608,33 @@ function r4(){
   if(!S.t4.sort.every(done))return box;
 
   box.append(el("div",{class:"stage-head",style:"padding-top:10px"},el("h3",{},"Make the questions"),
-    el("p",{class:"rubric"},"Составь вопрос к каждой фразе. Routine: Do you…? или How often do you…? Experience: Have you ever…? и третья форма глагола (V3).")));
+    el("p",{class:"rubric"},"Routine: напиши вопрос целиком (Do you…? или How often do you…?). Experience: выбери третью форму глагола (V3).")));
   const blist=el("div",{class:"list"});
   BUILD.forEach((ti,bi)=>{
     const it=T4[ti],b=S.t4.build[bi];
     const card=el("div",{class:"citem"+(b.ok?" good":b.shown?" shown":"")});
-    card.append(el("p",{class:"qline"},qText(it,b)));
-    if(!done(b)){
-      if(it.c==="u"||b.stem!=="Have you ever"){
+    if(it.c==="u"){
+      card.append(el("span",{class:"def"},"Routine · "+it.p));
+      if(!done(b)){
+        const inp=el("input",{type:"text",autocomplete:"off",autocorrect:"off",spellcheck:"false","aria-label":"Question with "+it.p,placeholder:"… "+it.p+"?"});
+        inp.value=b.val;inp.addEventListener("input",()=>{b.val=inp.value;HW.save();});
+        const chk=()=>{if(!norm(b.val))return;b.tries.push(b.val.trim());if(routineOk(it,b.val))b.ok=true;else if(b.tries.length>=2)b.shown=true;rr();};
+        inp.addEventListener("keydown",e=>{if(e.key==="Enter")chk();});
+        card.append(el("div",{class:"fixrow"},inp,el("button",{class:"btn primary",onclick:chk},"Check")));
+        if(b.tries.length===1)card.append(el("p",{class:"fb no"},"Not quite. Начни с Do you… или How often do you…"));
+      }else card.append(el("p",{class:"qline"},qText(it,b)));
+    }else{
+      card.append(el("p",{class:"qline"},qText(it,b)));
+      if(!done(b)){
         const row=el("div",{class:"opts"});
-        STEMS.forEach(st=>{const wrong=b.stemTries.includes(st);
-          row.append(el("button",{class:"opt"+(wrong?" wrong":""),disabled:wrong?"":null,onclick:()=>{
-            b.stemTries.push(st);
-            if(it.c==="u"){const good=it.yn?st==="Do you":st!=="Have you ever"; if(good){b.stem=st;b.ok=true;} else if(b.stemTries.length>=2){b.stem="Do you";b.shown=true;}}
-            else{ if(st==="Have you ever")b.stem=st; else if(b.stemTries.length>=2)b.stem="Have you ever"; }
-            rr();}},st+" …"));});
-        card.append(row);
-        if(b.stemTries.length&&!b.ok&&!b.shown&&b.stem==null)card.append(el("p",{class:"fb no"},
-          it.c!=="u"?"Это опыт в жизни. Попробуй ещё раз.":(it.yn&&b.stemTries[b.stemTries.length-1]==="How often do you")?"С sleep well «как часто» звучит странно. Это вопрос да/нет.":"Это routine. Попробуй ещё раз."));
-      }
-      if(it.c==="e"&&b.stem==="Have you ever"){
-        const row=el("div",{class:"opts"});
-        it.v.forEach(v=>{const wrong=b.vTries.includes(v);
-          row.append(el("button",{class:"opt"+(wrong?" wrong":""),disabled:wrong?"":null,onclick:()=>{
-            b.vTries.push(v); if(v===it.v3){b.v=v;b.ok=true;} else if(b.vTries.length>=2)b.shown=true; rr();}},v));});
+        it.v.forEach(v=>{const wrong=b.tries.includes(v);
+          row.append(el("button",{class:"opt"+(wrong?" wrong":""),disabled:wrong?"":null,onclick:()=>attempt(b,v,v===it.v3)},v));});
         card.append(el("p",{class:"def"},it.base+" → V3?"),row);
-        if(b.vTries.length===1&&!b.ok)card.append(el("p",{class:"fb no"},"Not quite. После have нужна третья форма (V3)."));
+        if(b.tries.length===1)card.append(el("p",{class:"fb no"},"Not quite. После have нужна третья форма (V3)."));
       }
     }
-    if(b.ok)card.append(el("p",{class:"fb ok"},"✓ Good question!"),sayBtn(qText(it,b)));
-    if(b.shown)card.append(el("p",{class:"fb info"},"Правильно: "+(it.c==="u"?(it.yn?"Do you ":"Do you / How often do you ")+it.p+"?":"Have you ever "+it.v3+" "+it.rest+"? ("+it.base+" → "+it.v3+")")));
+    if(b.ok)card.append(el("p",{class:"fb ok"},"✓ Good question! "),sayBtn(qText(it,b)));
+    if(b.shown)card.append(el("p",{class:"fb info"},"Правильно: "+(it.c==="u"?"Do you / How often do you "+it.p+"?":"Have you ever "+it.v3+" "+it.rest+"? ("+it.base+" → "+it.v3+")")));
     blist.append(card);
   });
   box.append(blist);
@@ -761,11 +759,10 @@ function summary(){
   T2.forEach((t,i)=>L.push(line(t.v+" "+t.p,S.t2.res[i])));
   L.push("","Task 3 · Gap fill (word bank)",`${first(S.t3.res)} of ${T3.length} right first time`);
   T3.forEach((t,i)=>L.push(line(t.s.replace("___","["+t.a+"]"),S.t3.res[i])));
-  L.push("","Task 4 · Routine or experience? + make the questions",`Sorted ${first(S.t4.sort)} of ${T4.length} right first time · ${S.t4.build.filter(b=>b.ok&&b.stemTries.length<=1&&b.vTries.length<=1).length} of ${BUILD.length} questions right first time`);
+  L.push("","Task 4 · Routine or experience? + make the questions",`Sorted ${first(S.t4.sort)} of ${T4.length} right first time · ${first(S.t4.build)} of ${BUILD.length} questions right first time`);
   T4.forEach((t,i)=>{const r=S.t4.sort[i];if(!(r.ok&&r.tries.length===1))L.push(line(t.p+" → "+(t.c==="u"?"routine":"experience"),r));});
-  BUILD.forEach((ti,bi)=>{const t=T4[ti],b=S.t4.build[bi];if(!done(b))return;
-    const extra=[b.stemTries.length>1?"stems: "+b.stemTries.join(" → "):"",b.vTries.length>1?"V3: "+b.vTries.join(" → "):""].filter(Boolean).join(" · ");
-    L.push(`${b.ok&&!extra?"✓":b.ok?"✓":"✗ shown ·"} ${qText(t,b)}${extra?" ("+extra+")":""}`);});
+  BUILD.forEach((ti,bi)=>{const t=T4[ti],b=S.t4.build[bi];if(!done(b)&&!b.tries.length)return;
+    L.push(`${b.ok?"✓":b.shown?"✗ shown ·":"…"} ${t.c==="u"?t.p+": "+b.tries.map(x=>'"'+x+'"').join(" → "):qText(t,b)+(b.tries.length>1||b.shown?" (V3 tries: "+b.tries.join(" → ")+")":"")}`);});
   L.push("","Task 5 · Chat with Olivia (typed questions, delayed feedback)");
   const firstOk=S.t5.fb.filter(f=>f.first===true).length;
   L.push(S.t5.qs.length<CHAT.length?`Chat not finished: ${S.t5.qs.length} of ${CHAT.length} questions`:`${firstOk} of ${CHAT.length} questions right first time`);
