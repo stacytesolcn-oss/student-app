@@ -1002,6 +1002,22 @@ function packLessons(K){
   return list.slice(0, K.size).map(x=>({...x, done: x.manual || endAt(x.date, x.time) <= now}));
 }
 function packUsed(K){ return packLessons(K).filter(x=>x.done).length; }
+function openBoard(BD){
+  let ov = document.getElementById("boardPop");
+  if(!ov){ ov = document.createElement("div"); ov.id = "boardPop";
+    ov.style.cssText = "position:fixed;inset:0;z-index:80;background:rgba(35,24,21,.55);overflow:auto;-webkit-overflow-scrolling:touch;padding:16px";
+    document.body.appendChild(ov);
+    ov.addEventListener("click", e => { if(e.target === ov || e.target.closest("[data-close]")) { ov.hidden = true; document.body.style.overflow = ""; } }); }
+  const img = new URL(BD.img, location.href).href;
+  ov.innerHTML = '<div style="max-width:720px;margin:0 auto;background:var(--card);border-radius:22px;padding:14px;display:grid;gap:12px">'+
+    '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><b style="font-family:var(--display);font-size:1.5rem">'+esc(BD.title)+'</b>'+
+    '<button type="button" data-close style="min-height:44px;min-width:44px;border-radius:999px;border:1.5px solid var(--line);background:transparent;color:var(--ink);font-size:1.2rem">✕</button></div>'+
+    '<img src="'+esc(img)+'" alt="'+esc(BD.title)+'" style="width:100%;border-radius:12px;background:#fff">'+
+    '<a href="'+esc(img)+'" download="Lesson board.jpg" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;min-height:52px;border-radius:999px;background:var(--brown);color:var(--on-brown);font-weight:700;text-decoration:none">Download</a>'+
+    '<p lang="ru" style="margin:0;color:var(--muted);font-size:.9rem;text-align:center">Если не скачивается: нажмите на картинку и удерживайте → «Сохранить».</p>'+
+    '<button type="button" data-close style="min-height:48px;border-radius:999px;border:1.5px solid var(--line);background:transparent;color:var(--ink);font-weight:700">← Back to my page</button></div>';
+  ov.hidden = false; document.body.style.overflow = "hidden"; ov.scrollTop = 0;
+}
 function renderProfile(){
   const P = PROFILE, les = P.lessons, tz = P.timezone;
   const nl = les.length ? nextLesson(les, tzOff(P.tzName)) : null;
@@ -1029,12 +1045,14 @@ function renderProfile(){
   renderHomework();
   const MK = P.makeup, mk = $("pcMake"); mk.hidden = !MK;
   if(MK){ mk.href = MK.url; mk.innerHTML = '<span class="hwt"><span class="pill">Tuesday lesson</span><b>'+esc(MK.title)+'</b><span class="hwnote" lang="ru">'+esc(MK.note)+'</span><span>'+esc(MK.mins||"")+'</span></span><i aria-hidden="true">→</i>'; }
-  /* Lesson board pictures to download (profile.board = {title, note, url}) */
+  /* Lesson board picture (profile.board = {title, note, img}). Opens in a pop-up on this page, so the page
+     never navigates away (no login can be lost). Download opens the picture itself. */
   const BD = P.board;
-  ["pcBoard","hwBoard"].forEach(id=>{ const el = $(id); if(!el) return; el.hidden = !BD; if(!BD) return; el.href = BD.url + location.search + location.hash;
+  ["pcBoard","hwBoard"].forEach(id=>{ const el = $(id); if(!el) return; el.hidden = !BD; if(!BD) return; el.href = "#"; el.removeAttribute("target");
     el.innerHTML = id==="pcBoard"
       ? '<span class="hwt"><span class="pill">Lesson board</span><b>'+esc(BD.title)+'</b>'+(BD.note?'<span class="hwnote" lang="ru">'+esc(BD.note)+'</span>':'')+'</span><i aria-hidden="true">↓</i>'
-      : '<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg></span><span class="t"><strong>'+esc(BD.title)+'</strong><span>'+esc(BD.note||"")+'</span></span>'; });
+      : '<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg></span><span class="t"><strong>'+esc(BD.title)+'</strong><span>'+esc(BD.note||"")+'</span></span>';
+    el.onclick = ev => { ev.preventDefault(); openBoard(BD); }; });
   $("miroLink").hidden = !P.miro; $("miroLink").previousElementSibling.hidden = !P.miro;
   $("miroLink").href = P.miro || "#"; $("miroPh").hidden = true;
   $("planPay").hidden = !pay && !P.stripe && !K;
