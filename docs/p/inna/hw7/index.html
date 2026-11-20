@@ -161,11 +161,11 @@ const EX = [
     how: "Соедините начало и конец. Нажмите на начало слева, потом на конец справа — получится предложение.",
     sections: [{ type: "match", items: [
       { l: "I like guided tours because I can", r: "learn interesting facts about the place and the culture." },
-      { l: "Tom went on a desert safari", r: "and had dinner at a desert camp." },
-      { l: "Sam rented bikes", r: "and rode along the beach in Santa Monica." },
-      { l: "Lena went shopping in Covent Garden", r: "and saw a show in the West End." },
-      { l: "Maya visited the Grand Mosque", r: "and went to the Louvre Abu Dhabi." },
-      { l: "The next day, Tom tried", r: "skydiving. Never again!" }
+      { l: "It's a good tour when we visit", r: "several popular sights." },
+      { l: "It's a good tour when the guide", r: "speaks Russian well and tells interesting stories." },
+      { l: "Ivan took a guided tour of Sagrada Família", r: "on his last trip to Barcelona." },
+      { l: "Roma and I rented bikes", r: "when we were in Kaliningrad." },
+      { l: "A driver picked Tom up", r: "at the hotel at 3 pm." }
     ] }] },
   { num: 2, tab: "2 · Table", name: "Verb table + patterns",
     how: "Нажмите на фразу, потом на глагол в таблице. Иногда подходят два глагола. Потом посмотрите на таблицу и ответьте на 3 вопроса.",
@@ -219,7 +219,8 @@ const EX = [
       { pre: "Ivan and Victoria ", a: "had dinner", post: " at Zorro restaurant in Dubai." }
     ] }] },
   { num: 6, tab: "6 · Would like", name: "like / would like to",
-    how: "Посмотрите на два предложения и ответьте на вопросы. Потом выберите правильный вариант. В конце решите, кто что хотел бы сделать.",
+    how: "Посмотрите на два предложения и ответьте на вопросы. Потом выберите правильный вариант. В конце — голосовое сообщение: кто что хотел бы сделать.",
+    voice: { text: "Когда запишете голосовое (кто что хотел бы сделать, 5 предложений), отметьте здесь." },
     sections: [
       { type: "mcq", title: "Two sentences", items: [
         { qr: "Какое предложение о том, что нравится всегда?", a: "I like guided tours.", d: ["I'd like to go on a safari in Kenya."] },
@@ -232,13 +233,11 @@ const EX = [
         { pre: "Would you like to go on a desert safari? — Yes, ", post: "", a: "I'd like to.", d: ["I like to."] },
         { pre: "Roma ", post: " riding his bike.", a: "likes", d: ["would like to"] }
       ] },
-      { type: "fill", gate: true, title: "Who would like to do what?", how: "Нажмите на пропуск, потом на фразу из рамки.", items: [
-        { pre: "Anna would like to ", a: "try skydiving", post: "." },
-        { pre: "Ivan would like to ", a: "go on a desert safari", post: " in Dubai." },
-        { pre: "Victoria would like to ", a: "go shopping", post: " in London." },
-        { pre: "I'd like to ", a: "go on a safari", post: " in Kenya." },
-        { pre: "Roma and I would like to ", a: "rent bikes", post: " in Santa Monica." }
-      ] }
+      { type: "bank", gate: true, title: "Who would like to do what?",
+        how: "Посмотрите на рамку. Решите, кто что хотел бы сделать, и запишите голосовое сообщение в Telegram: 5 предложений. Не читайте с экрана — говорите.",
+        people: ["Ivan", "Victoria", "Anna", "Roma", "I"],
+        acts: ["go on a desert safari", "go on a safari in Kenya", "try skydiving", "go shopping", "go snorkeling", "rent bikes and ride along the beach", "take a food tour", "see a show", "visit the Grand Mosque", "try the local food"],
+        stems: ["I think Ivan would like to …", "Victoria would like to … because she likes …", "I'd like to …"] }
     ] }
 ];
 
@@ -270,12 +269,13 @@ function newSec(sec) {
     case "final": return { hint: false };
   }
 }
-const S = { v: 5, tab: 0, ex: EX.map(x => x.sections.map(newSec)), fin: EX.map(() => false), voice: EX.map(() => false), pops: 0 };
+const S = { v: 6, tab: 0, ex: EX.map(x => x.sections.map(newSec)), fin: EX.map(() => false), voice: EX.map(() => false), pops: 0 };
 
 function secDone(e, s) {
   const sec = EX[e].sections[s], ss = S.ex[e][s];
   if (sec.type === "write") return ss.items.every(x => x.text.trim().length > 15);
   if (sec.type === "final") return S.voice[e];
+  if (sec.type === "bank") return true;
   return ss.items.every(answered);
 }
 const stopDone = e => EX[e].sections.every((x, s) => secDone(e, s)) && (!EX[e].voice || S.voice[e]);
@@ -369,6 +369,11 @@ function secHTML(e, s) {
         '<p class="line" lang="en">' + (fin ? '<span class="fill">' + esc(sentence) + '</span>' : esc(sentence)) + '</p>' +
         (fin ? "" : '<button type="button" class="check"' + A("sk", e, s, i) + (st.pick.every(Boolean) ? "" : " disabled") + '>Check</button>') + fbHTML(st, sec.frame(it.ans)) + '</div>'; }).join("");
   }
+  if (sec.type === "bank") {
+    h += '<div class="profile" lang="en"><b>Who?</b><div class="bank">' + sec.people.map(x => '<span class="chip">' + esc(x) + '</span>').join("") + '</div></div>' +
+      '<div class="profile" lang="en"><b>What would they like to do?</b><div class="bank">' + sec.acts.map(x => '<span class="chip">' + esc(x) + '</span>').join("") + '</div></div>' +
+      '<div class="stems" lang="en"><b>You can start like this</b>' + sec.stems.map(x => '<span>' + esc(x) + '</span>').join("") + '</div>';
+  }
   if (sec.type === "write") {
     h += '<div class="stems" lang="en"><b>You can use</b>' + sec.stems.map(x => '<span>' + esc(x) + '</span>').join("") + '</div>';
     h += sec.items.map((it, i) => '<div class="item"><div class="profile" lang="en"><b>' + esc(it.who) + '</b><span>' + esc(it.facts) + '</span></div>' +
@@ -383,7 +388,7 @@ function secHTML(e, s) {
 }
 
 function voiceHTML(e) {
-  const v = EX[e].voice; if (!v) return "";
+  const v = EX[e].voice; if (!v || !EX[e].sections.every((x, k) => secDone(e, k))) return "";
   return '<div class="card" style="gap:10px"><p class="eyebrow">Voice message</p><p class="small">' + esc(v.text) + '</p>' +
     (v.play ? v.play.map(t => '<button type="button" class="play sm"' + A("say", e, 0, null, t) + ' lang="en">▶ ' + esc(t) + '</button>').join("") : "") +
     (v.stems ? '<div class="stems" lang="en"><b>Model</b>' + v.stems.map(x => '<span>' + esc(x) + '</span>').join("") + '</div>' : "") +
@@ -456,6 +461,7 @@ function secSummary(e, s) {
   const sec = EX[e].sections[s], ss = S.ex[e][s], L = [];
   if (sec.type === "write") return sec.items.map((it, i) => (ss.items[i].text.trim() ? "✓ " : "✗ ") + it.who + ": " + (ss.items[i].text.trim() || "—"));
   if (sec.type === "final") return ["Word bank opened: " + (ss.hint ? "yes" : "no")];
+  if (sec.type === "bank") return [];
   const first = ss.items.filter(st => st.ok && st.tries.length === 1).length;
   L.push((sec.title ? sec.title + ": " : "") + first + " of " + sec.items.length + " right first time");
   sec.items.forEach((it, i) => { const st = ss.items[i];
