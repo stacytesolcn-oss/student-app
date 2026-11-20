@@ -245,7 +245,7 @@ const EX = [
       { pre: "In the evening, people ride their bikes ", post: ".", a: ["along the promenade"] },
       { pre: "In Dubai, you can ", post: ", if you're brave!", a: ["try skydiving"] },
       { pre: "The water is very clear there, so you can ", post: ".", a: ["go snorkeling", "go snorkelling"] },
-      { pre: "On their last trip, the guests ", post: ".", a: ["visited several popular sights"] },
+      { segs: ["On their last trip, the guests ", ["visited"], " several popular ", ["sights"], "."] },
       { pre: "In Kenya, you can ", post: " and see the animals.", a: ["go on a safari"] }
     ] }] },
   { num: 8, tab: "8 · Speak", name: "Who would like to do what? (voice)",
@@ -281,14 +281,14 @@ function newSec(sec) {
     case "rows": return { items: sec.items.map(it => Object.assign(it0(), { sel: [], order: shuffle(it.opts.map((o, k) => k)) })) };
     case "mcq": return { items: sec.items.map(it => Object.assign(it0(), { order: shuffle([it.a].concat(it.d)) })) };
     case "fill": return { sel: -1, msg: "", bank: shuffle(idx), items: idx.map(() => Object.assign(it0(), { val: "" })) };
-    case "type": return { items: idx.map(() => Object.assign(it0(), { val: "" })) };
+    case "type": return { items: sec.items.map(it => Object.assign(it0(), { val: "", vals: it.segs ? it.segs.filter(Array.isArray).map(() => "") : undefined })) };
     case "subst": return { items: idx.map(() => Object.assign(it0(), { pick: sec.cols.map(() => "") })) };
     case "write": return { items: idx.map(() => ({ text: "" })) };
     case "final": return { hint: false };
     case "bank": return { used: [] };
   }
 }
-const S = { v: 8, tab: 0, ex: EX.map(x => x.sections.map(newSec)), fin: EX.map(() => false), voice: EX.map(() => false), pops: 0 };
+const S = { v: 9, tab: 0, ex: EX.map(x => x.sections.map(newSec)), fin: EX.map(() => false), voice: EX.map(() => false), pops: 0 };
 
 function secDone(e, s) {
   const sec = EX[e].sections[s], ss = S.ex[e][s];
@@ -373,6 +373,13 @@ function secHTML(e, s) {
   if (sec.type === "type") {
     const hintw = p => p.split(" ").map(w => '<span class="hw">' + esc((w.length <= 2 ? w : w[0] + "_".repeat(w.length - 2) + w[w.length - 1]).split("").join(" ")) + '</span>').join("");
     h += sec.items.map((it, i) => { const st = ss.items[i], fin = answered(st);
+      if (it.segs) { let g = -1;
+        const sent = it.segs.map(p => { if (!Array.isArray(p)) return esc(p); g++;
+          return fin ? '<span class="fill">' + esc(p[0]) + '</span>' : '<span class="hintw">' + hintw(p[0]) + '</span>'; }).join("");
+        let gi = -1;
+        return '<div class="item"><p class="sent" lang="en"><span class="num">' + (i + 1) + '</span>' + sent + '</p>' +
+          (fin ? "" : '<div class="row">' + it.segs.filter(Array.isArray).map(p => { gi++; return '<input class="inp" lang="en" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="word ' + (gi + 1) + '" data-in="type" data-s="' + s + '" data-i="' + i + '" data-g="' + gi + '" value="' + esc((st.vals || [])[gi] || "") + '">'; }).join("") +
+            '<button type="button" class="check sm"' + A("tk", e, s, i) + '>Check</button></div>') + fbHTML(st, it.segs.filter(Array.isArray).map(p => p[0]).join(" … ")) + '</div>'; }
       return '<div class="item"><p class="sent" lang="en"><span class="num">' + (i + 1) + '</span>' + esc(it.pre) +
         (fin ? '<span class="fill">' + esc(st.ok ? st.tries[st.tries.length - 1] : it.a[0]) + '</span>' : '<span class="hintw">' + hintw(it.a[0]) + '</span>') + esc(it.post) + '</p>' +
         (fin ? "" : '<div class="row"><input class="inp" lang="en" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Type the phrase" data-in="type" data-s="' + s + '" data-i="' + i + '" value="' + esc(st.val) + '">' +
@@ -460,7 +467,10 @@ $("app").addEventListener("click", ev => {
   if (a === "fk") { let wrong = 0;
     ss.items.forEach((st, k) => { if (answered(st) || !st.val) return; attempt(st, st.val, st.val === sec.items[k].a); if (!st.ok) { wrong++; st.val = ""; } });
     ss.msg = ss.items.every(answered) ? "All done!" : wrong ? wrong + (wrong === 1 ? " gap is" : " gaps are") + " not right yet. Try again." : ""; }
-  if (a === "tk") { const st = ss.items[i], v = norm(st.val); if (!v) return; attempt(st, st.val.trim(), sec.items[i].a.map(norm).includes(v)); if (!answered(st)) st.val = ""; }
+  if (a === "tk") { const st = ss.items[i], it = sec.items[i];
+    if (it.segs) { const gaps = it.segs.filter(Array.isArray), vals = (st.vals || []).map(v => String(v || "").trim()); if (vals.some(v => !v)) return;
+      attempt(st, vals.join(" / "), gaps.every((p, k) => p.map(norm).includes(norm(vals[k])))); if (!answered(st)) st.vals = gaps.map(() => ""); }
+    else { const v = norm(st.val); if (!v) return; attempt(st, st.val.trim(), it.a.map(norm).includes(v)); if (!answered(st)) st.val = ""; } }
   if (a === "sp") { const [k, o] = x.split("|"); ss.items[i].pick[+k] = o; }
   if (a === "sk") { const st = ss.items[i], it = sec.items[i]; attempt(st, sec.frame(st.pick), st.pick.every((p, k) => p === it.ans[k])); if (!answered(st)) st.pick = sec.cols.map(() => ""); }
   if (a === "hint") ss.hint = true;
@@ -471,7 +481,7 @@ $("app").addEventListener("click", ev => {
 $("app").addEventListener("input", ev => {
   const t = ev.target; if (!t.dataset || !t.dataset.in || HW.preview) return;
   const ss = S.ex[S.tab][+t.dataset.s], st = ss.items[+t.dataset.i];
-  if (t.dataset.in === "type") st.val = t.value; else st.text = t.value;
+  if (t.dataset.in === "type") { if (t.dataset.g != null && st.vals) st.vals[+t.dataset.g] = t.value; else st.val = t.value; } else st.text = t.value;
   HW.save();
 });
 $("app").addEventListener("keydown", ev => { const t = ev.target; if (ev.key === "Enter" && t.dataset && t.dataset.in === "type") { const b = t.parentNode.querySelector("[data-act]"); if (b) b.click(); } });
@@ -487,6 +497,7 @@ function secSummary(e, s) {
   L.push((sec.title ? sec.title + ": " : "") + first + " of " + sec.items.length + " right first time");
   sec.items.forEach((it, i) => { const st = ss.items[i];
     const label = sec.type === "match" ? it.l + " …" : sec.type === "sort" ? "___ " + it.c : sec.type === "rows" ? it.v + ":" : sec.type === "subst" ? it.cue
+      : it.segs ? it.segs.map(p => Array.isArray(p) ? "[" + p[0] + "]" : p).join("")
       : it.say ? "🔊 " + it.say : it.qr ? it.qr : (it.card ? it.card + " · " : "") + (it.pre + "[" + (Array.isArray(it.a) ? it.a[0] : it.a) + "]" + (it.post || "")).trim();
     L.push((i + 1) + ". " + label + " → " + triesTxt(st)); });
   return L;
