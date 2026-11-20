@@ -193,16 +193,19 @@ const EX = [
       { v: "go + -ing", opts: ["shopping", "snorkeling", "sightseeing", "the beach"], ok: [0, 1, 2] },
       { v: "try", opts: ["skydiving", "shrimp", "the local food", "a show"], ok: [0, 1, 2] }
     ] }] },
-  { num: 4, tab: "4 · Listen", name: "Listen and say",
+  { num: 4, tab: "4 · Listen", name: "desert or dessert?",
     how: "Нажмите ▶, послушайте и выберите, что вы услышали. Можно слушать сколько угодно раз.",
     sections: [
-      { type: "mcq", title: "desert or dessert?", items: [
+      { type: "mcq", title: "Words", items: [
         { say: "desert", a: "desert", d: ["dessert"] }, { say: "dessert", a: "dessert", d: ["desert"] },
-        { say: "a desert safari", a: "desert", d: ["dessert"] }, { say: "dessert", a: "dessert", d: ["desert"] }
+        { say: "desert", a: "desert", d: ["dessert"] }, { say: "dessert", a: "dessert", d: ["desert"] }
+      ] },
+      { type: "mcq", title: "Sentences", items: [
+        { say: "Tom went on a desert safari.", a: "desert", d: ["dessert"] },
+        { say: "Would you like a dessert?", a: "dessert", d: ["desert"] },
+        { say: "They had dinner at a desert camp.", a: "desert", d: ["dessert"] }
       ] }
-    ],
-    voice: { text: "Послушайте каждую фразу и повторите 2–3 раза. Потом запишите голосовое сообщение в Telegram с этими тремя фразами.",
-      play: ["went on a desert safari", "rode along the promenade", "took a guided tour"] } },
+    ] },
   { num: 5, tab: "5 · Your people", name: "Chunks: your people",
     how: "Вставьте фразы из рамки. Нажмите на пропуск, потом на фразу. В конце нажмите Check.",
     sections: [{ type: "fill", items: [
