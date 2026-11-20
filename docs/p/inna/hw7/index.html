@@ -270,7 +270,7 @@ function newSec(sec) {
     case "final": return { hint: false };
   }
 }
-const S = { tab: 0, ex: EX.map(x => x.sections.map(newSec)), fin: EX.map(() => false), voice: EX.map(() => false), pops: 0 };
+const S = { v: 5, tab: 0, ex: EX.map(x => x.sections.map(newSec)), fin: EX.map(() => false), voice: EX.map(() => false), pops: 0 };
 
 function secDone(e, s) {
   const sec = EX[e].sections[s], ss = S.ex[e][s];
@@ -472,7 +472,7 @@ HW.start({
   id: HW_ID, title: HW_TITLE,
   get: () => S,
   set: z => {
-    if (!z) return;
+    if (!z || z.v !== S.v) return; /* answers from an older version of this page are ignored */
     if (Array.isArray(z.ex) && z.ex.length === EX.length) z.ex.forEach((secs, e) => { if (!Array.isArray(secs) || secs.length !== S.ex[e].length) return;
       secs.forEach((ss, s) => { const cur = S.ex[e][s]; if (ss && (!cur.items || (Array.isArray(ss.items) && ss.items.length === cur.items.length))) S.ex[e][s] = ss; }); });
     if (Array.isArray(z.fin) && z.fin.length === EX.length) S.fin = z.fin.map(Boolean);
