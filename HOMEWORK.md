@@ -123,3 +123,9 @@ Separate Edge Function `notify` (repo: `supabase/functions/notify/`, the main `a
 Send from SQL with pg_net, the key stays in the database:
 `select net.http_post(url := 'https://nrnjubhnpaicuokidnjl.supabase.co/functions/v1/notify', body := jsonb_build_object('page','p/<slug>/','button','Do my homework','text','Hi <Name>! …'), headers := jsonb_build_object('content-type','application/json','x-auth','key '||(select value from app_config where key='TEACHER_KEY')));`
 Check: `select status_code, content from net._http_response where id = <request_id>;` → 200 {"ok":true}. Messages in English, student's name.
+
+## Removing checked homework from Teacher view (Nov 20, 2026)
+Teacher view lists every `student_state` key that starts with `hw:`. To hide one Stacy has checked, keep the answers but rename the key:
+`update student_state set key='checked:<hwId>' where key='hw:<hwId>' and student_id=(select id from students where page='p/<slug>/');`
+Also mark it finished on the student's page: `select app_homework_done('<slug>','<hwId>');`
+Note: the front "Homework" card on a student page shows only the open homework with the earliest due date, so an old open one hides a new one.
