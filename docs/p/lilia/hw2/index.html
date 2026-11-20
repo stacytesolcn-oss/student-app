@@ -1,0 +1,499 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>The perfect mother</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Raleway:wght@600;700&display=swap">
+<style>
+:root{
+  --bg:#F6F1E7; --card:#FCFAF5; --ink:#231815; --muted:#6E5C52; --line:#E3D9C8;
+  --brown:#643A24; --on-brown:#F6F1E7;
+  --butter:#F4DC96; --butter-soft:#FAF0CF;
+  --blue-soft:#E3EEF4; --blue-ink:#2F4C5E;
+  --good:#2E6B45; --good-soft:#E2F0E5; --warn:#8A4B12; --warn-soft:#F6E6D3;
+  --display:"Cormorant Garamond","Iowan Old Style",Georgia,serif;
+  --body:"DM Sans","Helvetica Neue",Arial,sans-serif;
+  --caps:"Raleway","Avenir Next","Helvetica Neue",Arial,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){ :root{
+  --bg:#231815; --card:#2E211C; --ink:#F3ECDF; --muted:#BCA995; --line:#46352C;
+  --brown:#F4DC96; --on-brown:#231815;
+  --butter:#F4DC96; --butter-soft:#3F3422;
+  --blue-soft:#253743; --blue-ink:#C1DBE8;
+  --good:#9FD3AE; --good-soft:#1F3426; --warn:#F0C08E; --warn-soft:#3E2B1B;
+  color-scheme:dark }}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.55;-webkit-tap-highlight-color:transparent}
+.wrap{max-width:560px;margin:0 auto;padding-block:20px 96px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:18px}
+.back{color:var(--muted);font-size:.9rem;text-decoration:none}
+h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.08;margin:0;text-wrap:balance}
+h1{font-size:2.4rem} h2{font-size:1.8rem} h3{font-size:1.35rem}
+p{margin:0}
+.eyebrow{font-family:var(--caps);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.muted{color:var(--muted)}
+.part{display:grid;gap:12px;padding-top:10px}
+.how{background:var(--butter-soft);border-radius:20px;padding:14px 16px;display:grid;gap:6px;font-size:.95rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px;display:grid;gap:10px;min-width:0}
+.card.ok{border-color:var(--good)}
+.top{display:flex;align-items:flex-start;gap:10px}
+.num{width:28px;height:28px;border-radius:50%;background:var(--brown);color:var(--on-brown);display:grid;place-items:center;font-weight:700;font-size:.85rem;flex:none;margin-top:2px}
+.card.ok .num{background:var(--good);color:var(--card)}
+.sent{font-size:1.05rem;line-height:1.5}
+.hint{font-family:var(--caps);letter-spacing:.06em;font-weight:700;color:var(--muted);font-size:.85rem}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button{font:inherit;cursor:pointer;border-radius:999px;padding:10px 16px;font-weight:600;font-size:.92rem;border:1.5px solid var(--brown);background:var(--brown);color:var(--on-brown);min-height:44px}
+button.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+button.on{background:var(--brown);color:var(--on-brown);border-color:var(--brown)}
+button[disabled]{opacity:.45;cursor:default}
+input,textarea{width:100%;font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;min-height:44px}
+textarea{min-height:72px;resize:vertical}
+input:disabled{opacity:.8}
+.fb{font-size:.93rem;border-radius:12px;padding:8px 12px}
+.fb.good{background:var(--good-soft);color:var(--good)}
+.fb.bad{background:var(--warn-soft);color:var(--warn)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.seg button{padding:8px 6px;font-size:.88rem;border-radius:12px;background:var(--card);color:var(--ink);border-color:var(--line)}
+.seg button.on{background:var(--brown);color:var(--on-brown);border-color:var(--brown)}
+.seg button.right{border-color:var(--good);background:var(--good-soft);color:var(--good)}
+.seg button.wrong{border-color:var(--warn);background:var(--warn-soft);color:var(--warn)}
+.box{background:var(--blue-soft);color:var(--blue-ink);border-radius:14px;padding:10px 12px;font-size:.93rem}
+.box b{display:block;font-family:var(--caps);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:.88rem;color:var(--ink)}
+.chip.used{background:var(--good-soft);border-color:var(--good);color:var(--good)}
+ul.starters{margin:0;padding-left:1.1em;display:grid;gap:2px;font-size:.95rem}
+.article{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;display:grid;gap:12px;font-size:1.02rem;line-height:1.65}
+.article h3{font-size:1.5rem}
+.photo{width:100%;height:auto;border-radius:14px;display:block;margin:4px 0}
+.gl{background:var(--butter-soft);border-bottom:2px solid var(--butter);border-radius:4px;padding:0 3px;cursor:pointer}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--brown);color:var(--on-brown);padding:14px max(16px,env(safe-area-inset-left,0px)) calc(14px + env(safe-area-inset-bottom,0px));display:flex;gap:12px;align-items:flex-start;box-shadow:0 -6px 20px rgba(0,0,0,.18)}
+.sheet[hidden]{display:none}
+.sheet div{flex:1;max-width:560px;margin:0 auto}
+.sheet b{display:block;font-size:1.05rem}
+.sheet button{background:transparent;border-color:var(--on-brown);color:var(--on-brown);min-height:36px;padding:4px 12px}
+.guess{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.guess:last-child{border-bottom:0}
+.tag{font-size:.82rem;font-weight:700;border-radius:999px;padding:2px 10px;flex:none}
+.tag.good{background:var(--good-soft);color:var(--good)} .tag.bad{background:var(--warn-soft);color:var(--warn)}
+a{color:var(--brown)}
+.hw-sent{background:#dff0e4;color:#2f7d4a;font-weight:700;border-radius:12px;padding:10px 14px}
+.tok{border-radius:6px;padding:1px 1px;cursor:pointer}
+.tok.hit{background:var(--good-soft);color:var(--good);font-weight:700}
+.tok.sel{background:var(--butter);color:#231815;font-weight:600}
+.tok.miss{background:var(--warn-soft)}
+.mark{background:var(--butter-soft);border-bottom:2px solid var(--butter);border-radius:4px;padding:0 2px;font-weight:600}
+.txt{font-size:1.05rem;line-height:1.85}
+.counter{font-family:var(--caps);font-weight:700;letter-spacing:.06em;font-size:.85rem;color:var(--brown)}
+.chg{display:grid;gap:2px;border-left:4px solid var(--good);padding:4px 10px;font-size:.95rem}
+.chg s{color:var(--muted)}
+.pick{display:flex;flex-wrap:wrap;gap:8px}
+.pick button{background:var(--card);color:var(--ink);border-color:var(--line);font-weight:500;border-radius:14px;text-align:left;padding:8px 12px}
+.pick button.on{background:var(--brown);color:var(--on-brown);border-color:var(--brown)}
+.pgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.pgrid button{padding:6px 0;border-radius:10px;background:var(--card);color:var(--ink);border-color:var(--line);min-height:40px}
+.pgrid button.right{background:var(--good-soft);color:var(--good);border-color:var(--good)}
+.pgrid button.wrong{background:var(--warn-soft);color:var(--warn);border-color:var(--warn)}
+.pn{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--butter);color:#231815;font-size:.75rem;font-weight:700;margin-right:6px;vertical-align:2px}
+.article h4{font-family:var(--caps);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:6px 0 -4px}
+.mcard{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:10px 12px;text-align:left;color:var(--ink);font-weight:500;width:100%;min-height:48px}
+.mcard.her{background:var(--blue-soft);color:var(--blue-ink);border-color:var(--blue-soft)}
+.mcard.on{border-color:var(--brown);box-shadow:0 0 0 2px var(--brown) inset}
+.mcard.shake{animation:sh .35s}
+@keyframes sh{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:start}
+.cols>div{display:grid;gap:8px}
+.pair{display:grid;gap:8px;background:var(--good-soft);border:1px solid var(--good);border-radius:16px;padding:10px}
+.pair .her{font-size:.92rem;color:var(--good)}
+.plan{display:grid;gap:4px;font-size:.95rem}
+.guess.yn{display:grid;gap:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../" data-hw-back>← My English</a>
+  <div>
+    <p class="eyebrow">Homework · 19 Nov lesson · about 35 min</p>
+    <h1>The perfect mother</h1>
+  </div>
+  <div class="how">Four parts: your summary, polished · the perfect mother · a reading · a voice message. Your answers save as you go, so you can stop and come back later.</div>
+  <main id="app"></main>
+</div>
+<div class="sheet" id="sheet" hidden><div><b id="shW"></b><span id="shM"></span></div><button type="button" id="shX">Close</button></div>
+<script src="../../../kit/hw.js"></script>
+<script>
+/* ---------- Part 0: her summary of the 12 Nov article, polished ---------- */
+/* [x] = a phrase from our lessons */
+const ORIG = "A lot of mum [have a lot on their plate]. We all [overwhelmed]. But [what matters most] is not be [too hard on herself]. It's important to know that sometime or anytime it could be [out of our control]. We don't have a right answer for everyone what to do with all this stuff, but it's always a good idea to [set boundaries] in your family, [carve out some me time] and be relaxed.";
+/* c = which change a word belongs to */
+const POL = [
+  {t:"A lot of "},{c:0,t:"mums"},{t:" have a lot on their plate. We all "},{c:1,t:"feel"},
+  {t:" overwhelmed. But what matters most is not "},{c:2,t:"being"},{t:" too hard on "},{c:2,t:"ourselves"},
+  {t:". It's important to know that "},{c:3,t:"sometimes things are"},{t:" out of our control. "},
+  {c:4,t:"There isn't one"},{t:" right answer for everyone, but it's always a good idea to set boundaries in your family, carve out some me time and be relaxed."}
+];
+const CHG = [
+  {from:"A lot of mum", to:"A lot of mums", why:"one mum → many mums: add -s"},
+  {from:"We all overwhelmed", to:"We all feel overwhelmed", why:"a verb was missing"},
+  {from:"is not be too hard on herself", to:"is not being too hard on ourselves", why:"after “is” → verb + -ing · we → ourselves"},
+  {from:"sometime or anytime it could be", to:"sometimes things are", why:"sometimes = from time to time"},
+  {from:"We don't have a right answer for everyone what to do with all this stuff", to:"There isn't one right answer for everyone", why:"a shorter, more natural way to say it"}
+];
+
+/* ---------- Part 1 ---------- */
+const STEMS = ["The perfect mother always…","She never…","She even…","For her, good parenting means… (+ -ing)","She places a lot of value on…","What matters most to her is…"];
+const BANK = [
+  ["Feelings",["feel guilty","feel overwhelmed","be hard on herself","struggle with","… gives her anxiety"]],
+  ["Home and time",["stay on top of everything","have all her ducks in a row","have a lot on her plate","carve out some me time","recharge her batteries","be out of her control","her home gives off calm vibes"]],
+  ["Kids and family",["spend quality time with","make the most of (every moment)","set boundaries","have a blast (+ -ing)","take (and post) perfect family photos"]]
+];
+const BANKFLAT = BANK.flatMap(g=>g[1]);
+
+/* ---------- Part 2: predictions + article ---------- */
+const QS = [
+  {q:"Is there too much pressure on mothers today?", yn:true, a:"Yes", p:[1]},
+  {q:"Do mothers feel guilty when they can't do everything?", yn:true, a:"Yes", p:[2]},
+  {q:"Do mothers feel that it's never enough?", yn:true, a:"Yes", p:[2]},
+  {q:"Where do our expectations about motherhood come from?", p:[4,6]},
+  {q:"Why do many mothers hide it when they're struggling?", p:[7,8]},
+  {q:"What can a mother do about it?", p:[9,10,11,12]}
+];
+const GLOSS = {
+  "criticism":"when people say what is bad or wrong about you",
+  "admit":"say that something is true, even when it's hard to say",
+  "meditate":"sit quietly and calm your mind for a few minutes",
+  "judge":"decide that someone is good or bad, often without knowing them well",
+  "daycare":"a place where small children stay while their parents work",
+  "myth":"something many people believe, but it isn't true",
+  "mixed feelings":"when you feel good and bad about something at the same time",
+  "recipe":"step-by-step instructions, for example for cooking",
+  "judgement":"your own ability to decide what is right"
+};
+const ART = [
+  {h:"Too much pressure"},
+  "Families have changed a lot in the last 200 years, but one thing hasn't changed: mothers get more {criticism|criticism} than anyone for how they raise their children. Today there is too much pressure on mothers. The expectations are so high that almost nobody can live up to them.",
+  "Many of us don't want to {admit|admit} this, even to ourselves. So we keep trying, and we feel guilty when we can't do it all. Whatever we do, it feels like it's never enough.",
+  {h:"The perfect mother"},
+  "Jessica Grose, a writer for The New York Times, wrote a book about modern motherhood called Screaming on the Inside. In it, she asks her readers: “Close your eyes and picture the perfect mother.”",
+  "Here is the picture she describes. The perfect mother always looks great. Her home is beautiful. She has the perfect balance between her career, her health and the housework. She even gets up at 5 a.m. to {meditate|meditate}. It sounds funny, but many of us have this picture in our heads, and we compare ourselves to it.",
+  "Grose says that when she became a mother, people started to see her differently. She felt she had to hide her own needs and wishes, and even parts of her personality, because everyone expected her to put the baby first in everything.",
+  {h:"Judged from every side"},
+  "Today, more than 70% of mothers with young children have a paid job and also do most of the housework. They have a lot on their plate. And whatever they decide, someone {judges|judge} them: strangers, friends, family and people on social media. For example, some people online see a mother who sends her child to {daycare|daycare} all day as a bad mother.",
+  "So many mothers try to look perfect, because they don't want to be judged.",
+  {h:"Do it your way"},
+  "Grose says the first step is to understand that the perfect mother is a {myth|myth}. We are afraid that other people will see we are not perfect, and this fear stops us from being honest. That's why mothers who are struggling often keep quiet.",
+  "So be honest about your {mixed feelings|mixed feelings}. Admit that the pressure is too much. And stop judging other mothers.",
+  "Every family can decide what matters most to them. Maybe you miss a school event because of work. Maybe you let your child quit a sport, wear unusual clothes, or get a phone earlier than other kids. That's OK. Every family places a lot of value on different things, and copying the families around you only adds stress. As Grose says, parenting can't follow a {recipe|recipe}.",
+  {h:"Trust yourself"},
+  "Trust your own {judgement|judgement}, even when other people give you different advice. And stop being so hard on yourself when you can't live up to the picture of a perfect, always-happy family.",
+  "The perfect mother doesn't exist. When we accept this, we and our children will probably be happier. There is more than one way to raise happy kids."
+];
+const NPARA = ART.filter(x=>typeof x==="string").length;
+const ORIGINAL = "https://www.psychologytoday.com/us/blog/singletons/202301/avoiding-the-perfect-mother-trap";
+
+/* ---------- Part 2, task 5: her ideas ↔ the article's words ---------- */
+const HER = [
+  "Society tells us it usually goes this way for everyone.",
+  "We have big expectations about parenting, our partners and our work.",
+  "I thought something was wrong with me. I did something wrong.",
+  "It's never enough.",
+  "She's being too hard on herself.",
+  "It depends on the person and the situation."
+];
+const ARTS = [
+  "Many of us have this picture in our heads, and we compare ourselves to it.",
+  "The expectations are so high that almost nobody can live up to them.",
+  "We feel guilty when we can't do it all.",
+  "Whatever we do, it feels like it's never enough.",
+  "Stop being so hard on yourself.",
+  "There is more than one way to raise happy kids."
+];
+const ORDER = [3,0,5,1,4,2]; /* how the article cards are shown */
+const words = s => s.split(" ");
+const VSTEMS = ["The writer says that…","One idea I liked was… because…","This article made me feel…"];
+
+/* ---------- state ---------- */
+const S = {
+  p0:{found:CHG.map(()=>false), taps:[], all:false, q:"", keep:[]},
+  t1:{stems:[], text:{}, used:[]},
+  t2:{yn:["","",""], g:["","",""], ready:false},
+  t4:QS.map(()=>({picks:[], ok:false, ans:""})),
+  t5:{pair:HER.map(()=>-1), tries:[], hl:ARTS.map(()=>[])},
+  t6:[], t7:false
+};
+let sel5 = -1, msg0 = "", shake = null;
+const norm = s => String(s||"").toLowerCase().replace(/[‘’ʼ`]/g,"'").replace(/\s+/g," ").trim();
+const $ = id => document.getElementById(id);
+const el = (tag, cls, txt) => { const e=document.createElement(tag); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e; };
+const save = () => { try{ HW.save(); }catch(e){} };
+const MAX = 2;
+function textArea(get,set,ph,rows){ const ta=el("textarea"); ta.value=get(); if(ph) ta.placeholder=ph; if(rows) ta.rows=rows; ta.oninput=()=>{set(ta.value);save();}; return ta; }
+function starters(list){ const u=el("ul","starters"); list.forEach(s=>u.append(el("li",null,s))); return u; }
+function showGloss(key){ $("shW").textContent=key; $("shM").textContent=GLOSS[key]; $("sheet").hidden=false; }
+function tagText(p, s){ /* [x] → highlighted phrase */
+  s.split(/(\[[^\]]+\])/).forEach(b=>{ const m=b.match(/^\[(.+)\]$/); if(m) p.append(el("span","mark",m[1])); else if(b) p.append(document.createTextNode(b)); });
+}
+
+/* ---------- Part 0 ---------- */
+function part0(app){
+  const part=el("section","part");
+  part.append(el("p","eyebrow","Part 0 · Your summary"), el("h2",null,"Your summary, polished"));
+  const c1=el("div","card");
+  c1.append(el("p",null,"This is your summary of the last article. You used 7 phrases from our lessons!"));
+  const o=el("p","txt"); tagText(o, ORIG); c1.append(o);
+  part.append(c1);
+
+  const n=S.p0.found.filter(Boolean).length;
+  const c2=el("div","card");
+  c2.append(el("p",null,"Here is the same summary, a little polished. 5 small things changed. Read both versions and tap the words that are different."));
+  c2.append(el("p","counter","Found: "+n+" / "+CHG.length));
+  const t=el("p","txt");
+  POL.forEach(seg=>{
+    seg.t.split(/(\s+)/).forEach(w=>{
+      if(!w.trim()){ t.append(document.createTextNode(w)); return; }
+      const shown = seg.c!=null && (S.p0.found[seg.c] || S.p0.all);
+      const s=el("span","tok"+(shown?" hit":""),w);
+      s.onclick=()=>{
+        if(seg.c!=null && !S.p0.found[seg.c] && !S.p0.all){ S.p0.found[seg.c]=true; S.p0.taps.push("✓ "+CHG[seg.c].to); msg0=""; }
+        else if(seg.c==null){ S.p0.taps.push("✗ "+w.replace(/[.,]/g,"")); msg0="“"+w.replace(/[.,]/g,"")+"” is the same in both versions. Look again."; }
+        render();
+      };
+      t.append(s);
+    });
+  });
+  c2.append(t);
+  if(msg0) c2.append(el("div","fb bad",msg0));
+  const list = CHG.map((c,i)=>[c,i]).filter(([,i])=>S.p0.found[i]||S.p0.all);
+  if(list.length){ const box=el("div","plan");
+    list.forEach(([c,i])=>{ const d=el("div","chg"); const a=el("span"); a.append(el("s",null,c.from), document.createTextNode(" → "), el("b",null,c.to)); d.append(a, el("span","muted",c.why)); box.append(d); });
+    c2.append(box); }
+  if(n<CHG.length && !S.p0.all && S.p0.taps.length>=5){
+    const b=el("button","ghost","Show me the changes I missed"); b.type="button"; b.onclick=()=>{S.p0.all=true; msg0=""; render();}; const r=el("div","row"); r.append(b); c2.append(r); }
+  if(n===CHG.length) c2.append(el("div","fb good","✓ You found all 5 changes!"));
+  part.append(c2);
+
+  if(n===CHG.length || S.p0.all){
+    const c3=el("div","card");
+    c3.append(el("p",null,"Do you have any questions about these changes or the patterns behind them? Write them here and we'll talk about them in class. (Optional)"));
+    c3.append(textArea(()=>S.p0.q,v=>S.p0.q=v,"My questions…",2));
+    c3.append(el("p",null,"Which 2 changes do you want to remember? Tap two."));
+    const pk=el("div","pick");
+    CHG.forEach((c,i)=>{ const on=S.p0.keep.includes(i); const b=el("button",on?"on":null,c.to); b.type="button";
+      b.onclick=()=>{ if(on) S.p0.keep=S.p0.keep.filter(x=>x!==i); else if(S.p0.keep.length<2) S.p0.keep.push(i); render(); }; pk.append(b); });
+    c3.append(pk); part.append(c3);
+  }
+  app.append(part);
+}
+
+/* ---------- Part 1 ---------- */
+function part1(app){
+  const part=el("section","part");
+  part.append(el("p","eyebrow","Part 1 · Before you read"), el("h2",null,"Picture the perfect mother"));
+  const c=el("div","card");
+  c.append(el("p",null,"1. Close your eyes and picture the perfect mother. What is she like? Choose 3 sentence starters and finish them."));
+  const pk=el("div","pick");
+  STEMS.forEach((s,i)=>{ const on=S.t1.stems.includes(i); const b=el("button",on?"on":null,s); b.type="button";
+    b.onclick=()=>{ if(on) S.t1.stems=S.t1.stems.filter(x=>x!==i); else if(S.t1.stems.length<3) S.t1.stems.push(i); render(); }; pk.append(b); });
+  c.append(pk);
+  const box=el("div","box"); box.append(el("b",null,"Word bank"), el("span",null,"You can use these. Change the form so it fits your sentence: feels, never feels, has…"));
+  BANK.forEach(([g,list])=>{ const d=el("div"); d.style.marginTop="6px"; d.append(el("span","muted",g)); const ch=el("div","chips"); list.forEach(w=>ch.append(el("span","chip",w))); d.append(ch); box.append(d); });
+  c.append(box);
+  S.t1.stems.forEach(i=>{ c.append(el("p","hint",STEMS[i])); c.append(textArea(()=>S.t1.text[i]||"",v=>S.t1.text[i]=v,STEMS[i].replace(" (+ -ing)",""),2)); });
+  part.append(c);
+  if(S.t1.stems.length===3){
+    const c2=el("div","card"); c2.append(el("p",null,"Now tap the phrases from the word bank that you used."));
+    const p2=el("div","pick");
+    BANKFLAT.forEach((w,i)=>{ const on=S.t1.used.includes(i); const b=el("button",on?"on":null,(on?"✓ ":"")+w); b.type="button";
+      b.onclick=()=>{ S.t1.used = on ? S.t1.used.filter(x=>x!==i) : S.t1.used.concat(i); render(); }; p2.append(b); });
+    c2.append(p2); part.append(c2);
+  }
+
+  const c3=el("div","card");
+  c3.append(el("p",null,"2. You're going to read an article called “Avoiding the Perfect Mother Trap”. What do you think the writer will say? Guess first."));
+  QS.forEach((it,i)=>{
+    if(it.yn){ const r=el("div","guess yn"); r.append(el("span",null,(i+1)+". "+it.q));
+      const seg=el("div","pgrid"); seg.style.gridTemplateColumns="repeat(3,1fr)";
+      ["Yes","No","Not sure"].forEach(k=>{ const b=el("button",S.t2.yn[i]===k?"on":null,k); b.type="button"; b.disabled=S.t2.ready;
+        if(S.t2.yn[i]===k){ b.style.background="var(--brown)"; b.style.color="var(--on-brown)"; }
+        b.onclick=()=>{ S.t2.yn[i]=k; render(); }; seg.append(b); });
+      r.append(seg); c3.append(r);
+    } else {
+      c3.append(el("p",null,(i+1)+". "+it.q));
+      const inp=el("input"); inp.value=S.t2.g[i-3]; inp.placeholder="Your guess (one line)"; inp.disabled=S.t2.ready;
+      inp.oninput=()=>{ S.t2.g[i-3]=inp.value; save(); }; c3.append(inp);
+    }
+  });
+  part.append(c3);
+  app.append(part);
+}
+
+/* ---------- Part 2 ---------- */
+function part2(app){
+  const part=el("section","part");
+  part.append(el("p","eyebrow","Part 2 · Read"), el("h2",null,"“Avoiding the Perfect Mother Trap”"));
+  if(!S.t2.ready){
+    const all=S.t2.yn.every(Boolean)&&S.t2.g.every(g=>g.trim());
+    const r=el("div","row"), b=el("button",null,"I'm ready to read →"); b.type="button";
+    const note=el("span","muted",""); 
+    b.onclick=()=>{ if(S.t2.yn.every(Boolean)&&S.t2.g.every(g=>g.trim())){ S.t2.ready=true; render(); } else note.textContent="Answer all 6 guesses first."; };
+    r.append(b, note);
+    part.append(r); app.append(part); return false;
+  }
+  part.append(el("div","how","3. Read the article. Don't worry about every word. Tap a highlighted word to see what it means."));
+  const art=el("article","article"); let n=0;
+  ART.forEach(x=>{
+    if(typeof x!=="string"){ art.append(el("h4",null,x.h)); return; }
+    n++; const p=el("p"); p.append(el("span","pn",n));
+    x.split(/(\{[^}]+\})/).forEach(bit=>{ const m=bit.match(/^\{([^|]+)\|([^}]+)\}$/);
+      if(m){ const s=el("span","gl",m[1]); s.setAttribute("role","button"); s.tabIndex=0; s.onclick=()=>showGloss(m[2]); p.append(s); }
+      else if(bit) p.append(document.createTextNode(bit)); });
+    art.append(p);
+  });
+  const src=el("p","muted"); src.style.fontSize=".9rem";
+  src.append(document.createTextNode("Adapted from Susan Newman, Psychology Today, 4 Jan 2023. "));
+  const a=el("a",null,"Read the original →"); a.href=ORIGINAL; a.target="_blank"; a.rel="noopener"; src.append(a); art.append(src);
+  part.append(art);
+
+  /* task 4 */
+  part.append(el("h3",null,"4. Find the answers"));
+  part.append(el("p",null,"Go back to your guesses. Tap the paragraph that answers each question."+" For 4–6, also write the answer in one line."));
+  QS.forEach((it,i)=>{
+    const st=S.t4[i], done=st.ok||st.picks.length>=MAX, card=el("div","card"+(st.ok?" ok":""));
+    const top=el("div","top"); top.append(el("span","num",i+1), el("p","sent",it.q)); card.append(top);
+    const guess = it.yn ? S.t2.yn[i] : S.t2.g[i-3];
+    card.append(el("p","muted","Your guess: "+(guess||"—")));
+    const g=el("div","pgrid");
+    for(let k=1;k<=NPARA;k++){ const b=el("button",null,String(k)); b.type="button";
+      if(st.picks.includes(k)) b.className = it.p.includes(k) ? "right" : "wrong";
+      else if(done && !st.ok && it.p.includes(k)) b.className="right";
+      b.disabled=done;
+      b.onclick=()=>{ st.picks.push(k); if(it.p.includes(k)) st.ok=true; render(); };
+      g.append(b); }
+    card.append(g);
+    if(st.ok) card.append(el("div","fb good","✓ Yes, paragraph "+st.picks[st.picks.length-1]+(it.yn?". The writer says: "+it.a+".":"")));
+    else if(done) card.append(el("div","fb bad","Look at paragraph "+it.p.join(" / ")+(it.yn?". The writer says: "+it.a+".":"")));
+    else if(st.picks.length) card.append(el("div","fb bad","Not this one. Try again."));
+    if(!it.yn && done){ card.append(textArea(()=>st.ans,v=>st.ans=v,"The answer in one line",2)); }
+    part.append(card);
+  });
+
+  /* task 5 */
+  part.append(el("h3",null,"5. Your idea, the article's words"));
+  part.append(el("p",null,"The blue cards are ideas you said in our lessons. The article says the same ideas in other words. Tap a blue card, then tap the article sentence that matches it."));
+  const done5 = S.t5.pair.filter(x=>x>=0).length;
+  const pairs=el("div","plan");
+  HER.forEach((h,i)=>{ const j=S.t5.pair[i]; if(j<0) return;
+    const pr=el("div","pair"); pr.append(el("p","her","You: “"+h+"”"));
+    const t=el("p","sent");
+    words(ARTS[j]).forEach((w,k)=>{ const on=S.t5.hl[j].includes(k); const s=el("span","tok"+(on?" sel":""),w); s.onclick=()=>{ S.t5.hl[j]= on ? S.t5.hl[j].filter(x=>x!==k) : S.t5.hl[j].concat(k).sort((a,b)=>a-b); render(); }; t.append(s, document.createTextNode(" ")); });
+    pr.append(t); pairs.append(pr); });
+  if(done5){ part.append(el("p","muted","In each green box, tap the words that say your idea. They turn yellow. Tap again to undo.")); part.append(pairs); }
+  if(done5<HER.length){
+    const cols=el("div","cols"), L=el("div"), R=el("div");
+    HER.forEach((h,i)=>{ if(S.t5.pair[i]>=0) return; const b=el("button","mcard her"+(sel5===i?" on":""),h); b.type="button"; b.onclick=()=>{ sel5 = sel5===i ? -1 : i; render(); }; L.append(b); });
+    ORDER.forEach(j=>{ if(S.t5.pair.includes(j)) return; const b=el("button","mcard"+(shake===j?" shake":""),ARTS[j]); b.type="button";
+      b.onclick=()=>{ if(sel5<0) return; const ok = sel5===j; S.t5.tries.push((sel5+1)+"→"+(ok?"✓":"✗ “"+ARTS[j]+"”"));
+        if(ok){ S.t5.pair[sel5]=j; sel5=-1; shake=null; } else shake=j; render(); setTimeout(()=>{ shake=null; },400); };
+      R.append(b); });
+    cols.append(L,R); part.append(cols);
+  } else part.append(el("div","fb good","✓ All 6 matched!"));
+
+  /* task 6 */
+  part.append(el("h3",null,"6. My phrases"));
+  const ph=myPhrases();
+  const c6=el("div","card");
+  if(!ph.length) c6.append(el("p","muted","First tap some words in the green boxes in task 5. They will appear here."));
+  else {
+    c6.append(el("p",null,"These are the words you chose in task 5. Pick 3 or 4 that you want to use. They will be your phrases for the voice message."));
+    const pk=el("div","pick");
+    ph.forEach(w=>{ const on=S.t6.includes(w); const b=el("button",on?"on":null,(on?"✓ ":"")+w); b.type="button";
+      b.onclick=()=>{ if(on) S.t6=S.t6.filter(x=>x!==w); else if(S.t6.length<4) S.t6.push(w); render(); }; pk.append(b); });
+    c6.append(pk);
+  }
+  part.append(c6);
+
+  /* task 7 */
+  part.append(el("h3",null,"7. Tell a friend about the article"));
+  const c7=el("div","card");
+  c7.append(el("p",null,"Record a voice message for me in Telegram (1–2 minutes). Imagine you're telling a friend about this article and what you think. Don't read aloud. Just talk."));
+  const plan=el("div","box"); plan.append(el("b",null,"Your plan: your answers from task 4"));
+  [3,4,5].forEach(i=>plan.append(el("p",null,"• "+QS[i].q+" "+(S.t4[i].ans.trim()||"…"))));
+  c7.append(plan);
+  const mp=el("div","box"); mp.append(el("b",null,"My phrases: use 2 or 3"));
+  const ch=el("div","chips"); (S.t6.length?S.t6:["(choose them in task 6)"]).forEach(w=>ch.append(el("span","chip",w))); mp.append(ch); c7.append(mp);
+  c7.append(el("p","muted","You can start like this:"), starters(VSTEMS));
+  const b=el("button",S.t7?"on":"ghost",S.t7?"✓ I sent a voice message":"I sent a voice message"); b.type="button"; b.onclick=()=>{ S.t7=!S.t7; render(); };
+  const r=el("div","row"); r.append(b); c7.append(r);
+  part.append(c7);
+  app.append(part);
+  return true;
+}
+function myPhrases(){
+  const out=[];
+  HER.forEach((h,i)=>{ const j=S.t5.pair[i]; if(j<0) return; const w=words(ARTS[j]), hl=S.t5.hl[j]; let cur=[];
+    hl.forEach((k,n)=>{ if(n && k!==hl[n-1]+1){ out.push(cur.join(" ")); cur=[]; } cur.push(w[k]); });
+    if(cur.length) out.push(cur.join(" ")); });
+  return [...new Set(out.map(s=>s.replace(/[.,]+$/,"").replace(/^[,]+/,"")).filter(Boolean))];
+}
+
+/* ---------- page ---------- */
+function render(){
+  const y=window.scrollY, app=$("app"); app.innerHTML="";
+  part0(app); part1(app); const reading=part2(app);
+  const end=el("section","part");
+  if(reading){ end.append(el("p",null,"Finished? Send it to me. You can still come back and look at it.")); end.append(HW.sendBlock({lang:"en"})); }
+  app.append(end);
+  window.scrollTo(0,y);
+  save();
+}
+$("shX").onclick=()=>{ $("sheet").hidden=true; };
+
+/* ---------- what Stacy reads ---------- */
+function summary(){
+  const L=[], n0=S.p0.found.filter(Boolean).length, miss=S.p0.taps.filter(t=>t[0]==="✗").length;
+  L.push("Task 0 · Her summary, polished (reformulation)", (n0===CHG.length?"✓ ":"")+"Found "+n0+" of "+CHG.length+" changes"+(S.p0.all?" (then tapped “show me the rest”)":"")+" · taps on unchanged words: "+miss);
+  CHG.forEach((c,i)=>L.push((S.p0.found[i]?"✓ ":"✗ ")+c.from+" → "+c.to));
+  if(S.p0.taps.length) L.push("Taps in order: "+S.p0.taps.join(" · "));
+  L.push("Her questions: "+(S.p0.q.trim()||"—"));
+  L.push("Wants to remember: "+(S.p0.keep.map(i=>CHG[i].to).join(" · ")||"—"));
+  L.push("");
+  L.push("Task 1 · Picture the perfect mother", "Stems chosen: "+(S.t1.stems.length||0)+" · word-bank phrases ticked: "+S.t1.used.length);
+  S.t1.stems.forEach(i=>L.push(STEMS[i]+" → "+((S.t1.text[i]||"").trim()||"—")));
+  L.push("Phrases she says she used: "+(S.t1.used.map(i=>BANKFLAT[i]).join(", ")||"—"));
+  L.push("");
+  L.push("Task 2 + 4 · Predictions and answers", S.t2.ready?"Paragraphs found first try: "+S.t4.filter(s=>s.ok&&s.picks.length===1).length+" of "+QS.length:"Not started reading yet");
+  QS.forEach((it,i)=>{ const st=S.t4[i], g=it.yn?S.t2.yn[i]:S.t2.g[i-3];
+    let line=(i+1)+". "+it.q+" · guess: "+(g||"—");
+    if(it.yn) line+=(g?(g===it.a?" ✓":" ✗"):"");
+    line+=" · paragraph: "+(st.picks.length?st.picks.join(" → ")+(st.ok?" ✓":" ✗"):"—");
+    if(!it.yn) line+=" · answer: "+(st.ans.trim()||"—");
+    L.push(line); });
+  L.push("");
+  const m=S.t5.pair.filter(x=>x>=0).length, wrong=S.t5.tries.filter(t=>t.includes("✗")).length;
+  L.push("Task 5 · Her ideas ↔ the article's words", (m===HER.length&&wrong===0?"✓ ":"")+"Matched "+m+" of "+HER.length+" · wrong taps: "+wrong);
+  HER.forEach((h,i)=>{ const j=S.t5.pair[i]; const hl=j>=0?S.t5.hl[j].map(k=>words(ARTS[j])[k]).join(" "):""; L.push((i+1)+". “"+h+"” → "+(j>=0?"✓ highlighted: "+(hl||"nothing"):"✗ not matched")); });
+  if(wrong) L.push("Wrong tries: "+S.t5.tries.filter(t=>t.includes("✗")).join(" · "));
+  L.push("");
+  L.push("Task 6 · My phrases", S.t6.join(" · ")||"—");
+  L.push("");
+  L.push("Task 7 · Voice message: "+(S.t7?"she says she sent it":"not marked"));
+  return L.join("\n");
+}
+
+HW.start({
+  id:"hw2", title:"The perfect mother (19 Nov)",
+  get:()=>S,
+  set:(z)=>{
+    if(z.p0&&Array.isArray(z.p0.found)&&z.p0.found.length===CHG.length){ S.p0=z.p0; S.p0.taps=S.p0.taps||[]; S.p0.keep=S.p0.keep||[]; S.p0.q=String(S.p0.q||""); }
+    if(z.t1&&Array.isArray(z.t1.stems)){ S.t1={stems:z.t1.stems.filter(i=>i<STEMS.length).slice(0,3), text:z.t1.text||{}, used:(z.t1.used||[]).filter(i=>i<BANKFLAT.length)}; }
+    if(z.t2&&Array.isArray(z.t2.yn)&&z.t2.yn.length===3&&Array.isArray(z.t2.g)&&z.t2.g.length===3) S.t2=z.t2;
+    if(Array.isArray(z.t4)&&z.t4.length===QS.length) S.t4=z.t4;
+    if(z.t5&&Array.isArray(z.t5.pair)&&z.t5.pair.length===HER.length&&Array.isArray(z.t5.hl)&&z.t5.hl.length===ARTS.length) S.t5=z.t5;
+    if(Array.isArray(z.t6)) S.t6=z.t6.map(String).slice(0,4);
+    S.t7=!!z.t7;
+  },
+  summary, render
+});
+</script>
+</body>
+</html>

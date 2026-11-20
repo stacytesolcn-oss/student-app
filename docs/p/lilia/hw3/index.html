@@ -1,0 +1,228 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Feeling seen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Raleway:wght@600;700&display=swap">
+<style>
+:root{
+  --bg:#F6F1E7; --card:#FCFAF5; --ink:#231815; --muted:#6E5C52; --line:#E3D9C8;
+  --brown:#643A24; --on-brown:#F6F1E7;
+  --butter:#F4DC96; --butter-soft:#FAF0CF;
+  --blue-soft:#E3EEF4; --blue-ink:#2F4C5E;
+  --good:#2E6B45; --good-soft:#E2F0E5; --warn:#8A4B12; --warn-soft:#F6E6D3;
+  --display:"Cormorant Garamond","Iowan Old Style",Georgia,serif;
+  --body:"DM Sans","Helvetica Neue",Arial,sans-serif;
+  --caps:"Raleway","Avenir Next","Helvetica Neue",Arial,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){ :root{
+  --bg:#231815; --card:#2E211C; --ink:#F3ECDF; --muted:#BCA995; --line:#46352C;
+  --brown:#F4DC96; --on-brown:#231815;
+  --butter:#F4DC96; --butter-soft:#3F3422;
+  --blue-soft:#253743; --blue-ink:#C1DBE8;
+  --good:#9FD3AE; --good-soft:#1F3426; --warn:#F0C08E; --warn-soft:#3E2B1B;
+  color-scheme:dark }}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.55;-webkit-tap-highlight-color:transparent}
+.wrap{max-width:560px;margin:0 auto;padding-block:20px 96px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:18px}
+.back{color:var(--muted);font-size:.9rem;text-decoration:none}
+h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.08;margin:0;text-wrap:balance}
+h1{font-size:2.4rem} h2{font-size:1.8rem} h3{font-size:1.35rem}
+p{margin:0}
+.eyebrow{font-family:var(--caps);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.muted{color:var(--muted)}
+.part{display:grid;gap:12px;padding-top:10px}
+.how{background:var(--butter-soft);border-radius:20px;padding:14px 16px;display:grid;gap:6px;font-size:.95rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px;display:grid;gap:10px;min-width:0}
+.card.ok{border-color:var(--good)}
+.top{display:flex;align-items:flex-start;gap:10px}
+.num{width:28px;height:28px;border-radius:50%;background:var(--brown);color:var(--on-brown);display:grid;place-items:center;font-weight:700;font-size:.85rem;flex:none;margin-top:2px}
+.card.ok .num{background:var(--good);color:var(--card)}
+.sent{font-size:1.05rem;line-height:1.5}
+.hint{font-family:var(--caps);letter-spacing:.06em;font-weight:700;color:var(--muted);font-size:.85rem}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button{font:inherit;cursor:pointer;border-radius:999px;padding:10px 16px;font-weight:600;font-size:.92rem;border:1.5px solid var(--brown);background:var(--brown);color:var(--on-brown);min-height:44px}
+button.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+button.on{background:var(--brown);color:var(--on-brown);border-color:var(--brown)}
+button[disabled]{opacity:.45;cursor:default}
+input,textarea{width:100%;font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;min-height:44px}
+textarea{min-height:72px;resize:vertical}
+input:disabled{opacity:.8}
+.fb{font-size:.93rem;border-radius:12px;padding:8px 12px}
+.fb.good{background:var(--good-soft);color:var(--good)}
+.fb.bad{background:var(--warn-soft);color:var(--warn)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.seg button{padding:8px 6px;font-size:.88rem;border-radius:12px;background:var(--card);color:var(--ink);border-color:var(--line)}
+.seg button.on{background:var(--brown);color:var(--on-brown);border-color:var(--brown)}
+.seg button.right{border-color:var(--good);background:var(--good-soft);color:var(--good)}
+.seg button.wrong{border-color:var(--warn);background:var(--warn-soft);color:var(--warn)}
+.box{background:var(--blue-soft);color:var(--blue-ink);border-radius:14px;padding:10px 12px;font-size:.93rem}
+.box b{display:block;font-family:var(--caps);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:.88rem;color:var(--ink)}
+.chip.used{background:var(--good-soft);border-color:var(--good);color:var(--good)}
+ul.starters{margin:0;padding-left:1.1em;display:grid;gap:2px;font-size:.95rem}
+.article{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;display:grid;gap:12px;font-size:1.02rem;line-height:1.65}
+.article h3{font-size:1.5rem}
+.photo{width:100%;height:auto;border-radius:14px;display:block;margin:4px 0}
+.gl{background:var(--butter-soft);border-bottom:2px solid var(--butter);border-radius:4px;padding:0 3px;cursor:pointer}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--brown);color:var(--on-brown);padding:14px max(16px,env(safe-area-inset-left,0px)) calc(14px + env(safe-area-inset-bottom,0px));display:flex;gap:12px;align-items:flex-start;box-shadow:0 -6px 20px rgba(0,0,0,.18)}
+.sheet[hidden]{display:none}
+.sheet div{flex:1;max-width:560px;margin:0 auto}
+.sheet b{display:block;font-size:1.05rem}
+.sheet button{background:transparent;border-color:var(--on-brown);color:var(--on-brown);min-height:36px;padding:4px 12px}
+.guess{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.guess:last-child{border-bottom:0}
+.tag{font-size:.82rem;font-weight:700;border-radius:999px;padding:2px 10px;flex:none}
+.tag.good{background:var(--good-soft);color:var(--good)} .tag.bad{background:var(--warn-soft);color:var(--warn)}
+a{color:var(--brown)}
+.hw-sent{background:#dff0e4;color:#2f7d4a;font-weight:700;border-radius:12px;padding:10px 14px}
+.tok{border-radius:6px;padding:1px 1px;cursor:pointer}
+.tok.hit{background:var(--good-soft);color:var(--good);font-weight:700}
+.tok.sel{background:var(--butter);color:#231815;font-weight:600}
+.tok.miss{background:var(--warn-soft)}
+.mark{background:var(--butter-soft);border-bottom:2px solid var(--butter);border-radius:4px;padding:0 2px;font-weight:600}
+.txt{font-size:1.05rem;line-height:1.85}
+.counter{font-family:var(--caps);font-weight:700;letter-spacing:.06em;font-size:.85rem;color:var(--brown)}
+.chg{display:grid;gap:2px;border-left:4px solid var(--good);padding:4px 10px;font-size:.95rem}
+.chg s{color:var(--muted)}
+.pick{display:flex;flex-wrap:wrap;gap:8px}
+.pick button{background:var(--card);color:var(--ink);border-color:var(--line);font-weight:500;border-radius:14px;text-align:left;padding:8px 12px}
+.pick button.on{background:var(--brown);color:var(--on-brown);border-color:var(--brown)}
+.pgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.pgrid button{padding:6px 0;border-radius:10px;background:var(--card);color:var(--ink);border-color:var(--line);min-height:40px}
+.pgrid button.right{background:var(--good-soft);color:var(--good);border-color:var(--good)}
+.pgrid button.wrong{background:var(--warn-soft);color:var(--warn);border-color:var(--warn)}
+.pn{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--butter);color:#231815;font-size:.75rem;font-weight:700;margin-right:6px;vertical-align:2px}
+.article h4{font-family:var(--caps);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:6px 0 -4px}
+.mcard{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:10px 12px;text-align:left;color:var(--ink);font-weight:500;width:100%;min-height:48px}
+.mcard.her{background:var(--blue-soft);color:var(--blue-ink);border-color:var(--blue-soft)}
+.mcard.on{border-color:var(--brown);box-shadow:0 0 0 2px var(--brown) inset}
+.mcard.shake{animation:sh .35s}
+@keyframes sh{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:start}
+.cols>div{display:grid;gap:8px}
+.pair{display:grid;gap:8px;background:var(--good-soft);border:1px solid var(--good);border-radius:16px;padding:10px}
+.pair .her{font-size:.92rem;color:var(--good)}
+.plan{display:grid;gap:4px;font-size:.95rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../" data-hw-back>← My English</a>
+  <div>
+    <p class="eyebrow">Optional homework · about 10 min</p>
+    <h1>Feeling seen</h1>
+  </div>
+  <div class="how">This one is optional. Do it if you have time and want to, or skip it. No problem at all! It goes with “The perfect mother”, so do that one first.</div>
+  <main id="app"></main>
+</div>
+<script src="../../../kit/hw.js"></script>
+<script>
+const EXA = [
+  "When I started this newsletter, I wanted every post to be bright and neat, with a useful lesson at the end.",
+  "But I stopped enjoying it.",
+  "I felt pressure to “add value” every single week, and my writing started to feel fake, like a performance.",
+  "So now I want to write something different: real, honest and human, without a perfect lesson at the end."
+];
+const EXA_OK = 2;
+const EXB = "What I really want to read are stories that make me feel seen. I think everyone wants to feel seen. When a stranger describes your exact experience, it feels like magic. It reminds you that you are not alone, and that we are more alike than different. The parts of ourselves we usually hide are often what make us most human.";
+const ORIGINAL = "https://brirenko.substack.com/p/to-feel-seen-in-motherhood";
+const IDEAS = [
+  ["Mothers feel there is too much pressure on them.","Perfect mother"],
+  ["Whatever we do, it feels like it's never enough.","Perfect mother"],
+  ["Many of us have a picture of the perfect mother in our heads.","Perfect mother"],
+  ["Mothers are judged from every side, even on social media.","Perfect mother"],
+  ["The fear of looking imperfect stops mothers from being honest.","Perfect mother"],
+  ["Every family can decide what matters most to them.","Perfect mother"],
+  ["Stop being so hard on yourself.","Perfect mother"],
+  ["There is more than one way to raise happy kids.","Perfect mother"],
+  ["Trying to make everything perfect can feel fake.","Feeling seen"],
+  ["Everyone wants to feel seen.","Feeling seen"]
+];
+const BOXES = ["I liked this","This was new for me","This answered my question"];
+const S = {q1:{picks:[],ok:false}, q2:"", sort:IDEAS.map(()=>-1), voice:false};
+const $ = id => document.getElementById(id);
+const el = (tag, cls, txt) => { const e=document.createElement(tag); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e; };
+const save = () => { try{ HW.save(); }catch(e){} };
+
+function render(){
+  const y=window.scrollY, app=$("app"); app.innerHTML="";
+  const part=el("section","part");
+  part.append(el("p","eyebrow","Read"), el("h2",null,"Two short parts from a mum's blog"));
+  part.append(el("p",null,"Bri is a mum who writes a blog. Here are two short parts from one of her posts."));
+  const art=el("article","article");
+  art.append(el("h4",null,"Part A"));
+  const pa=el("p"); EXA.forEach(s=>pa.append(document.createTextNode(s+" "))); art.append(pa);
+  art.append(el("h4",null,"Part B"), el("p",null,EXB));
+  const src=el("p","muted"); src.style.fontSize=".9rem"; src.append(document.createTextNode("Adapted from bri renko, “To Feel Seen in Motherhood”, Substack, 24 Sept 2026. "));
+  const a=el("a",null,"Read the original →"); a.href=ORIGINAL; a.target="_blank"; a.rel="noopener"; src.append(a); art.append(src);
+  part.append(art);
+
+  /* 1 */
+  const c1=el("div","card"+(S.q1.ok?" ok":""));
+  c1.append(el("p",null,"1. Part A: why did Bri stop trying to make her posts perfect? Tap the sentence that says it."));
+  const done=S.q1.ok||S.q1.picks.length>=2;
+  EXA.forEach((s,i)=>{ const b=el("button","mcard",s); b.type="button"; b.disabled=done;
+    if(S.q1.picks.includes(i)) b.style.borderColor = i===EXA_OK ? "var(--good)" : "var(--warn)";
+    else if(done && i===EXA_OK) b.style.borderColor="var(--good)";
+    b.onclick=()=>{ S.q1.picks.push(i); if(i===EXA_OK) S.q1.ok=true; render(); }; c1.append(b); });
+  if(S.q1.ok) c1.append(el("div","fb good","✓ Yes: she felt pressure, and her writing started to feel fake."));
+  else if(done) c1.append(el("div","fb bad","Look at the green sentence: she felt pressure to “add value”, so her writing felt fake."));
+  else if(S.q1.picks.length) c1.append(el("div","fb bad","Not this one. Look for the reason."));
+  part.append(c1);
+
+  /* 2 */
+  const c2=el("div","card");
+  c2.append(el("p",null,"2. Part B: why does feeling seen help? Write 2–3 sentences in your own words."));
+  const u=el("ul","starters"); ["It makes you feel…","When someone shares…, you…"].forEach(s=>u.append(el("li",null,s))); c2.append(u);
+  const ta=el("textarea"); ta.rows=3; ta.value=S.q2; ta.placeholder="Your answer"; ta.oninput=()=>{S.q2=ta.value;save();}; c2.append(ta);
+  part.append(c2);
+
+  /* 3 */
+  part.append(el("h3",null,"3. Sort the ideas"));
+  part.append(el("p",null,"These ideas are from both texts. For each one, tap where it goes for you. You can leave some out."));
+  IDEAS.forEach(([t,src],i)=>{
+    const c=el("div","card"); c.append(el("p","hint",src), el("p","sent",t));
+    const pk=el("div","pick");
+    BOXES.forEach((bx,k)=>{ const on=S.sort[i]===k; const b=el("button",on?"on":null,bx); b.type="button"; b.onclick=()=>{ S.sort[i]= on ? -1 : k; render(); }; pk.append(b); });
+    c.append(pk); part.append(c);
+  });
+
+  /* 4 */
+  const c4=el("div","card");
+  c4.append(el("p",null,"4. Optional: record a short voice message for me in Telegram. What made you feel seen as a mum? Don't read aloud. Just talk."));
+  const b=el("button",S.voice?"on":"ghost",S.voice?"✓ I sent a voice message":"I sent a voice message"); b.type="button"; b.onclick=()=>{S.voice=!S.voice;render();};
+  const r=el("div","row"); r.append(b); c4.append(r); part.append(c4);
+
+  app.append(part);
+  const end=el("section","part"); end.append(el("p",null,"Finished? Send it to me.")); end.append(HW.sendBlock({lang:"en"})); app.append(end);
+  window.scrollTo(0,y);
+  save();
+}
+
+function summary(){
+  const L=[];
+  L.push("Task 1 · Why did Bri stop making her posts perfect?", (S.q1.ok?"✓ ":S.q1.picks.length?"✗ ":"")+(S.q1.picks.length?S.q1.picks.map(i=>"“"+EXA[i]+"”").join(" → ")+" ("+S.q1.picks.length+(S.q1.picks.length===1?" try)":" tries)"):"not answered"));
+  L.push("","Task 2 · Why does feeling seen help?", S.q2.trim()||"—");
+  L.push("","Task 3 · Sort the ideas");
+  BOXES.forEach((bx,k)=>{ const list=IDEAS.filter((_,i)=>S.sort[i]===k).map(x=>x[0]); L.push(bx+": "+(list.join(" · ")||"—")); });
+  L.push("","Task 4 · Voice message: "+(S.voice?"she says she sent it":"not marked"));
+  return L.join("\n");
+}
+
+HW.start({
+  id:"hw3", title:"Feeling seen (optional, 19 Nov)",
+  get:()=>S,
+  set:(z)=>{
+    if(z.q1&&Array.isArray(z.q1.picks)) S.q1={picks:z.q1.picks.filter(i=>i<EXA.length), ok:!!z.q1.ok};
+    S.q2=String(z.q2||"");
+    if(Array.isArray(z.sort)&&z.sort.length===IDEAS.length) S.sort=z.sort;
+    S.voice=!!z.voice;
+  },
+  summary, render
+});
+</script>
+</body>
+</html>
