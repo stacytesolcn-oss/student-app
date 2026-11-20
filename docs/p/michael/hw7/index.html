@@ -251,43 +251,26 @@ function banner(srcs,step,title){
 }
 function triesTxt(arr){return arr&&arr.length?arr.join(" → ")+` (${arr.length} ${arr.length===1?"try":"tries"})`:"";}
 
-/* ================= DRAG & DROP (finger drag, or tap a word and then tap the place) ================= */
-let SEL=null, DROP=null, LASTDRAG=0;
+/* ================= TAP TO PLACE: tap a word, then tap its place ================= */
+let SEL=null, DROP=null;
 function dragChip(label,key,extraCls){
-  const b=el("button",{class:"wchip dchip"+(extraCls?" "+extraCls:""),"aria-pressed":String(SEL===key)},label);
-  let sx=0,sy=0,drag=false,ghost=null,over=null,pid=null;
-  const zoneAt=(x,y)=>{const t=document.elementFromPoint(x,y);return t&&t.closest?t.closest("[data-drop]"):null;};
-  b.addEventListener("pointerdown",e=>{sx=e.clientX;sy=e.clientY;drag=false;pid=e.pointerId;try{b.setPointerCapture(pid);}catch(_){}});
-  b.addEventListener("pointermove",e=>{
-    if(pid==null)return;
-    if(!drag&&Math.hypot(e.clientX-sx,e.clientY-sy)>8){drag=true;ghost=b.cloneNode(true);ghost.classList.add("ghost");document.body.append(ghost);}
-    if(drag){ghost.style.left=e.clientX+"px";ghost.style.top=e.clientY+"px";const z=zoneAt(e.clientX,e.clientY);if(z!==over){if(over)over.classList.remove("over");over=z;if(over)over.classList.add("over");}}
-  });
-  const end=e=>{
-    if(pid==null)return;pid=null;
-    if(ghost){ghost.remove();ghost=null;}
-    if(over)over.classList.remove("over");
-    if(drag){const z=over;over=null;drag=false;LASTDRAG=Date.now();if(z&&DROP)DROP(key,z.getAttribute("data-drop"));}
-  };
-  b.addEventListener("pointerup",end);
-  b.addEventListener("pointercancel",()=>{pid=null;drag=false;if(ghost){ghost.remove();ghost=null;}if(over){over.classList.remove("over");over=null;}});
-  b.addEventListener("click",()=>{if(Date.now()-LASTDRAG<400)return;SEL=SEL===key?null:key;rr();});
-  return b;
+  return el("button",{class:"wchip"+(extraCls?" "+extraCls:""),"aria-pressed":String(SEL===key),onclick:()=>{SEL=SEL===key?null:key;rr();}},label);
 }
 function dropZone(tag,attrs,id,...kids){const z=el(tag,Object.assign({},attrs,{"data-drop":id}),...kids);
-  z.addEventListener("click",e=>{if(SEL!=null&&DROP&&!e.target.closest(".dchip")&&!e.target.closest(".say")){const k=SEL;SEL=null;DROP(k,id);}});return z;}
+  if(SEL!=null)z.classList.add("over");
+  z.addEventListener("click",e=>{if(SEL!=null&&DROP&&!e.target.closest(".say")){const k=SEL;SEL=null;DROP(k,id);}});return z;}
 /* a wrong drop counts as a try; after 2 wrong tries the word goes to its place by itself */
 function attempt(st,where,correct){
   st.tries.push(where);
   if(correct)st.ok=true; else if(st.tries.length>=2)st.shown=true;
   rr();
 }
-function bank(chips,label){return el("div",{class:"bankbox"},el("span",{class:"lbl"},label||"Word bank · перетащи или нажми слово, потом место"),el("div",{class:"bank"},...chips));}
+function bank(chips,label){return el("div",{class:"bankbox"},el("span",{class:"lbl"},label||"Word bank · нажми на слово, потом на место"),el("div",{class:"bank"},...chips));}
 
 /* ================= DATA ================= */
 const WORDS=[
   {id:"fasting",w:"fasting",label:"fasting (noun) / fast (verb)",img:"img/fasting.webp",icon:"⏳",def:"not eating for many hours",say:"fasting. fast"},
-  {id:"detox",w:"a detox",label:"a detox",img:"img/detox.webp",icon:"🥤",def:"a few days of only juice, water or vegetables",say:"a detox"},
+  {id:"detox",w:"a detox",label:"a detox",img:"img/detox.webp",icon:"🥤",def:"a few days of only juice, water or vegetables · DEE-tox",say:"a dee-tox"},
   {id:"poison",w:"food poisoning",label:"food poisoning",img:"img/food-poisoning.webp",icon:"🤢",def:"you feel very sick after bad food",say:"food poisoning"},
   {id:"diet",w:"a diet",label:"a diet",img:"img/diet.webp",icon:"🥗",def:"you eat less or stop eating some food",say:"a diet"},
   {id:"lose",w:"lose weight",label:"lose weight",img:"img/lose-weight.webp",icon:"⚖️",def:"you become thinner: −3 kilos!",say:"lose weight"}
@@ -298,7 +281,7 @@ const T2=[
   {id:"fasting",p:"fasting",v:"try"},
   {id:"if",p:"intermittent fasting",v:"try"},
   {id:"week",p:"once a week",v:"fast"},
-  {id:"detox",p:"a detox",v:"do"},
+  {id:"detox",p:"a detox",v:"do",say:"do a dee-tox"},
   {id:"poison",p:"food poisoning",v:"have"},
   {id:"weight",p:"weight",v:"lose"}
 ];
@@ -314,8 +297,13 @@ const T3=[
 ];
 const T3EXTRA=["fasting","makes a detox"];
 const T4=[
-  {p:"lift weights",c:"u"},{p:"sleep well",c:"u",yn:true},{p:"skip breakfast",c:"u"},{p:"eat red meat",c:"u"},
-  {p:"drink herbal tea",c:"u"},{p:"take vitamins",c:"u"},{p:"get sick",c:"u"},
+  {p:"do yoga",c:"u",g:"sport"},{p:"work out",c:"u",g:"sport"},{p:"skip a workout",c:"u",g:"sport"},{p:"do cardio",c:"u",g:"sport"},
+  {p:"lift weights",c:"u",g:"sport"},{p:"go for a run",c:"u",g:"sport"},{p:"go to the gym",c:"u",g:"sport"},
+  {p:"see a doctor",c:"u",g:"sick"},{p:"have a headache",c:"u",g:"sick"},{p:"stay in bed",c:"u",g:"sick"},{p:"have a cough",c:"u",g:"sick"},
+  {p:"have a runny nose",c:"u",g:"sick"},{p:"have a sore throat",c:"u",g:"sick"},{p:"get tired",c:"u",g:"sick"},{p:"get sick",c:"u",g:"sick"},
+  {p:"take vitamins",c:"u",g:"sick"},{p:"sleep well",c:"u",g:"sick"},
+  {p:"have breakfast",c:"u",g:"food"},{p:"skip breakfast",c:"u",g:"food"},{p:"finish your plate",c:"u",g:"food"},{p:"drink herbal tea",c:"u",g:"food"},
+  {p:"eat fish",c:"u",g:"food"},{p:"eat red meat",c:"u",g:"food"},{p:"eat out",c:"u",g:"food"},{p:"get hungry",c:"u",g:"food"},
   {p:"be on a diet",c:"e",base:"be",rest:"on a diet",v3:"been"},
   {p:"try fasting",c:"e",base:"try",rest:"fasting",v3:"tried"},
   {p:"do a detox",c:"e",base:"do",rest:"a detox",v3:"done"},
@@ -323,9 +311,10 @@ const T4=[
   {p:"run a marathon",c:"e",base:"run",rest:"a marathon",v3:"run"},
   {p:"try to lose weight",c:"e",base:"try",rest:"to lose weight",v3:"tried"}
 ];
+const GROUPS=[["sport","🏃 Sport"],["sick","🤒 Health"],["food","🍳 Food"]];
 /* Task 5: chat with Olivia */
 const MYHELLO="Hi Olivia! My name is Michael. I'm your nutritionist 😊 I want to ask you some questions about your health and your lifestyle.";
-const HELLO="Hi Michael! Nice to meet you 😊 Sure, ask me anything!";
+const HELLO="Hi Michael! Nice to meet you 😊 Sure, go ahead!";
 const BYE="That's all? Great, thank you! See you on Friday 👋";
 const CHAT=[
   {id:"sleep",task:"😴 Ask about her sleep",type:"u",model:"Do you sleep well?",
@@ -349,6 +338,14 @@ const REAL={
   diet:"many times · last year: no sugar, no bread · lost 4 kilos, but they came back",
   fasting:"tried intermittent fasting once (12–8 pm, two weeks) · hangry in the mornings · doesn't want to try again"
 };
+const T6=[
+  {id:"sleep",q:"Do you sleep well?",o:["Yes","No"],a:"No"},
+  {id:"sport",q:"How often do you work out?",o:["Every day","Twice a week","Never"],a:"Twice a week"},
+  {id:"breakfast",q:"Do you skip breakfast?",o:["Yes","No"],a:"Yes"},
+  {id:"vitamins",q:"Do you take vitamins?",o:["Yes, every day","Sometimes","No, never"],a:"Sometimes"},
+  {id:"diet",q:"Have you ever been on a diet?",o:["Yes, many times","Yes, once","No, never"],a:"Yes, many times"},
+  {id:"fasting",q:"Have you ever tried fasting?",o:["Yes, many times","Yes, once","No, never"],a:"Yes, once"}
+];
 const MEMLAB={sleep:"Sleep 😴",sport:"Exercise 🏃",breakfast:"Breakfast 🍳",vitamins:"Vitamins 💊",diet:"Diets 🥗",fasting:"Fasting ⏳"};
 
 /* Checks his chat question. Returns {ok, hint}. Hints are in Russian, like Stacy's delayed feedback. */
@@ -404,7 +401,7 @@ const S={
   t3:{chips:shuffle(T3.map(x=>x.a).concat(T3EXTRA)),res:T3.map(()=>({tries:[],ok:false,shown:false}))},
   t4:{chips:shuffle(T4.map((_,i)=>i)),sort:T4.map(()=>({tries:[],ok:false,shown:false})),v3:T4.map(()=>({tries:[],ok:false,shown:false,val:""}))},
   t5:{qs:[],fb:CHAT.map(()=>({tries:[],ok:false,shown:false}))},
-  t6:{notes:CHAT.map(()=>""),revealed:false}
+  t6:T6.map(()=>({tries:[],ok:false,shown:false}))
 };
 let TYPING=false, DRAFT="";
 const done=r=>r.ok||r.shown;
@@ -414,7 +411,7 @@ const STAGES=[
   {tab:"3 Предложения",render:r3,done:()=>S.t3.res.every(done)},
   {tab:"4 Routine / Ever",render:r4,done:()=>S.t4.sort.every(done)&&T4.every((it,i)=>it.c==="u"||done(S.t4.v3[i]))},
   {tab:"5 Чат с клиентом",render:r5,done:()=>S.t5.qs.length===CHAT.length&&S.t5.fb.every(done)},
-  {tab:"6 Что ты помнишь?",render:r6,done:()=>S.t6.revealed},
+  {tab:"6 Что ты помнишь?",render:r6,done:()=>S.t6.every(done)},
   {tab:"7 Голосовое",render:r7,done:()=>!!HW.submitted}
 ];
 
@@ -444,9 +441,9 @@ function wrongNote(list,what){return list.length?el("p",{class:"fb info"},what+"
 /* ================= TASK 1 · words → photos ================= */
 function r1(){
   const box=el("section",{class:"stage"});
-  box.append(head("Задание 1 из 7","New words",null,["img/fasting.webp","img/detox.webp","img/diet.webp"]));
+  box.append(head("Задание 1 из 7","New words",null,["img/b-foods.webp"]));
   box.append(el("p",{class:"note"},"Повторение урока · ~25 минут · можно делать по частям. Ответы сохраняются автоматически."));
-  box.append(el("p",{class:"rubric"},"Перетащи слово на фото, которое ему подходит. Или нажми на слово, а потом на фото. Нажми 🔊, чтобы послушать."));
+  box.append(el("p",{class:"rubric"},"Нажми на слово, потом на фото, которое ему подходит. Нажми 🔊, чтобы послушать."));
   DROP=(key,zone)=>{const st=S.t1.res[key];if(done(st))return;attempt(st,WORDS[+zone].w,String(key)===zone);if(st.ok)say(WORDS[key].say);};
   const left=S.t1.chips.filter(i=>!done(S.t1.res[i]));
   if(left.length)box.append(bank(left.map(i=>dragChip(WORDS[i].label,i))));
@@ -480,7 +477,8 @@ function r1(){
 /* ================= TASK 2 · phrases → key verbs ================= */
 function r2(){
   const box=el("section",{class:"stage"});
-  box.append(head("Задание 2 из 7","Which verb?","Перетащи каждую фразу к глаголу, с которым она идёт. Или нажми на фразу, а потом на глагол."));
+  box.append(head("Задание 2 из 7","Which verb?",null,["img/b-book.webp"]));
+  box.append(el("p",{class:"rubric"},"Нажми на фразу, потом на глагол, с которым она идёт."));
   DROP=(key,zone)=>{const st=S.t2.res[key];if(done(st))return;attempt(st,zone,T2[key].v===zone);};
   const left=S.t2.chips.filter(i=>!done(S.t2.res[i]));
   if(left.length)box.append(bank(left.map(i=>dragChip(T2[i].p,i))));
@@ -490,7 +488,7 @@ function r2(){
   VERBS.forEach(v=>{
     const z=dropZone("div",{class:"vbox"},v,el("h3",{},v));
     const inn=el("div",{class:"in"});
-    T2.forEach((it,i)=>{const r=S.t2.res[i];if(it.v===v&&done(r))inn.append(el("span",{class:"placed"+(r.shown?" shown":"")},v+" "+it.p+" ",sayBtn(v+" "+it.p)));});
+    T2.forEach((it,i)=>{const r=S.t2.res[i];if(it.v===v&&done(r))inn.append(el("span",{class:"placed"+(r.shown?" shown":"")},v+" "+it.p+" ",sayBtn(it.say||v+" "+it.p)));});
     z.append(inn);grid.append(z);
   });
   box.append(grid);
@@ -502,7 +500,7 @@ function r2(){
 /* ================= TASK 3 · gap fill with a word bank ================= */
 function r3(){
   const box=el("section",{class:"stage"});
-  box.append(head("Задание 3 из 7","Complete the sentences","Перетащи фразу из word bank в пропуск. Или нажми на фразу, а потом на пропуск. Две фразы лишние."));
+  box.append(head("Задание 3 из 7","Complete the sentences","Нажми на фразу в word bank, потом на пропуск. Две фразы лишние."));
   DROP=(key,zone)=>{const i=+zone,st=S.t3.res[i];if(done(st))return;attempt(st,key,key===T3[i].a);};
   const used=T3.filter((t,i)=>done(S.t3.res[i])).map(t=>t.a);
   const left=S.t3.chips.filter(c=>!used.includes(c));
@@ -524,7 +522,7 @@ function r3(){
 function r4(){
   const box=el("section",{class:"stage"});
   box.append(head("Задание 4 из 7","Routine or experience?",
-    "Routine — то, что человек делает регулярно: каждый день, раз в неделю, иногда. Experience — опыт в жизни: было это когда-нибудь или нет. Перетащи каждую фразу в нужную колонку."));
+    "Routine — то, что человек делает регулярно: каждый день, раз в неделю, иногда. Experience — опыт в жизни: было это когда-нибудь или нет. Нажми на фразу, потом на нужную колонку."));
   DROP=(key,zone)=>{const st=S.t4.sort[key];if(done(st))return;attempt(st,zone,T4[key].c===zone);};
   const left=S.t4.chips.filter(i=>!done(S.t4.sort[i]));
   if(left.length)box.append(bank(left.map(i=>dragChip(T4[i].p,i))));
@@ -532,7 +530,9 @@ function r4(){
   if(last&&last.tries.length===1&&!done(last))box.append(el("p",{class:"fb no"},"Not quite. Think again: regularly or ever in life?"));
   const col=(c,title,starters)=>{
     const z=dropZone("div",{class:"tcol "+c},c,el("h3",{},title),...starters.map(s=>el("span",{class:"starter"},s)));
-    T4.forEach((it,i)=>{const r=S.t4.sort[i];if(it.c===c&&done(r))z.append(el("span",{class:"placed"+(r.shown?" shown":"")},it.p));});
+    const put=(it,i)=>{const r=S.t4.sort[i];if(it.c===c&&done(r))z.append(el("span",{class:"placed"+(r.shown?" shown":"")},it.p));};
+    if(c==="u")GROUPS.forEach(([g,lab])=>{if(T4.some((it,i)=>it.g===g&&done(S.t4.sort[i])))z.append(el("span",{class:"def",style:"margin-top:4px"},lab));T4.forEach((it,i)=>{if(it.g===g)put(it,i);});});
+    else T4.forEach(put);
     return z;};
   box.append(el("div",{class:"ttable"},
     col("u","Routine · regularly",["Do you … ?","How often do you … ?"]),
@@ -573,7 +573,8 @@ function r5(){
   const tt=el("div",{class:"ttable",style:"margin-top:8px"});
   [["u","Routine · regularly",["Do you … ?","How often do you … ?"]],["e","Experience · ever in life",["Have you ever + V3 … ?"]]].forEach(([c,t,st])=>{
     const z=el("div",{class:"tcol "+c,style:"min-height:0"},el("h3",{},t),...st.map(x=>el("span",{class:"starter"},x)));
-    T4.forEach(it=>{if(it.c===c)z.append(el("span",{class:"placed"},it.c==="e"?it.v3+" "+it.rest:it.p));});tt.append(z);});
+    if(c==="u")GROUPS.forEach(([g,lab])=>{z.append(el("span",{class:"def",style:"margin-top:4px"},lab));T4.forEach(it=>{if(it.g===g)z.append(el("span",{class:"placed"},it.p));});});
+    else T4.forEach(it=>{if(it.c===c)z.append(el("span",{class:"placed"},it.v3+" "+it.rest));});tt.append(z);});
   wb.append(tt);box.append(el("div",{class:"card"},wb));
   const n=S.t5.qs.length;
   const chat=el("div",{class:"chat"});
@@ -633,25 +634,26 @@ function feedback(){
   return box;
 }
 
-/* ================= TASK 6 · remember ================= */
+/* ================= TASK 6 · remember (tick her answers) ================= */
 function r6(){
   const box=el("section",{class:"stage"});
-  box.append(head("Задание 6 из 7","What do you remember about Olivia?","Не смотри в чат! Напиши по-английски, что ты помнишь: можно коротко, просто слова (например: 5 hours, bed at 1 am). Потом нажми кнопку и сравни с её ответами."));
+  box.append(head("Задание 6 из 7","What did Olivia answer?","Не смотри в чат! Вот твои вопросы. Что ответила Olivia? Выбери ответ. Потом увидишь её ответ полностью."));
   if(S.t5.qs.length<CHAT.length){box.append(el("p",{class:"fb info"},"Сначала закончи чат с Olivia (задание 5)."));return box;}
-  const card=el("div",{class:"card"});
-  CHAT.forEach((c,i)=>{
-    const inp=el("input",{type:"text",autocomplete:"off","aria-label":MEMLAB[c.id],placeholder:"…"});
-    inp.value=S.t6.notes[i]; inp.addEventListener("input",()=>{S.t6.notes[i]=inp.value;HW.save();});
-    if(S.t6.revealed)inp.setAttribute("readonly","");
-    card.append(el("div",{class:"mem"},el("label",{},MEMLAB[c.id]),inp));
+  const list=el("div",{class:"list"});
+  T6.forEach((it,i)=>{const st=S.t6[i];
+    const c=el("div",{class:"citem"+(st.ok?" good":st.shown?" shown":"")});
+    c.append(el("span",{class:"def"},MEMLAB[it.id]),el("p",{class:"q"},el("b",{},it.q)));
+    if(!done(st)){
+      const row=el("div",{class:"opts"});
+      it.o.forEach(o=>{const wrong=st.tries.includes(o);row.append(el("button",{class:"opt"+(wrong?" wrong":""),disabled:wrong?"":null,onclick:()=>attempt(st,o,o===it.a)},o));});
+      c.append(row);
+      if(st.tries.length===1)c.append(el("p",{class:"fb no"},"Not quite. Try again."));
+    }else{
+      c.append(el("p",{class:st.ok?"fb ok":"fb info"},(st.ok?"✓ ":"Her answer: ")+it.a),el("p",{class:"def"},REAL[it.id]));
+    }
+    list.append(c);
   });
-  box.append(card);
-  if(!S.t6.revealed)box.append(el("div",{class:"row"},el("button",{class:"btn primary",onclick:()=>{S.t6.revealed=true;rr();}},"Посмотреть её ответы")));
-  else{
-    const tb=el("table",{class:"real"});
-    CHAT.forEach(c=>tb.append(el("tr",{},el("td",{},MEMLAB[c.id]),el("td",{},REAL[c.id]))));
-    box.append(el("div",{class:"card"},el("b",{},"Olivia's answers. What did you remember?"),tb));
-  }
+  box.append(list);
   return box;
 }
 
@@ -659,7 +661,7 @@ function r6(){
 function r7(){
   const box=el("section",{class:"stage"});
   box.append(head("Задание 7 из 7","Tell your supervisor",
-    "Ты практикант, а я твой supervisor. Запиши мне голосовое в Telegram про твоего клиента Olivia: что она рассказала про сон, спорт, завтрак, витамины, диеты и fasting. И что, по-твоему, ей нужно. Говори своими словами, не читай с экрана. Можно смотреть в таблицу в задании 6."));
+    "Ты практикант, а я твой supervisor. Запиши мне голосовое в Telegram про твоего клиента Olivia: что она рассказала про сон, спорт, завтрак, витамины, диеты и fasting. И что, по-твоему, ей нужно. Говори своими словами, не читай с экрана. Можно смотреть в ответы в задании 6.",["img/b-notebook.webp"]));
   box.append(el("div",{class:"stembox"},
     el("p",{},"Olivia usually … / She doesn't …"),
     el("p",{},"She has tried … / She has never …"),
@@ -695,9 +697,8 @@ function summary(){
     else if(f.shown)ln+=` ✗ → tries: ${f.tries.join(" → ")} · model shown`;
     else if(f.first===false)ln+=f.tries.length?` ✗ → tries: ${f.tries.join(" → ")}`:" ✗ not corrected yet";
     L.push(ln);});
-  L.push("","Task 6 · What he remembers about Olivia (before seeing her answers)");
-  CHAT.forEach((c,i)=>L.push(`${MEMLAB[c.id].replace(/\s\S+$/,"")}: ${S.t6.notes[i].trim()||"—"}`));
-  L.push(S.t6.revealed?"Opened Olivia's answers ✓":"Hasn't opened Olivia's answers yet");
+  L.push("","Task 6 · Olivia's answers from memory",`${first(S.t6)} of ${T6.length} right first time`);
+  T6.forEach((t,i)=>L.push(line(t.q+" → "+t.a,S.t6[i])));
   L.push("","Task 7 · Voice message to supervisor → Telegram");
   return L.join("\n");
 }
@@ -713,7 +714,7 @@ HW.start({
     if(z.t3&&okArr(z.t3.res,T3.length)&&okArr(z.t3.chips,T3.length+T3EXTRA.length))S.t3=z.t3;
     if(z.t4&&okArr(z.t4.sort,T4.length)&&okArr(z.t4.v3,T4.length)&&okArr(z.t4.chips,T4.length))S.t4=z.t4;
     if(z.t5&&Array.isArray(z.t5.qs)&&z.t5.qs.length<=CHAT.length&&okArr(z.t5.fb,CHAT.length))S.t5=z.t5;
-    if(z.t6&&okArr(z.t6.notes,CHAT.length))S.t6={notes:z.t6.notes.map(String),revealed:!!z.t6.revealed};
+    if(okArr(z.t6,T6.length))S.t6=z.t6;
     S.stage=Math.min(STAGES.length-1,Math.max(0,z.stage|0));
   },
   summary, render
