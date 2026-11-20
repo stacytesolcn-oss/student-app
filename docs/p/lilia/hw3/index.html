@@ -112,10 +112,10 @@ a{color:var(--brown)}
 <div class="wrap">
   <a class="back" href="../" data-hw-back>← My English</a>
   <div>
-    <p class="eyebrow">Optional homework · about 20 min</p>
+    <p class="eyebrow">Optional homework · about 15 min</p>
     <h1>Feeling seen</h1>
   </div>
-  <div class="how">This one is optional. Do it if you have time and want to, or skip it. No problem at all! It goes with “The perfect mother”, so do that one first. You can also do just the podcast.</div>
+  <div class="how">This one is optional. Do it if you have time and want to, or skip it. No problem at all! It goes with “The perfect mother”, so do that one first.</div>
   <main id="app"></main>
 </div>
 <script src="../../../kit/hw.js"></script>
@@ -140,36 +140,16 @@ const IDEAS = [
   ["Be honest about your mixed feelings.",1,"Perfect mother"],
   ["Stop being so hard on yourself.",1,"Perfect mother"],
   ["When a stranger describes your exact experience, you feel you're not alone.",1,"Bri"],
-  ["When someone talks about an experience like yours, you feel seen.",1,"Podcast"]
+  ["We all want to feel seen.",1,"Bri"]
 ];
 const BOXES = ["The problem","What helps"];
-const POD = "https://www.bbc.co.uk/learningenglish/features/the-english-we-speak_2025/ep-250505";
-const L1 = {q:"What does “feel seen” mean?", opts:["You feel that people understand you, because they talk about an experience like yours.","You feel that people are watching you all the time.","You feel happy because a lot of people know your name."], a:0};
-const L2 = ["The very long coffee order","The mum who gets her kids dressed and feels she has lived 100 lives before she leaves the house","The friend in a wheelchair who sees someone like her on TV"];
-const S = {l1:[], l2:-1, q1:{picks:[],ok:false}, q2:"", sort:IDEAS.map(()=>[]), voice:false};
+const S = {q1:{picks:[],ok:false}, q2:"", sort:IDEAS.map(()=>[]), voice:false};
 const $ = id => document.getElementById(id);
 const el = (tag, cls, txt) => { const e=document.createElement(tag); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e; };
 const save = () => { try{ HW.save(); }catch(e){} };
 
 function render(){
   const y=window.scrollY, app=$("app"); app.innerHTML="";
-  const lp=el("section","part");
-  lp.append(el("p","eyebrow","Listen · 3 min"), el("h2",null,"The English We Speak: “Feel seen”"));
-  const lc=el("div","card");
-  lc.append(el("p",null,"Listen to this short BBC Learning English podcast. You can read the transcript on the same page if you like."));
-  const la=el("a",null,"Open the podcast →"); la.href=POD; la.target="_blank"; la.rel="noopener"; const lr=el("div","row"); lr.append(la); lc.append(lr);
-  lc.append(el("p",null,"1. "+L1.q));
-  const ldone=S.l1.includes(L1.a)||S.l1.length>=2;
-  L1.opts.forEach((o,i)=>{ const b=el("button","mcard",o); b.type="button"; b.disabled=ldone;
-    if(S.l1.includes(i)) b.style.borderColor = i===L1.a ? "var(--good)" : "var(--warn)"; else if(ldone && i===L1.a) b.style.borderColor="var(--good)";
-    b.onclick=()=>{ S.l1.push(i); render(); }; lc.append(b); });
-  if(S.l1.includes(L1.a)) lc.append(el("div","fb good","✓ Yes: you feel understood."));
-  else if(ldone) lc.append(el("div","fb bad","It means you feel understood: someone talks about an experience like yours."));
-  else if(S.l1.length) lc.append(el("div","fb bad","Not quite. Listen again to the first example."));
-  lc.append(el("p",null,"2. Which example from the podcast can you relate to most?"));
-  L2.forEach((o,i)=>{ const b=el("button","mcard"+(S.l2===i?" on":""),o); b.type="button"; b.onclick=()=>{ S.l2 = S.l2===i ? -1 : i; render(); }; lc.append(b); });
-  lp.append(lc); app.append(lp);
-
   const part=el("section","part");
   part.append(el("p","eyebrow","Read"), el("h2",null,"Two short parts from a mum's blog"));
   part.append(el("p",null,"Bri is a mum who writes a blog. Here are two short parts from one of her posts."));
@@ -203,7 +183,7 @@ function render(){
 
   /* 3 */
   part.append(el("h3",null,"3. The problem, and what helps"));
-  part.append(el("p",null,"These ideas are from the article, Bri's blog and the podcast. Is each one part of the problem, or something that helps? Tap."));
+  part.append(el("p",null,"These ideas are from the article and Bri's blog. Is each one part of the problem, or something that helps? Tap."));
   IDEAS.forEach(([t,k,src],i)=>{
     const tr=S.sort[i], ok=tr.includes(k), done=ok||tr.length>=2;
     const c=el("div","card"+(ok?" ok":"")); c.append(el("p","hint",src), el("p","sent",t));
@@ -220,7 +200,7 @@ function render(){
 
   /* 4 */
   const c4=el("div","card");
-  c4.append(el("p",null,"4. Put it all together. Record a voice message for me in Telegram (1–2 minutes): why do honest stories help mothers more than “perfect” pictures? Use ideas from all three: the article, Bri's blog and the podcast, and your own experience. Don't read aloud. Just talk."));
+  c4.append(el("p",null,"4. Put it all together. Record a voice message for me in Telegram (1–2 minutes): why do honest stories help mothers more than “perfect” pictures? Use ideas from the article, Bri's blog and your own experience. Don't read aloud. Just talk."));
   const u4=el("ul","starters"); ["When mothers only show the perfect picture, …","When someone shares the hard parts, other mums …","For me, … made me feel seen."].forEach(x=>u4.append(el("li",null,x))); c4.append(u4);
   const b=el("button",S.voice?"on":"ghost",S.voice?"✓ I sent a voice message":"I sent a voice message"); b.type="button"; b.onclick=()=>{S.voice=!S.voice;render();};
   const r=el("div","row"); r.append(b); c4.append(r); part.append(c4);
@@ -233,7 +213,6 @@ function render(){
 
 function summary(){
   const L=[];
-  L.push("Listening · BBC “Feel seen”", "Meaning: "+(S.l1.length?(S.l1.includes(L1.a)?"✓ ":"✗ ")+S.l1.length+(S.l1.length===1?" try":" tries"):"not answered")+" · relates most to: "+(S.l2>=0?L2[S.l2]:"—"), "");
   L.push("Task 1 · Why did Bri stop making her posts perfect?", (S.q1.ok?"✓ ":S.q1.picks.length?"✗ ":"")+(S.q1.picks.length?S.q1.picks.map(i=>"“"+EXA[i]+"”").join(" → ")+" ("+S.q1.picks.length+(S.q1.picks.length===1?" try)":" tries)"):"not answered"));
   L.push("","Task 2 · Why does feeling seen help?", S.q2.trim()||"—");
   const right=IDEAS.filter((x,i)=>S.sort[i][0]===x[1]).length, any=S.sort.filter(t=>t.length).length;
@@ -248,7 +227,7 @@ HW.start({
   get:()=>S,
   set:(z)=>{
     if(z.q1&&Array.isArray(z.q1.picks)) S.q1={picks:z.q1.picks.filter(i=>i<EXA.length), ok:!!z.q1.ok};
-    S.q2=String(z.q2||""); if(Array.isArray(z.l1)) S.l1=z.l1.filter(i=>i<3); S.l2=(typeof z.l2==="number"&&z.l2<L2.length)?z.l2:-1;
+    S.q2=String(z.q2||"");
     if(Array.isArray(z.sort)&&z.sort.length===IDEAS.length&&z.sort.every(Array.isArray)) S.sort=z.sort;
     S.voice=!!z.voice;
   },
