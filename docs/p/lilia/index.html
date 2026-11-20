@@ -133,6 +133,9 @@ a.btn{display:block;text-align:center;text-decoration:none}
 .pc-hw .hwt b{font-family:var(--display);font-weight:600;font-size:1.45rem;line-height:1.1}
 .pc-hw .hwt span{font-size:.88rem;line-height:1.35;color:#3A2A1C}
 .pc-hw .pill{margin-bottom:2px;background:#F6F1E7;color:#231815}
+.pc-hw .hwrow{display:grid;gap:2px}
+.pc-hw .hwrow + .hwrow{border-top:1px solid rgba(35,24,21,.18);padding-top:8px;margin-top:4px}
+.pc-hw .hwrow + .hwrow b{font-size:1.15rem}
 .pc-hw i{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-style:normal;background:#231815;color:#F6F1E7;flex:none}
 .pc-hw.done{background:var(--sand-soft);color:var(--ink)}
 .pc-hw.done .hwt span{color:var(--muted)}
@@ -1143,10 +1146,10 @@ function renderHomework(){
   const card = $("pcHw");
   card.hidden = !hw.length;
   if(hw.length){
-    const next = open.slice().sort((a,b)=>(a.due||"9").localeCompare(b.due||"9"))[0];
+    const sorted = open.slice().sort((a,b)=>(a.due||"9").localeCompare(b.due||"9"));
     card.classList.toggle("done", !open.length);
     card.innerHTML = open.length
-      ? '<span class="hwt"><span class="pill">Homework'+(open.length>1?' · '+open.length:'')+'</span><b>'+esc(next.title)+'</b><span>'+esc([dueLabel(next.due), next.mins].filter(Boolean).join(" · "))+'</span></span><i aria-hidden="true">→</i>'
+      ? '<span class="hwt"><span class="pill">Homework'+(open.length>1?' · '+open.length:'')+'</span>'+sorted.map(h=>'<span class="hwrow"><b>'+esc(h.title)+'</b><span>'+esc([dueLabel(h.due), h.mins].filter(Boolean).join(" · "))+'</span></span>').join("")+'</span><i aria-hidden="true">→</i>'
       : '<span class="hwt"><span class="pill">Homework</span><b>All done ✓</b><span>New homework comes after our next lesson.</span></span><i aria-hidden="true">✓</i>';
   }
   $("hwEmpty").hidden = !!all.length;
