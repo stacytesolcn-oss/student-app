@@ -197,13 +197,13 @@ const TALK = [
 ];
 const words = s => s.split(" ");
 const SUMSTEMS = ["The writer says that…","She thinks mothers should…","In the end, …"];
-const EXTRA = [["it's just a facade", /\bfa[cç]ade\b/]];
+const EXTRA = [];
 const VSTEMS = ["I've always / I've never felt…","Since I became a mum, I've noticed that…","Have you ever…? I have…"];
 
 /* ---------- state ---------- */
 const S = {
   p0:{found:CHG.map(()=>false), taps:[], all:false, q:"", keep:[]},
-  t1:{text:"", stems:[], used:[]},
+  t1:{text:"", stems:[], used:[], voice:false},
   t2:{yn:["","",""], g:["","",""], ready:false},
   t4:QS.map(()=>({picks:[], ok:false, ans:""})),
   t5:{on:[], hl:TALK.map(()=>[])},
@@ -291,7 +291,12 @@ function part1(app){
   const box=el("div","box"); box.append(el("b",null,"Word bank"), el("span",null,"You can use these. Change the form so it fits your sentence: feels, never feels, has…"));
   BANK.forEach(([g,list])=>{ const d=el("div"); d.style.marginTop="6px"; d.append(el("span","muted",g)); const ch=el("div","chips"); list.forEach(w=>ch.append(el("span","chip",w))); d.append(ch); box.append(d); });
   c.append(box);
-  ta.id="t1text"; c.append(ta);
+  ta.id="t1text";
+  const rem=el("div","box"); rem.append(el("b",null,"Remember"), el("span",null,"She is talking about her usual life, so use the present simple. With she, add -s: she looks, she has, she never feels."));
+  c.append(rem, ta);
+  c.append(el("p",null,"Then record a voice message for me in Telegram: describe your perfect mother. You can add more details. Don't read aloud. Just talk."));
+  const vb=el("button",S.t1.voice?"on":"ghost",S.t1.voice?"✓ I sent a voice message":"I sent a voice message"); vb.type="button"; vb.onclick=()=>{ S.t1.voice=!S.t1.voice; render(); };
+  const vr=el("div","row"); vr.append(vb); c.append(vr);
   part.append(c);
   if(S.t1.text.trim().length>20){
     const c2=el("div","card"); c2.append(el("p",null,"Now tap the phrases from the word bank that you used."));
@@ -409,7 +414,7 @@ function part2(app){
   const ch=el("div","chips"), lo=S.t7.toLowerCase();
   S.t6.forEach(w=>ch.append(el("span","chip"+(lo.includes(w.toLowerCase())?" used":""),w)));
   EXTRA.forEach(([w,re])=>ch.append(el("span","chip"+(re.test(lo)?" used":""),w)));
-  mp.append(ch); mp.append(el("span",null,"Do you remember “it's just a facade”? You can use it too: for example, about the perfect family photos on Instagram."));
+  mp.append(ch);
   c7.append(mp);
   c7.append(el("p","muted","You can start like this:"), starters(SUMSTEMS));
   const ta7=textArea(()=>S.t7,v=>S.t7=v,"Your summary",6);
@@ -420,7 +425,7 @@ function part2(app){
   /* task 8 */
   part.append(el("h3",null,"8. Voice message: and you?"));
   const c8=el("div","card");
-  c8.append(el("p",null,"Record a voice message for me in Telegram (1–2 minutes). Have you ever felt the pressure to be a perfect mother? What has helped you? Don't read aloud. Just talk."));
+  c8.append(el("p",null,"Record a voice message for me in Telegram (1–2 minutes). Have you ever felt the pressure to be a perfect mother? What has helped you? And the “perfect” mothers on Instagram: are they real, or is it just a facade? Don't read aloud. Just talk."));
   const rem=el("div","box"); rem.append(el("b",null,"Remember"), el("span",null,"This is about your life up to now, so try to use the present perfect: I've felt…, I've noticed…, I've never…"));
   c8.append(rem, el("p","muted","You can start like this:"), starters(VSTEMS));
   const b=el("button",S.t8?"on":"ghost",S.t8?"✓ I sent a voice message":"I sent a voice message"); b.type="button"; b.onclick=()=>{ S.t8=!S.t8; render(); };
@@ -460,6 +465,7 @@ function summary(){
   L.push("");
   L.push("Task 1 · Picture the perfect mother", "Word-bank phrases she ticked: "+(S.t1.used.map(i=>BANKFLAT[i]).join(", ")||"—"));
   L.push(S.t1.text.trim()||"—");
+  L.push("Voice message (present simple): "+(S.t1.voice?"she says she sent it":"not marked"));
   L.push("");
   L.push("Task 2 + 4 · Predictions and answers", S.t2.ready?"Paragraphs found first try: "+S.t4.filter(s=>s.ok&&s.picks.length===1).length+" of "+QS.length:"Not started reading yet");
   QS.forEach((it,i)=>{ const st=S.t4[i], g=it.yn?S.t2.yn[i]:S.t2.g[i-3];
@@ -486,7 +492,7 @@ HW.start({
   get:()=>S,
   set:(z)=>{
     if(z.p0&&Array.isArray(z.p0.found)&&z.p0.found.length===CHG.length){ S.p0=z.p0; S.p0.taps=S.p0.taps||[]; S.p0.keep=S.p0.keep||[]; S.p0.q=String(S.p0.q||""); }
-    if(z.t1&&typeof z.t1.text==="string") S.t1={text:z.t1.text, stems:(z.t1.stems||[]).filter(i=>i<STEMS.length), used:(z.t1.used||[]).filter(i=>i<BANKFLAT.length)};
+    if(z.t1&&typeof z.t1.text==="string") S.t1={text:z.t1.text, stems:(z.t1.stems||[]).filter(i=>i<STEMS.length), used:(z.t1.used||[]).filter(i=>i<BANKFLAT.length), voice:!!z.t1.voice};
     if(z.t2&&Array.isArray(z.t2.yn)&&z.t2.yn.length===3&&Array.isArray(z.t2.g)&&z.t2.g.length===3) S.t2=z.t2;
     if(Array.isArray(z.t4)&&z.t4.length===QS.length) S.t4=z.t4;
     if(z.t5&&Array.isArray(z.t5.hl)&&z.t5.hl.length===TALK.length) S.t5={on:(z.t5.on||[]).filter(i=>i<TALK.length), hl:z.t5.hl};
