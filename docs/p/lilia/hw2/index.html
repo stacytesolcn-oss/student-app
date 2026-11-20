@@ -196,7 +196,7 @@ const TALK = [
   "There is more than one way to raise happy kids."
 ];
 const words = s => s.split(" ");
-const SUMSTEMS = ["The writer says that…","She thinks mothers should…","In the end, …"];
+const SUMSTEMS = ["The writer says that…","One idea I can really relate to is… because…","In the end, …"];
 const EXTRA = [];
 
 /* ---------- state ---------- */
@@ -374,12 +374,12 @@ function part2(app){
   });
 
   /* task 5 */
-  part.append(el("h3",null,"5. We talked about this!"));
-  part.append(el("p",null,"These ideas are all from the article. Which ones did we talk about in our lesson on Thursday? Tap them."));
+  part.append(el("h3",null,"5. Your ideas"));
+  part.append(el("p",null,"These ideas are all from the article. Which ones are your ideas too, or ideas you can relate to? Tap them."));
   TALK.forEach((t,i)=>{ const on=S.t5.on.includes(i); const b=el("button","mcard"+(on?" on":""),(on?"✓ ":"")+t); b.type="button";
     b.onclick=()=>{ S.t5.on = on ? S.t5.on.filter(x=>x!==i) : S.t5.on.concat(i).sort((a,b)=>a-b); render(); }; part.append(b); });
   if(S.t5.on.length){
-    part.append(el("p",null,"Now look at the ideas you chose. Tap the words you'd like to use yourself. They turn yellow. Tap again to undo."));
+    part.append(el("p",null,"Now look at the ideas you chose. Tap the words you'd like to use in your summary. They turn yellow. Tap again to undo."));
     const pairs=el("div","plan");
     S.t5.on.forEach(i=>{ const pr=el("div","pair"), t=el("p","sent");
       words(TALK[i]).forEach((w,k)=>{ const on=S.t5.hl[i].includes(k); const sp=el("span","tok"+(on?" sel":""),w);
@@ -388,36 +388,27 @@ function part2(app){
     part.append(pairs);
   }
 
-  /* task 6 */
-  part.append(el("h3",null,"6. My phrases"));
-  const ph=myPhrases();
-  const c6=el("div","card");
-  if(!ph.length) c6.append(el("p","muted","First tap some words in task 5. They will appear here."));
-  else {
-    c6.append(el("p",null,"These are the words you chose. Pick 3 or 4 that you want to use in your summary."));
-    const pk=el("div","pick");
-    ph.forEach(w=>{ const on=S.t6.includes(w); const b=el("button",on?"on":null,(on?"✓ ":"")+w); b.type="button";
-      b.onclick=()=>{ if(on) S.t6=S.t6.filter(x=>x!==w); else if(S.t6.length<4) S.t6.push(w); render(); }; pk.append(b); });
-    c6.append(pk);
-  }
-  part.append(c6);
 
   /* task 7 */
-  part.append(el("h3",null,"7. Write a short summary"));
+  part.append(el("h3",null,"6. Write a short summary"));
   const c7=el("div","card");
-  c7.append(el("p",null,"Write a short summary of the article (4–5 sentences). Use your answers from task 4 and 2–3 of your phrases."));
+  c7.append(el("p",null,"Write a short summary of the article (4–5 sentences). Say what the writer thinks, and which ideas you can relate to. Use 2–3 of your yellow words."));
   const plan=el("div","box"); plan.append(el("b",null,"Your answers from task 4"));
   [3,4,5].forEach(i=>plan.append(el("p",null,"• "+QS[i].q+" "+(S.t4[i].ans.trim()||"…"))));
   c7.append(plan);
-  const mp=el("div","box"); mp.append(el("b",null,"Phrases"));
+  const mine=el("div","box"); mine.append(el("b",null,"Ideas you can relate to (task 5)"));
+  (S.t5.on.length?S.t5.on.map(i=>TALK[i]):["(choose them in task 5)"]).forEach(t=>mine.append(el("p",null,"• "+t)));
+  c7.append(mine);
+  const mp=el("div","box"); mp.append(el("b",null,"Your yellow words"));
   const ch=el("div","chips"), lo=S.t7.toLowerCase();
-  S.t6.forEach(w=>ch.append(el("span","chip"+(lo.includes(w.toLowerCase())?" used":""),w)));
+  const PH=myPhrases(); if(!PH.length) ch.append(el("span","chip","(tap words in task 5)"));
+  PH.forEach(w=>ch.append(el("span","chip"+(lo.includes(w.toLowerCase())?" used":""),w)));
   EXTRA.forEach(([w,re])=>ch.append(el("span","chip"+(re.test(lo)?" used":""),w)));
   mp.append(ch);
   c7.append(mp);
   c7.append(el("p","muted","You can start like this:"), starters(SUMSTEMS));
   const ta7=textArea(()=>S.t7,v=>S.t7=v,"Your summary",6);
-  ta7._chips=ch; ta7.addEventListener("input",()=>{ const l=S.t7.toLowerCase(); [...ch.children].forEach((c,k)=>{ const w=c.textContent, re=k<S.t6.length?null:EXTRA[k-S.t6.length][1]; c.classList.toggle("used", re?re.test(l):l.includes(w.toLowerCase())); }); });
+  ta7._chips=ch; ta7.addEventListener("input",()=>{ const l=S.t7.toLowerCase(); [...ch.children].forEach((c,k)=>{ const w=c.textContent, re=null; c.classList.toggle("used", re?re.test(l):l.includes(w.toLowerCase())); }); });
   c7.append(ta7);
   part.append(c7);
 
@@ -465,13 +456,11 @@ function summary(){
     if(!it.yn) line+=" · answer: "+(st.ans.trim()||"—");
     L.push(line); });
   L.push("");
-  L.push("Task 5 · Ideas we talked about", "Chose "+S.t5.on.length+" of "+TALK.length);
+  L.push("Task 5 · Ideas she can relate to", "Chose "+S.t5.on.length+" of "+TALK.length);
   S.t5.on.forEach(i=>{ const hl=S.t5.hl[i].map(k=>words(TALK[i])[k]).join(" "); L.push("• "+TALK[i]+" → highlighted: "+(hl||"nothing")); });
   L.push("");
-  L.push("Task 6 · My phrases", S.t6.join(" · ")||"—");
-  L.push("");
-  const lo=S.t7.toLowerCase(), used=S.t6.filter(w=>lo.includes(w.toLowerCase())).concat(EXTRA.filter(([,re])=>re.test(lo)).map(x=>x[0]));
-  L.push("Task 7 · Summary ("+used.length+" phrases: "+(used.join(", ")||"none")+")", S.t7.trim()||"—");
+  const lo=S.t7.toLowerCase(), used=myPhrases().filter(w=>lo.includes(w.toLowerCase())).concat(EXTRA.filter(([,re])=>re.test(lo)).map(x=>x[0]));
+  L.push("Task 6 · Summary ("+used.length+" phrases: "+(used.join(", ")||"none")+")", S.t7.trim()||"—");
 
   return L.join("\n");
 }
