@@ -112,7 +112,7 @@ a{color:var(--brown)}
 <div class="wrap">
   <a class="back" href="../" data-hw-back>← My English</a>
   <div>
-    <p class="eyebrow">Optional homework · about 15 min</p>
+    <p class="eyebrow">Optional homework · about 20 min</p>
     <h1>Feeling seen</h1>
   </div>
   <div class="how">This one is optional. Do it if you have time and want to, or skip it. No problem at all! It goes with “The perfect mother”, so do that one first. You can also do just the podcast.</div>
@@ -129,23 +129,24 @@ const EXA = [
 const EXA_OK = 2;
 const EXB = "What I really want to read are stories that make me feel seen. I think everyone wants to feel seen. When a stranger describes your exact experience, it feels like magic. It reminds you that you are not alone, and that we are more alike than different. The parts of ourselves we usually hide are often what make us most human.";
 const ORIGINAL = "https://brirenko.substack.com/p/to-feel-seen-in-motherhood";
+/* 0 = the problem, 1 = what helps */
 const IDEAS = [
-  ["Mothers feel there is too much pressure on them.","Perfect mother"],
-  ["Whatever we do, it feels like it's never enough.","Perfect mother"],
-  ["Many of us have a picture of the perfect mother in our heads.","Perfect mother"],
-  ["Mothers are judged from every side, even on social media.","Perfect mother"],
-  ["The fear of looking imperfect stops mothers from being honest.","Perfect mother"],
-  ["Every family can decide what matters most to them.","Perfect mother"],
-  ["Stop being so hard on yourself.","Perfect mother"],
-  ["There is more than one way to raise happy kids.","Perfect mother"],
-  ["Trying to make everything perfect can feel fake.","Feeling seen"],
-  ["Everyone wants to feel seen.","Feeling seen"]
+  ["There is too much pressure on mothers.",0,"Perfect mother"],
+  ["Whatever we do, it feels like it's never enough.",0,"Perfect mother"],
+  ["We have a picture of the perfect mother in our heads.",0,"Perfect mother"],
+  ["Mothers are judged from every side, even on social media.",0,"Perfect mother"],
+  ["Mothers who are struggling often keep quiet.",0,"Perfect mother"],
+  ["Trying to make every post perfect can feel fake.",0,"Bri"],
+  ["Be honest about your mixed feelings.",1,"Perfect mother"],
+  ["Stop being so hard on yourself.",1,"Perfect mother"],
+  ["When a stranger describes your exact experience, you feel you're not alone.",1,"Bri"],
+  ["When someone talks about an experience like yours, you feel seen.",1,"Podcast"]
 ];
-const BOXES = ["I liked this","This was new for me","This answered my question"];
+const BOXES = ["The problem","What helps"];
 const POD = "https://www.bbc.co.uk/learningenglish/features/the-english-we-speak_2025/ep-250505";
 const L1 = {q:"What does “feel seen” mean?", opts:["You feel that people understand you, because they talk about an experience like yours.","You feel that people are watching you all the time.","You feel happy because a lot of people know your name."], a:0};
 const L2 = ["The very long coffee order","The mum who gets her kids dressed and feels she has lived 100 lives before she leaves the house","The friend in a wheelchair who sees someone like her on TV"];
-const S = {l1:[], l2:-1, q1:{picks:[],ok:false}, q2:"", sort:IDEAS.map(()=>-1), voice:false};
+const S = {l1:[], l2:-1, q1:{picks:[],ok:false}, q2:"", sort:IDEAS.map(()=>[]), voice:false};
 const $ = id => document.getElementById(id);
 const el = (tag, cls, txt) => { const e=document.createElement(tag); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e; };
 const save = () => { try{ HW.save(); }catch(e){} };
@@ -201,18 +202,26 @@ function render(){
   part.append(c2);
 
   /* 3 */
-  part.append(el("h3",null,"3. Sort the ideas"));
-  part.append(el("p",null,"These ideas are from both texts. For each one, tap where it goes for you. You can leave some out."));
-  IDEAS.forEach(([t,src],i)=>{
-    const c=el("div","card"); c.append(el("p","hint",src), el("p","sent",t));
+  part.append(el("h3",null,"3. The problem, and what helps"));
+  part.append(el("p",null,"These ideas are from the article, Bri's blog and the podcast. Is each one part of the problem, or something that helps? Tap."));
+  IDEAS.forEach(([t,k,src],i)=>{
+    const tr=S.sort[i], ok=tr.includes(k), done=ok||tr.length>=2;
+    const c=el("div","card"+(ok?" ok":"")); c.append(el("p","hint",src), el("p","sent",t));
     const pk=el("div","pick");
-    BOXES.forEach((bx,k)=>{ const on=S.sort[i]===k; const b=el("button",on?"on":null,bx); b.type="button"; b.onclick=()=>{ S.sort[i]= on ? -1 : k; render(); }; pk.append(b); });
-    c.append(pk); part.append(c);
+    BOXES.forEach((bx,j)=>{ const b=el("button",null,bx); b.type="button"; b.disabled=done;
+      if(tr.includes(j)){ b.style.borderColor = j===k ? "var(--good)" : "var(--warn)"; if(j===k) b.className="on"; }
+      else if(done && j===k) b.style.borderColor="var(--good)";
+      b.onclick=()=>{ tr.push(j); render(); }; pk.append(b); });
+    c.append(pk);
+    if(!ok && done) c.append(el("div","fb bad","This one is "+(k?"something that helps.":"part of the problem.")));
+    else if(!ok && tr.length) c.append(el("div","fb bad","Try again."));
+    part.append(c);
   });
 
   /* 4 */
   const c4=el("div","card");
-  c4.append(el("p",null,"4. Optional: record a short voice message for me in Telegram. What made you feel seen as a mum? Don't read aloud. Just talk."));
+  c4.append(el("p",null,"4. Put it all together. Record a voice message for me in Telegram (1–2 minutes): why do honest stories help mothers more than “perfect” pictures? Use ideas from all three: the article, Bri's blog and the podcast, and your own experience. Don't read aloud. Just talk."));
+  const u4=el("ul","starters"); ["When mothers only show the perfect picture, …","When someone shares the hard parts, other mums …","For me, … made me feel seen."].forEach(x=>u4.append(el("li",null,x))); c4.append(u4);
   const b=el("button",S.voice?"on":"ghost",S.voice?"✓ I sent a voice message":"I sent a voice message"); b.type="button"; b.onclick=()=>{S.voice=!S.voice;render();};
   const r=el("div","row"); r.append(b); c4.append(r); part.append(c4);
 
@@ -227,9 +236,10 @@ function summary(){
   L.push("Listening · BBC “Feel seen”", "Meaning: "+(S.l1.length?(S.l1.includes(L1.a)?"✓ ":"✗ ")+S.l1.length+(S.l1.length===1?" try":" tries"):"not answered")+" · relates most to: "+(S.l2>=0?L2[S.l2]:"—"), "");
   L.push("Task 1 · Why did Bri stop making her posts perfect?", (S.q1.ok?"✓ ":S.q1.picks.length?"✗ ":"")+(S.q1.picks.length?S.q1.picks.map(i=>"“"+EXA[i]+"”").join(" → ")+" ("+S.q1.picks.length+(S.q1.picks.length===1?" try)":" tries)"):"not answered"));
   L.push("","Task 2 · Why does feeling seen help?", S.q2.trim()||"—");
-  L.push("","Task 3 · Sort the ideas");
-  BOXES.forEach((bx,k)=>{ const list=IDEAS.filter((_,i)=>S.sort[i]===k).map(x=>x[0]); L.push(bx+": "+(list.join(" · ")||"—")); });
-  L.push("","Task 4 · Voice message: "+(S.voice?"she says she sent it":"not marked"));
+  const right=IDEAS.filter((x,i)=>S.sort[i][0]===x[1]).length, any=S.sort.filter(t=>t.length).length;
+  L.push("","Task 3 · The problem / what helps", (right===IDEAS.length?"✓ ":"")+"Right first try: "+right+" of "+IDEAS.length+(any<IDEAS.length?" (answered "+any+")":""));
+  IDEAS.forEach(([t,k],i)=>{ const tr=S.sort[i]; if(tr.length && tr[0]!==k) L.push("✗ "+t+" → she said “"+BOXES[tr[0]]+"”"+(tr.includes(k)?", then fixed it":"")); });
+  L.push("","Task 4 · Voice message (putting it all together): "+(S.voice?"she says she sent it":"not marked"));
   return L.join("\n");
 }
 
@@ -239,7 +249,7 @@ HW.start({
   set:(z)=>{
     if(z.q1&&Array.isArray(z.q1.picks)) S.q1={picks:z.q1.picks.filter(i=>i<EXA.length), ok:!!z.q1.ok};
     S.q2=String(z.q2||""); if(Array.isArray(z.l1)) S.l1=z.l1.filter(i=>i<3); S.l2=(typeof z.l2==="number"&&z.l2<L2.length)?z.l2:-1;
-    if(Array.isArray(z.sort)&&z.sort.length===IDEAS.length) S.sort=z.sort;
+    if(Array.isArray(z.sort)&&z.sort.length===IDEAS.length&&z.sort.every(Array.isArray)) S.sort=z.sort;
     S.voice=!!z.voice;
   },
   summary, render
