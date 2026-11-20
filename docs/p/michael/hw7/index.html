@@ -123,6 +123,8 @@ textarea.qs{width:100%;min-height:150px;font:inherit;font-size:1rem;border:1.5px
 @media (max-width:420px){body{font-size:18px}.sbtn{font-size:1.02rem}.avatar{width:46px;height:46px;font-size:1.2rem}}
 
 /* hw7 extras */
+.fullpic{border-radius:18px;overflow:hidden;background:var(--river-soft);display:flex;justify-content:center}
+.fullpic img{display:block;max-width:100%;max-height:300px;width:auto;height:auto}
 .ph{display:grid;place-items:center;background:var(--river-soft);color:var(--river);font-size:2.2rem;width:100%;height:100%}
 .say{border:1px solid var(--line);background:var(--surface);border-radius:999px;min-height:36px;min-width:36px;padding:2px 10px;font-size:1rem}
 .wchips{display:flex;flex-wrap:wrap;gap:8px;position:sticky;top:calc(118px + env(safe-area-inset-top,0px));z-index:3;background:var(--bg);padding:8px 0}
@@ -194,7 +196,7 @@ table.real td:first-child{font-family:var(--display);white-space:nowrap;color:va
 .dchip{touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
 .ghost{position:fixed;pointer-events:none;z-index:100;opacity:.92;transform:translate(-50%,-60%) scale(1.05);box-shadow:0 6px 18px rgba(0,0,0,.25)}
 [data-drop].over{outline:3px dashed var(--vest);outline-offset:2px}
-.bankbox{position:sticky;top:calc(118px + env(safe-area-inset-top,0px));z-index:3;background:var(--bg);padding:8px 0;display:flex;flex-direction:column;gap:6px}
+.bankbox{position:sticky;top:var(--toph,118px);z-index:3;background:var(--bg);padding:8px 0;display:flex;flex-direction:column;gap:6px}
 .bankbox .lbl{font-family:var(--display);font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 .verbs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 @media (min-width:600px){.verbs{grid-template-columns:repeat(3,minmax(0,1fr))}}
@@ -214,7 +216,8 @@ table.real td:first-child{font-family:var(--display);white-space:nowrap;color:va
 .tcol.e{background:var(--vest-soft);border:2px solid var(--vest)}
 .tcol h3{font-size:1rem}
 .tcol .starter{font-family:var(--display);font-size:.9rem;background:var(--surface);border-radius:8px;padding:4px 8px}
-.tcol .placed{background:var(--surface);font-size:.95rem;word-break:break-word}
+.tcol .placed{background:var(--surface);font-size:.9rem;word-break:break-word;display:inline-block;margin:2px 2px 0 0}
+.tcol .grp{display:flex;flex-wrap:wrap}
 .tcol .placed.shown{outline:2px solid var(--vest)}
 table.v3{width:100%;border-collapse:collapse;font-size:1rem}
 table.v3 td{border-top:1px solid var(--line);padding:8px 4px;vertical-align:middle}
@@ -300,8 +303,8 @@ const T4=[
   {p:"do yoga",c:"u",g:"sport"},{p:"work out",c:"u",g:"sport"},{p:"skip a workout",c:"u",g:"sport"},{p:"do cardio",c:"u",g:"sport"},
   {p:"lift weights",c:"u",g:"sport"},{p:"go for a run",c:"u",g:"sport"},{p:"go to the gym",c:"u",g:"sport"},
   {p:"see a doctor",c:"u",g:"sick"},{p:"have a headache",c:"u",g:"sick"},{p:"stay in bed",c:"u",g:"sick"},{p:"have a cough",c:"u",g:"sick"},
-  {p:"have a runny nose",c:"u",g:"sick"},{p:"have a sore throat",c:"u",g:"sick"},{p:"get tired",c:"u",g:"sick"},{p:"get sick",c:"u",g:"sick"},
-  {p:"take vitamins",c:"u",g:"sick"},{p:"sleep well",c:"u",g:"sick",yn:true},
+  {p:"have a runny nose",c:"u",g:"sick"},{p:"have a sore throat",c:"u",g:"sick"},{p:"get tired",c:"u",g:"health"},{p:"get sick",c:"u",g:"sick"},
+  {p:"take vitamins",c:"u",g:"health"},{p:"sleep well",c:"u",g:"health",yn:true},
   {p:"have breakfast",c:"u",g:"food"},{p:"skip breakfast",c:"u",g:"food"},{p:"finish your plate",c:"u",g:"food"},{p:"drink herbal tea",c:"u",g:"food"},
   {p:"eat fish",c:"u",g:"food"},{p:"eat red meat",c:"u",g:"food"},{p:"eat out",c:"u",g:"food"},{p:"get hungry",c:"u",g:"food"},
   {p:"be on a diet",c:"e",base:"be",rest:"on a diet",v3:"been",v:["been","was","be"]},
@@ -313,7 +316,7 @@ const T4=[
 ];
 const BUILD=["lift weights","sleep well","skip breakfast","take vitamins","get sick","eat red meat","be on a diet","try fasting","do a detox","have food poisoning","run a marathon","try to lose weight"].map(p=>T4.findIndex(t=>t.p===p));
 const STEMS=["Do you","How often do you","Have you ever"];
-const GROUPS=[["sport","🏃 Sport"],["sick","🤒 Health"],["food","🍳 Food"]];
+const GROUPS=[["sport","🏃 Sport"],["sick","🤒 Sickness"],["health","💚 Health"],["food","🍳 Food"]];
 /* Task 5: chat with Olivia */
 const MYHELLO="Hi Olivia! My name is Michael. I'm your nutritionist 😊 I want to ask you some questions about your health and your lifestyle.";
 const HELLO="Hi Michael! Nice to meet you 😊 Sure, I'm happy to answer your questions.";
@@ -327,6 +330,8 @@ const CHAT=[
    reply:"Yes, I skip breakfast almost every day. I just have a big coffee with milk ☕ My first meal is at 1 or 2 pm, and I'm very hungry!"},
   {id:"vitamins",task:"💊 Ask about vitamins",type:"u",model:"Do you take vitamins?",
    reply:"Sometimes. In winter I take vitamin D and omega-3, but in summer I forget. My daughter says I need magnesium too, but I've never tried it."},
+  {id:"sick",task:"🤒 Ask how often she gets sick",type:"u",model:"How often do you get sick?",reply:""},
+  {id:"headache",task:"🤕 Ask about headaches",type:"u",model:"Do you often have a headache?",reply:""},
   {id:"diet",task:"🥗 Ask about diets: ever in her life?",type:"e",model:"Have you ever been on a diet?",
    reply:"Oh yes, many times 😅 Last year I was on a diet: no sugar and no bread. I lost 4 kilos! But after two months I stopped, and the kilos came back."},
   {id:"fasting",task:"⏳ Ask about fasting: ever in her life?",type:"e",model:"Have you ever tried fasting?",
@@ -356,6 +361,14 @@ const VARS={
     yn:{r:"Sometimes. In winter I take vitamin D and omega-3, but in summer I forget. My daughter says I need magnesium too, but I've never tried it.",o:["Yes","Sometimes","No"],a:"Sometimes"},
     often:{r:"Every day, but only in winter: vitamin D and omega-3. In summer I forget. My daughter says I need magnesium too, but I've never tried it.",o:["Every day in winter","Once a week","Never"],a:"Every day in winter"},
     ever:{r:"Yes, many times. In winter I take vitamin D and omega-3, but in summer I forget. My daughter says I need magnesium too, but I've never tried it.",o:EVER,a:"Yes, many times"}},
+  sick:{
+    yn:{r:"Not often. Maybe twice a year, usually in winter. Then I have a runny nose and a sore throat, and I stay in bed for two or three days.",o:["Yes, often","Not often","Never"],a:"Not often"},
+    often:{r:"About twice a year, usually in winter. Then I have a runny nose and a sore throat, and I stay in bed for two or three days.",o:["Every month","Twice a year","Never"],a:"Twice a year"},
+    ever:{r:"Ha-ha, of course, everybody gets sick! But not often: about twice a year, in winter. Then I have a runny nose and a sore throat, and I stay in bed for two or three days.",o:EVER,a:"Yes, many times"}},
+  headache:{
+    yn:{r:"Yes, quite often 😕 Usually in the afternoon, when I don't drink enough water or when I sleep badly. Then I take a pill and drink a lot of tea.",o:["Yes, often","Sometimes","No, never"],a:"Yes, often"},
+    often:{r:"Two or three times a week 😕 Usually in the afternoon, when I don't drink enough water or when I sleep badly. Then I take a pill and drink a lot of tea.",o:["Every day","Two or three times a week","Never"],a:"Two or three times a week"},
+    ever:{r:"Yes, many times 😕 I often have a headache in the afternoon, when I don't drink enough water or when I sleep badly. Then I take a pill and drink a lot of tea.",o:EVER,a:"Yes, many times"}},
   diet:{
     ever:{r:"Oh yes, many times 😅 Last year I was on a diet: no sugar and no bread. I lost 4 kilos! But after two months I stopped, and the kilos came back.",o:EVER,a:"Yes, many times"},
     yn:{r:"Not now. But I was on a diet many times 😅 Last year: no sugar and no bread. I lost 4 kilos! But after two months I stopped, and the kilos came back.",o:YN,a:"No"},
@@ -374,6 +387,8 @@ const REAL={
   sport:"yoga twice a week · walks her dog every day · doesn't go to the gym (boring)",
   breakfast:"skips it almost every day · only a big coffee · first meal at 1–2 pm",
   vitamins:"vitamin D and omega-3 in winter · forgets in summer · has never tried magnesium",
+  sick:"twice a year, in winter · runny nose, sore throat · stays in bed 2–3 days",
+  headache:"often, 2–3 times a week · when she sleeps badly or doesn't drink enough water",
   diet:"many times · last year: no sugar, no bread · lost 4 kilos, but they came back",
   fasting:"tried intermittent fasting once (12–8 pm, two weeks) · hangry in the mornings · doesn't want to try again"
 };
@@ -385,7 +400,7 @@ const T6=[
   {id:"diet",q:"Have you ever been on a diet?",o:["Yes, many times","Yes, once","No, never"],a:"Yes, many times"},
   {id:"fasting",q:"Have you ever tried fasting?",o:["Yes, many times","Yes, once","No, never"],a:"Yes, once"}
 ];
-const MEMLAB={sleep:"Sleep 😴",sport:"Exercise 🏃",breakfast:"Breakfast 🍳",vitamins:"Vitamins 💊",diet:"Diets 🥗",fasting:"Fasting ⏳"};
+const MEMLAB={sick:"Getting sick 🤒",headache:"Headaches 🤕",sleep:"Sleep 😴",sport:"Exercise 🏃",breakfast:"Breakfast 🍳",vitamins:"Vitamins 💊",diet:"Diets 🥗",fasting:"Fasting ⏳"};
 
 /* Checks his chat question. Returns {ok, hint}. Hints are in Russian, like Stacy's delayed feedback. */
 function checkQ(id,raw){
@@ -407,6 +422,12 @@ function checkQ(id,raw){
     if(id==="breakfast"){ if(/\b(skip|have|eat|miss|cook|make) (your |a )?breakfast\b|\bfor breakfast\b/.test(t))return {ok:true};
       if(/\bbreakfast\b/.test(t))return {ok:false,hint:"Какой глагол с breakfast? have breakfast / skip breakfast."};
       return {ok:false,hint:"Вопрос должен быть про завтрак: have breakfast / skip breakfast."}; }
+    if(id==="sick"){ if(/\b(get|gets|getting) (sick|ill)\b|\bcatch (a )?cold\b|\bbe sick\b/.test(t))return {ok:true};
+      if(/\bsick\b/.test(t))return {ok:false,hint:"Какой глагол с sick? ___ sick (заболеть)."};
+      return {ok:false,hint:"Вопрос должен быть про болезни: get sick."}; }
+    if(id==="headache"){ if(/\b(have|get|has) (a |any |many )?headaches?\b/.test(t))return {ok:true};
+      if(/\bheadaches?\b/.test(t))return {ok:false,hint:"Какой глагол с headache? ___ a headache."};
+      return {ok:false,hint:"Вопрос должен быть про головную боль: have a headache."}; }
     if(id==="vitamins"){ if(/\b(drink|eat|use) (any |some )?vitamins?\b/.test(t))return {ok:false,hint:"С vitamins мы используем другой глагол. ___ vitamins."};
       if(/\b(take|taking) (any |some )?(vitamins?|supplements)\b|\bvitamins do you take\b/.test(t))return {ok:true};
       return {ok:false,hint:"Вопрос должен быть про витамины: take vitamins."}; }
@@ -440,7 +461,7 @@ const S={
   t3:{chips:shuffle(T3.map(x=>x.a).concat(T3EXTRA)),res:T3.map(()=>({tries:[],ok:false,shown:false}))},
   t4:{chips:shuffle(T4.map((_,i)=>i)),sort:T4.map(()=>({tries:[],ok:false,shown:false})),build:BUILD.map(()=>({stem:null,stemTries:[],v:null,vTries:[],ok:false,shown:false}))},
   t5:{qs:[],keys:[],fb:CHAT.map(()=>({tries:[],ok:false,shown:false}))},
-  t6:T6.map(()=>({tries:[],ok:false,shown:false}))
+  t6:CHAT.map(()=>({tries:[],ok:false,shown:false}))
 };
 let TYPING=false, DRAFT="";
 const done=r=>r.ok||r.shown;
@@ -463,6 +484,7 @@ function render(){
   app.append(STAGES[S.stage].render());
   document.getElementById("prev").disabled=S.stage===0;
   document.getElementById("next").disabled=S.stage===STAGES.length-1;
+  const th=document.querySelector(".top");if(th)document.documentElement.style.setProperty("--toph",(th.getBoundingClientRect().bottom)+"px");
   HW.save();
 }
 function go(i){S.stage=i;SEL=null;render();window.scrollTo(0,0);const t=tabs.children[i];if(t&&t.scrollIntoView)t.scrollIntoView({inline:"center",block:"nearest"});}
@@ -493,13 +515,10 @@ function r1(){
     const W=WORDS[pi],r=S.t1.res[pi];
     const card=dropZone("div",{class:"mcard"+(r.ok?" ok":r.shown?" shown":"")},String(pi));
     card.append(pic(W.img,W.icon));
-    const lab=el("div",{class:"lab"});
-    if(done(r))lab.append(el("b",{},W.label),sayBtn(W.say),el("span",{class:"def"},W.def));
-    else lab.append(el("span",{class:"def"},"?"));
-    card.append(lab);grid.append(card);
+    if(done(r))card.append(el("div",{class:"lab"},el("b",{},W.label),sayBtn(W.say),el("span",{class:"def"},W.def)));grid.append(card);
   });
   box.append(grid);
-  box.append(wrongNote(WORDS.filter((w,i)=>S.t1.res[i].shown).map(w=>w.w),"Эти слова я поставила сама"));
+  box.append(...[wrongNote(WORDS.filter((w,i)=>S.t1.res[i].shown).map(w=>w.w),"Эти слова я поставила сама")].filter(Boolean));
   if(done(S.t1.res[0])){
     box.append(el("div",{class:"info"},
       el("h3",{},"fasting (noun) / fast (verb)"),
@@ -516,7 +535,8 @@ function r1(){
 /* ================= TASK 2 · phrases → key verbs ================= */
 function r2(){
   const box=el("section",{class:"stage"});
-  box.append(head("Задание 2 из 7","Which verb?",null,["img/b-book.webp"]));
+  box.append(head("Задание 2 из 7","Which verb?"));
+  box.append(el("div",{class:"fullpic"},el("img",{src:"img/b-book.webp",alt:""})));
   box.append(el("p",{class:"rubric"},"Нажми на фразу, потом на глагол, с которым она идёт."));
   DROP=(key,zone)=>{const st=S.t2.res[key];if(done(st))return;attempt(st,zone,T2[key].v===zone);};
   const left=S.t2.chips.filter(i=>!done(S.t2.res[i]));
@@ -531,7 +551,7 @@ function r2(){
     z.append(inn);grid.append(z);
   });
   box.append(grid);
-  box.append(wrongNote(T2.filter((t,i)=>S.t2.res[i].shown).map(t=>t.v+" "+t.p),"Эти фразы я поставила сама"));
+  box.append(...[wrongNote(T2.filter((t,i)=>S.t2.res[i].shown).map(t=>t.v+" "+t.p),"Эти фразы я поставила сама")].filter(Boolean));
   if(S.t2.res.every(done))box.append(el("p",{class:"tip"},"try fasting = попробовать (один раз или больше) · fast once a week = регулярно не есть · try to lose weight = пытаться похудеть"));
   return box;
 }
@@ -553,7 +573,7 @@ function r3(){
     list.append(p);
   });
   box.append(list);
-  box.append(wrongNote(T3.filter((t,i)=>S.t3.res[i].shown).map(t=>t.a),"Эти фразы я поставила сама"));
+  box.append(...[wrongNote(T3.filter((t,i)=>S.t3.res[i].shown).map(t=>t.a),"Эти фразы я поставила сама")].filter(Boolean));
   return box;
 }
 
@@ -575,10 +595,10 @@ function r4(){
   const last=SEL!=null?S.t4.sort[SEL]:null;
   if(last&&last.tries.length===1&&!done(last))box.append(el("p",{class:"fb no"},"Not quite. Think again: regularly or ever in life?"));
   const col=(c,title,starters)=>{
-    const z=dropZone("div",{class:"tcol "+c},c,el("h3",{},title),...starters.map(s=>el("span",{class:"starter"},s)));
+    let z=dropZone("div",{class:"tcol "+c},c,el("h3",{},title),...starters.map(s=>el("span",{class:"starter"},s)));
     const put=(it,i)=>{const r=S.t4.sort[i];if(it.c===c&&done(r))z.append(el("span",{class:"placed"+(r.shown?" shown":"")},it.p));};
-    if(c==="u")GROUPS.forEach(([g,lab])=>{if(T4.some((it,i)=>it.g===g&&done(S.t4.sort[i])))z.append(el("span",{class:"def",style:"margin-top:4px"},lab));T4.forEach((it,i)=>{if(it.g===g)put(it,i);});});
-    else T4.forEach(put);
+    if(c==="u")GROUPS.forEach(([g,lab])=>{if(!T4.some((it,i)=>it.g===g&&done(S.t4.sort[i])))return;z.append(el("span",{class:"def",style:"margin-top:4px"},lab));const w=el("div",{class:"grp"});const zz=z;z=w;T4.forEach((it,i)=>{if(it.g===g)put(it,i);});z=zz;z.append(w);});
+    else{const w=el("div",{class:"grp"});const zz=z;z=w;T4.forEach(put);z=zz;z.append(w);}
     return z;};
   box.append(el("div",{class:"ttable"},
     col("u","Routine · regularly",["Do you … ?","How often do you … ?"]),
@@ -629,12 +649,12 @@ function r5(){
   const box=el("section",{class:"stage"});
   box.append(head("Задание 5 из 7","Your first client",
     "Ты учишься на нутрициолога, и у тебя практика. Это твой первый клиент — Olivia. Задай ей вопросы, которые ты сортировал в задании 4. Над полем ввода — тема вопроса: напиши вопрос сам и отправь. Читай её ответы внимательно: потом нужно будет вспомнить, что она рассказала. Ошибки посмотрим после чата."));
-  const wb=el("details",{},el("summary",{},"Word bank: твоя таблица из задания 4"));
+  const wb=el("details",{},el("summary",{},"📖 Word bank: твоя таблица из задания 4 (нажми, чтобы открыть)"));
   const tt=el("div",{class:"ttable",style:"margin-top:8px"});
   [["u","Routine · regularly",["Do you … ?","How often do you … ?"]],["e","Experience · ever in life",["Have you ever + V3 … ?"]]].forEach(([c,t,st])=>{
     const z=el("div",{class:"tcol "+c,style:"min-height:0"},el("h3",{},t),...st.map(x=>el("span",{class:"starter"},x)));
-    if(c==="u")GROUPS.forEach(([g,lab])=>{z.append(el("span",{class:"def",style:"margin-top:4px"},lab));T4.forEach(it=>{if(it.g===g)z.append(el("span",{class:"placed"},it.p));});});
-    else T4.forEach(it=>{if(it.c===c)z.append(el("span",{class:"placed"},it.v3+" "+it.rest));});tt.append(z);});
+    if(c==="u")GROUPS.forEach(([g,lab])=>{z.append(el("span",{class:"def",style:"margin-top:4px"},lab));z.append(el("div",{class:"grp"},...T4.filter(it=>it.g===g).map(it=>el("span",{class:"placed"},it.p))));});
+    else{z.append(el("span",{class:"def",style:"margin-top:4px"},"🥗 Diet"));z.append(el("div",{class:"grp"},...T4.filter(it=>it.c===c).map(it=>el("span",{class:"placed"},it.v3+" "+it.rest))));}tt.append(z);});
   wb.append(tt);box.append(el("div",{class:"card"},wb));
   const n=S.t5.qs.length;
   const chat=el("div",{class:"chat"});
@@ -719,7 +739,7 @@ function r6(){
 function r7(){
   const box=el("section",{class:"stage"});
   box.append(head("Задание 7 из 7","Tell your supervisor",
-    "Ты практикант, а я твой supervisor. Запиши мне голосовое в Telegram про твоего клиента Olivia: что она рассказала про сон, спорт, завтрак, витамины, диеты и fasting. И что, по-твоему, ей нужно. Говори своими словами, не читай с экрана. Можно смотреть в ответы в задании 6.",["img/b-notebook.webp"]));
+    "Ты практикант, а я твой supervisor. Запиши мне голосовое в Telegram про твоего клиента Olivia: что она рассказала про сон, спорт, завтрак, витамины, болезни, головную боль, диеты и fasting. И что, по-твоему, ей нужно. Говори своими словами, не читай с экрана. Можно смотреть в ответы в задании 6.",["img/b-notebook.webp"]));
   box.append(el("div",{class:"stembox"},
     el("p",{},"Olivia usually … / She doesn't …"),
     el("p",{},"She has tried … / She has never …"),
@@ -773,7 +793,7 @@ HW.start({
     if(z.t3&&okArr(z.t3.res,T3.length)&&okArr(z.t3.chips,T3.length+T3EXTRA.length))S.t3=z.t3;
     if(z.t4&&okArr(z.t4.sort,T4.length)&&okArr(z.t4.build,BUILD.length)&&okArr(z.t4.chips,T4.length))S.t4=z.t4;
     if(z.t5&&Array.isArray(z.t5.qs)&&z.t5.qs.length<=CHAT.length&&okArr(z.t5.fb,CHAT.length)){S.t5=z.t5;if(!Array.isArray(S.t5.keys))S.t5.keys=[];}
-    if(okArr(z.t6,T6.length))S.t6=z.t6;
+    if(okArr(z.t6,CHAT.length))S.t6=z.t6;
     S.stage=Math.min(STAGES.length-1,Math.max(0,z.stage|0));
   },
   summary, render
