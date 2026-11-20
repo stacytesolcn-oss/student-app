@@ -117,3 +117,9 @@ Pages:
 
 ## Homework links on student pages (Nov 17, 2026)
 In-app homework (`url` like `hw6/`) must open in the **same window** with the login in the hash (`hwHref(h)` on every student page; `tools/build_page.py` step 6 adds it). Never `target="_blank"` for in-app homework: inside Telegram it can leave the mini-app, the kit then has no login and answers stay on the phone only (Inna, hw6). The kit now shows a red-flag banner when it has no login.
+
+## Telling a student about new homework right away (Nov 20, 2026)
+Separate Edge Function `notify` (repo: `supabase/functions/notify/`, the main `app` function is untouched). Teacher-only.
+Send from SQL with pg_net, the key stays in the database:
+`select net.http_post(url := 'https://nrnjubhnpaicuokidnjl.supabase.co/functions/v1/notify', body := jsonb_build_object('page','p/<slug>/','button','Do my homework','text','Hi <Name>! …'), headers := jsonb_build_object('content-type','application/json','x-auth','key '||(select value from app_config where key='TEACHER_KEY')));`
+Check: `select status_code, content from net._http_response where id = <request_id>;` → 200 {"ok":true}. Messages in English, student's name.
