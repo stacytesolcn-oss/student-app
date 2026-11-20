@@ -87,7 +87,8 @@ button{font:inherit;cursor:pointer;-webkit-appearance:none;appearance:none}
 textarea.inp{min-height:150px;resize:vertical;line-height:1.5}
 .check{min-height:52px;border-radius:999px;border:1.5px solid var(--brown);background:transparent;color:var(--ink);font-weight:700}
 .check[disabled]{opacity:.4}
-.hintw{font-family:ui-monospace,Menlo,monospace;letter-spacing:.12em;background:var(--butter-soft);border-radius:6px;padding:0 6px;white-space:nowrap}
+.hintw .hw{display:inline-block;white-space:pre;background:var(--butter-soft);border-radius:6px;padding:0 5px;margin:2px 6px 2px 0;font-family:ui-monospace,Menlo,monospace}
+.hintw{white-space:normal}
 .vtab{width:100%;border-collapse:collapse;font-size:.95rem}
 .vtab td{border-top:1px solid var(--line);padding:6px 4px;vertical-align:top}
 .vtab td:first-child{font-weight:700;color:var(--brown);white-space:nowrap;width:5.5em}
@@ -219,8 +220,7 @@ const EX = [
       { pre: "Ivan and Victoria ", a: "had dinner", post: " at Zorro restaurant in Dubai." }
     ] }] },
   { num: 6, tab: "6 · Would like", name: "like / would like to",
-    how: "Посмотрите на два предложения и ответьте на вопросы. Потом выберите правильный вариант. В конце — голосовое сообщение: кто что хотел бы сделать.",
-    voice: { text: "Когда запишете голосовое (кто что хотел бы сделать, 5 предложений), отметьте здесь." },
+    how: "Посмотрите на два предложения и ответьте на вопросы. Потом выберите правильный вариант.",
     sections: [
       { type: "mcq", title: "Two sentences", items: [
         { qr: "Какое предложение о том, что нравится всегда?", a: "I like guided tours.", d: ["I'd like to go on a safari in Kenya."] },
@@ -232,13 +232,31 @@ const EX = [
         { pre: "Ivan ", post: " go on a desert safari next year.", a: "would like to", d: ["likes to"] },
         { pre: "Would you like to go on a desert safari? — Yes, ", post: "", a: "I'd like to.", d: ["I like to."] },
         { pre: "Roma ", post: " riding his bike.", a: "likes", d: ["would like to"] }
-      ] },
-      { type: "bank", gate: true, title: "Who would like to do what?",
-        how: "Посмотрите на рамку. Решите, кто что хотел бы сделать, и запишите голосовое сообщение в Telegram: 5 предложений. Не читайте с экрана — говорите.",
+      ] }
+    ] },
+  { num: 7, tab: "7 · Letters", name: "Chunks: first and last letters",
+    how: "Напишите фразу целиком. Даны первая и последняя буквы каждого слова, каждая черта — одна буква. Короткие слова (a, on, go) уже написаны.",
+    sections: [{ type: "type", items: [
+      { pre: "The clients would like to ", post: " of the old town.", a: ["take a guided tour"] },
+      { pre: "Our guests ", post: " and had dinner at a desert camp.", a: ["went on a desert safari"] },
+      { pre: "After the meeting, the partners ", post: " at a restaurant by the sea.", a: ["had dinner"] },
+      { pre: "On Saturday, Victoria and her friends ", post: " and saw a show.", a: ["went shopping"] },
+      { pre: "In Santa Monica, you can ", post: " and ride along the beach.", a: ["rent bikes"] },
+      { pre: "In the evening, people ride their bikes ", post: ".", a: ["along the promenade"] },
+      { pre: "In Dubai, you can ", post: ", if you're brave!", a: ["try skydiving"] },
+      { pre: "The water is very clear there, so you can ", post: ".", a: ["go snorkeling", "go snorkelling"] },
+      { pre: "On their last trip, the guests ", post: ".", a: ["visited several popular sights"] },
+      { pre: "In Kenya, you can ", post: " and see the animals.", a: ["go on a safari"] }
+    ] }] },
+  { num: 8, tab: "8 · Speak", name: "Who would like to do what? (voice)",
+    how: "Голосовое сообщение в Telegram: 5–6 предложений о вас и о людях, которых вы знаете. Кто что хотел бы сделать? Смотрите на рамку и отмечайте фразы, которые вы использовали. Не читайте с экрана — говорите.",
+    sections: [
+      { type: "bank", title: "Who would like to do what?",
         people: ["Ivan", "Victoria", "Anna", "Roma", "I"],
         acts: ["go on a desert safari", "go on a safari in Kenya", "try skydiving", "go shopping", "go snorkeling", "rent bikes and ride along the beach", "take a food tour", "see a show", "visit the Grand Mosque", "try the local food"],
-        stems: ["I think Ivan would like to …", "Victoria would like to … because she likes …", "I'd like to …"] }
-    ] }
+        stems: ["I think Ivan would like to …", "I'd like to …", "Roma would like to …"] }
+    ],
+    voice: { text: "Когда запишете голосовое, отметьте здесь." } }
 ];
 
 const POPS = [
@@ -267,9 +285,10 @@ function newSec(sec) {
     case "subst": return { items: idx.map(() => Object.assign(it0(), { pick: sec.cols.map(() => "") })) };
     case "write": return { items: idx.map(() => ({ text: "" })) };
     case "final": return { hint: false };
+    case "bank": return { used: [] };
   }
 }
-const S = { v: 6, tab: 0, ex: EX.map(x => x.sections.map(newSec)), fin: EX.map(() => false), voice: EX.map(() => false), pops: 0 };
+const S = { v: 7, tab: 0, ex: EX.map(x => x.sections.map(newSec)), fin: EX.map(() => false), voice: EX.map(() => false), pops: 0 };
 
 function secDone(e, s) {
   const sec = EX[e].sections[s], ss = S.ex[e][s];
@@ -352,11 +371,11 @@ function secHTML(e, s) {
     if (ss.msg) h += '<p class="fb ' + (/^All/.test(ss.msg) ? "good" : "bad") + '" lang="en">' + esc(ss.msg) + '</p>';
   }
   if (sec.type === "type") {
-    const hintw = w => w.length <= 2 ? w : w[0] + " " + "_ ".repeat(w.length - 2) + w[w.length - 1];
+    const hintw = p => p.split(" ").map(w => '<span class="hw">' + esc((w.length <= 2 ? w : w[0] + "_".repeat(w.length - 2) + w[w.length - 1]).split("").join(" ")) + '</span>').join("");
     h += sec.items.map((it, i) => { const st = ss.items[i], fin = answered(st);
       return '<div class="item"><p class="sent" lang="en"><span class="num">' + (i + 1) + '</span>' + esc(it.pre) +
-        (fin ? '<span class="fill">' + esc(st.ok ? st.tries[st.tries.length - 1] : it.a[0]) + '</span>' : '<span class="hintw">' + esc(hintw(it.a[0])) + '</span>') + esc(it.post) + '</p>' +
-        (fin ? "" : '<div class="row"><input class="inp" lang="en" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Type the word" data-in="type" data-s="' + s + '" data-i="' + i + '" value="' + esc(st.val) + '">' +
+        (fin ? '<span class="fill">' + esc(st.ok ? st.tries[st.tries.length - 1] : it.a[0]) + '</span>' : '<span class="hintw">' + hintw(it.a[0]) + '</span>') + esc(it.post) + '</p>' +
+        (fin ? "" : '<div class="row"><input class="inp" lang="en" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Type the phrase" data-in="type" data-s="' + s + '" data-i="' + i + '" value="' + esc(st.val) + '">' +
           '<button type="button" class="check sm"' + A("tk", e, s, i) + '>Check</button></div>') + fbHTML(st, it.a[0]) + '</div>'; }).join("");
   }
   if (sec.type === "subst") {
@@ -370,8 +389,9 @@ function secHTML(e, s) {
         (fin ? "" : '<button type="button" class="check"' + A("sk", e, s, i) + (st.pick.every(Boolean) ? "" : " disabled") + '>Check</button>') + fbHTML(st, sec.frame(it.ans)) + '</div>'; }).join("");
   }
   if (sec.type === "bank") {
-    h += '<div class="profile" lang="en"><b>Who?</b><div class="bank">' + sec.people.map(x => '<span class="chip">' + esc(x) + '</span>').join("") + '</div></div>' +
-      '<div class="profile" lang="en"><b>What would they like to do?</b><div class="bank">' + sec.acts.map(x => '<span class="chip">' + esc(x) + '</span>').join("") + '</div></div>' +
+    const used = ss.used || [], chip = x => '<button type="button" class="chip' + (used.includes(x) ? " right" : "") + '"' + A("bt", e, s, null, x) + '>' + (used.includes(x) ? "✓ " : "") + esc(x) + '</button>';
+    h += '<div class="profile" lang="en"><b>Who?</b><div class="bank">' + sec.people.map(chip).join("") + '</div></div>' +
+      '<div class="profile" lang="en"><b>What would they like to do?</b><div class="bank">' + sec.acts.map(chip).join("") + '</div></div>' +
       '<div class="stems" lang="en"><b>You can start like this</b>' + sec.stems.map(x => '<span>' + esc(x) + '</span>').join("") + '</div>';
   }
   if (sec.type === "write") {
@@ -444,6 +464,7 @@ $("app").addEventListener("click", ev => {
   if (a === "sp") { const [k, o] = x.split("|"); ss.items[i].pick[+k] = o; }
   if (a === "sk") { const st = ss.items[i], it = sec.items[i]; attempt(st, sec.frame(st.pick), st.pick.every((p, k) => p === it.ans[k])); if (!answered(st)) st.pick = sec.cols.map(() => ""); }
   if (a === "hint") ss.hint = true;
+  if (a === "bt") { ss.used = ss.used || []; const p = ss.used.indexOf(x); if (p >= 0) ss.used.splice(p, 1); else ss.used.push(x); }
   if (a === "vt") S.voice[e] = !S.voice[e];
   act();
 });
@@ -461,7 +482,7 @@ function secSummary(e, s) {
   const sec = EX[e].sections[s], ss = S.ex[e][s], L = [];
   if (sec.type === "write") return sec.items.map((it, i) => (ss.items[i].text.trim() ? "✓ " : "✗ ") + it.who + ": " + (ss.items[i].text.trim() || "—"));
   if (sec.type === "final") return ["Word bank opened: " + (ss.hint ? "yes" : "no")];
-  if (sec.type === "bank") return [];
+  if (sec.type === "bank") return ["Phrases she ticked as used: " + ((ss.used || []).join(", ") || "none")];
   const first = ss.items.filter(st => st.ok && st.tries.length === 1).length;
   L.push((sec.title ? sec.title + ": " : "") + first + " of " + sec.items.length + " right first time");
   sec.items.forEach((it, i) => { const st = ss.items[i];
