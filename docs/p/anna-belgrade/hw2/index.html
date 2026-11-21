@@ -83,9 +83,11 @@
   .col .items{display:flex;flex-wrap:wrap;gap:6px;min-height:40px}
   .col.target{border-color:var(--accent);cursor:pointer}
   /* exercises */
-  .bank{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+  .bank{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px}
+  .pairs{display:flex;gap:8px}.pairs>div{flex:1;display:flex;flex-direction:column;gap:6px}
+  .pairs .opt{text-align:center;padding:9px 8px}
   .ex{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px;text-align:center;font-size:14px;font-weight:600}
-  .ex img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;display:block;margin-bottom:4px}
+  .ex img{width:100%;aspect-ratio:4/3;object-fit:contain;background:#f7f5f1;border-radius:8px;display:block;margin-bottom:4px}
   .ex .noimg{width:100%;aspect-ratio:1;border-radius:8px;background:#f2eee7;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:4px}
   .profile{background:#faf8f4;border-radius:10px;padding:8px 10px;margin-bottom:10px;font-size:15px}
   .stems{background:var(--blue-soft);color:var(--blue);border-radius:10px;padding:8px 12px;font-weight:600;font-size:15px;margin-bottom:8px}
@@ -107,7 +109,7 @@
   <a href="../" data-hw-back class="back-link">← My English</a>
   <header>
     <h1>Backs, injuries and your clients</h1>
-    <p>Homework · 6 short tasks · about 30 minutes · your answers save as you go</p>
+    <p>Homework · 7 short tasks · about 35 minutes · your answers save as you go</p>
   </header>
   <div class="progress" id="progress"></div>
   <main id="app"></main>
@@ -126,7 +128,7 @@
     {img:"gym.webp", d:"Pick up something very heavy at the gym, for example a barbell.", o:["roll down","lift heavy weights","work with a physiotherapist"], a:1},
     {d:"Damage to your body, for example after a fall or bad training.", o:["an injury","sciatica","a set of exercises"], a:0},
     {img:"physio.webp", d:"Have sessions with a specialist who helps your body get better after an injury.", o:["lift heavy weights","have a sedentary lifestyle","work with a physiotherapist"], a:2},
-    {d:"A few exercises you do together, for example every morning.", o:["a herniated disc","a set of exercises","an injury"], a:1},
+    {d:"Do a few exercises together, for example every morning.", o:["have a herniated disc","do a set of exercises","have an injury"], a:1},
     {img:"vertebra.webp", d:"This is one bone of your spine. “Roll down slowly, one ___ at a time.”", o:["disc","back","vertebra"], a:2}
   ];
 
@@ -145,7 +147,7 @@
     {t:"Do you have any injuries I should know about?", f:"p-any-injuries"},
     {t:"work with a physiotherapist", f:"p-physio"}
   ];
-  const BANK = ["upper / middle / lower back","pain in …","problems with …","a sedentary lifestyle","lift heavy weights","an injury","a herniated disc","sciatica","work with a physiotherapist","a set of exercises","one vertebra at a time"];
+  const BANK = ["upper / middle / lower back","pain in …","problems with …","a sedentary lifestyle","lift heavy weights","an injury","a herniated disc","sciatica","work with a physiotherapist","do / give a set of exercises","one vertebra at a time"];
 
   const GAP = [
     {b:"Many office workers have", c:"a sedentary lifestyle", a:"."},
@@ -155,7 +157,7 @@
     {b:"Pain from your lower back down your leg is called", c:"sciatica", a:"."},
     {b:"The doctor saw", c:"a herniated disc", a:"on his CT scan."},
     {b:"After the injury, she", c:"worked with a physiotherapist", a:"for three months."},
-    {b:"I give my clients an easy", c:"set of exercises", a:"to do at home."},
+    {b:"Every morning she", c:"does a set of exercises", a:"for her lower back."},
     {b:"Roll down slowly, one", c:"vertebra", a:"at a time."}
   ];
   const UNJ = [
@@ -171,7 +173,7 @@
   const SORT = [
     {t:"a sedentary lifestyle", a:["C"]},
     {t:"a herniated disc", a:["P"]},
-    {t:"a set of exercises", a:["H"]},
+    {t:"doing a set of exercises", a:["H"]},
     {t:"lifting heavy weights", a:["C"]},
     {t:"sciatica", a:["P"]},
     {t:"working with a physiotherapist", a:["H"]},
@@ -180,21 +182,33 @@
     {t:"rolling down one vertebra at a time", a:["H"]}
   ];
 
-  const WM = "https://thumb.wikimedia.org/wikipedia/commons/thumb/";
   const EXER = [
-    {n:"cat-cow", src:WM+"b/be/Yoga_at_Your_Park_-_Bitilasana.jpg/500px-Yoga_at_Your_Park_-_Bitilasana.jpg"},
-    {n:"child's pose", src:WM+"5/55/Hatha_yoga_child_pose.jpg/500px-Hatha_yoga_child_pose.jpg"},
-    {n:"glute bridge", src:WM+"f/f9/Single_Leg_Bridge.jpg/500px-Single_Leg_Bridge.jpg"},
-    {n:"bird dog", src:WM+"7/76/Girl_doing_bird_dog_yoga_pose_2.jpg/500px-Girl_doing_bird_dog_yoga_pose_2.jpg"},
+    {n:"cat-cow", src:"img/ex-catcow.webp"},
+    {n:"child's pose", src:"img/ex-child.webp"},
+    {n:"glute bridge", src:"img/ex-bridge.webp"},
+    {n:"bird dog", src:"img/ex-birddog.webp"},
+    {n:"open book", src:"img/ex-openbook.webp"},
     {n:"roll-down", src:"img/rolldown.webp"}
   ];
+  const COLL = [
+    {l:"pain", r:"in my lower back"},
+    {l:"problems", r:"with their back"},
+    {l:"lift", r:"heavy weights"},
+    {l:"a sedentary", r:"lifestyle"},
+    {l:"work with", r:"a physiotherapist"},
+    {l:"give a set", r:"of exercises"},
+    {l:"one vertebra", r:"at a time"},
+    {l:"a herniated", r:"disc"}
+  ];
+  const COLL_MIX = [3,6,0,7,2,5,1,4];
   const CASES = [
     {img:"office.webp", name:"Lena, 34", p:"Office manager. She sits at her computer 9 hours a day and drives to work. She doesn't do any sport."},
     {img:"neck.webp", name:"Mira, 27", p:"Designer. She works on her laptop and phone all day. Her neck and shoulders hurt in the evening."},
-    {img:"gym.webp", name:"Kate, 31", p:"She goes to the gym four times a week. After training, her lower back sometimes hurts."}
+    {img:"gym.webp", name:"Kate, 31", p:"She goes to the gym four times a week. After training, her lower back sometimes hurts."},
+    {img:"sciatica.webp", name:"Mark, 45", p:"He has terrible pain in his lower back and down his left leg. Some days he can't walk. He had an injury at the gym last year."}
   ];
 
-  const STEPS = ["Your back","Say it","Sentences and words","Cause → problem → what helps","Your clients","Your story"];
+  const STEPS = ["Your back","Say it","Sentences and collocations","Remember the phrases","Cause → problem → what helps","Your clients","Your story"];
 
   /* ================= STATE ================= */
   const S = {
@@ -204,12 +218,13 @@
     syl: SYL.map(()=>({tries:[],ok:false,done:false})),
     g: GAP.map(()=>({val:"",tries:[],ok:false,done:false})),
     u: UNJ.map(()=>({order:[],tries:[],ok:false,done:false})),
+    co: COLL.map(()=>({tries:[],ok:false,done:false})),
     so: SORT.map(()=>({col:null,tries:[],ok:false,done:false})),
     cases: CASES.map(()=>""),
     like:"",
     voice:false, used:BANK.map(()=>false), notice:"", feel:""
   };
-  let sel = null; // selected sort item (not saved)
+  let sel = null; let csel = null; // selected sort item (not saved)
 
   /* ================= HELPERS ================= */
   const norm = s => String(s).toLowerCase().replace(/[’‘`]/g,"'").replace(/[“”".,!?—–-]+/g," ").replace(/\s+/g," ").trim();
@@ -375,10 +390,32 @@
     });
   }
   function t3(app){
-    hwHead(app,3,"Sentences and words","<b>Part A:</b> put your own sentences from our lesson in order.<br><b>Part B:</b> type the missing phrase. You see the first and last letter of each word.");
+    hwHead(app,3,"Sentences and collocations","<b>Part A:</b> put your own sentences from our lesson in order.<br><b>Part B:</b> match the two halves of each phrase.");
     app.append(el("div","sub","Part A · Your sentences from 20 November"));
     unjumble(app);
-    app.append(el("div","sub","Part B · Complete the phrase"));
+    app.append(el("div","sub","Part B · Match the halves"));
+    const cur = csel;
+    const q=el("div","q");
+    q.append(el("div","prompt", cur===null ? "Tap a word on the left, then its pair on the right." : "Now tap the pair for “"+esc(COLL[cur].l)+"”."));
+    const pr=el("div","pairs"); const L=el("div"), Rr=el("div");
+    COLL.forEach((c,i)=>{ const st=S.co[i]; const b=el("button","opt"); b.textContent=c.l;
+      if(st.done){ b.disabled=true; b.classList.add(st.ok?"correct":"wrong"); } else if(csel===i) b.classList.add("picked");
+      b.onclick=()=>{ if(st.done||locked())return; csel=(csel===i?null:i); render(); }; L.append(b); });
+    COLL_MIX.forEach(j=>{ const st=S.co[j]; const b=el("button","opt"); b.textContent=COLL[j].r;
+      if(st.done){ b.disabled=true; b.classList.add(st.ok?"correct":"wrong"); }
+      b.onclick=()=>{ if(st.done||csel===null||locked())return; const cs=S.co[csel];
+        cs.tries.push(COLL[j].r);
+        if(j===csel){ cs.ok=true; cs.done=true; csel=null; render(); }
+        else if(cs.tries.length>=2){ cs.done=true; csel=null; render(); }
+        else { b.classList.add("wrong"); HW.save(); setTimeout(()=>b.classList.remove("wrong"),700); }
+      }; Rr.append(b); });
+    pr.append(L,Rr); q.append(pr);
+    if(S.co.every(c=>c.done)) q.append(el("div","fb ok",`Done! ${S.co.filter(c=>c.ok).length} / ${COLL.length} on the first or second try. Red = I showed you the pair.`));
+    app.append(q);
+  }
+
+  function tGap(app){
+    hwHead(app,4,"Remember the phrases","Type the missing phrase. You see the first and last letter of each word, and a dash for each missing letter.");
     GAP.forEach((it,i)=>{
       const q=el("div","q");
       q.append(el("div","prompt",`<span class="num">${i+1}.</span>${esc(it.b)} ___ ${esc(it.a)}`));
@@ -389,7 +426,7 @@
   }
 
   function t4(app){
-    hwHead(app,4,"Cause → problem → what helps","Tap a phrase, then tap the box where it goes. When all phrases are in boxes, tap <b>Check</b>.");
+    hwHead(app,5,"Cause → problem → what helps","Tap a phrase, then tap the box where it goes. When all phrases are in boxes, tap <b>Check</b>.");
     const pool=el("div","pool");
     SORT.forEach((it,i)=>{ const st=S.so[i]; if(st.col)return;
       const b=el("button","tile"+(sel===i?" sel":"")); b.textContent=it.t;
@@ -430,7 +467,7 @@
     ta.focus(); ta.dispatchEvent(new Event("input"));
   }
   function t5(app){
-    hwHead(app,5,"Your clients","Three new clients. Look at each photo and read about the person. What's the problem, and why? Which exercises would you recommend? Write 2–3 sentences for each person.");
+    hwHead(app,6,"Your clients","Four new clients. Look at each photo and read about the person. What's the problem, and why? What would you recommend? Write 2–3 sentences for each person.<br>You can choose exercises from the list or name your own.");
     app.append(el("div","sub","Exercises"));
     const bank=el("div","bank");
     EXER.forEach(x=>{ const c=el("div","ex"); const im=el("img"); im.src=x.src; im.alt=x.n; im.loading="lazy";
@@ -440,7 +477,7 @@
       const q=el("div","q");
       const im=el("img","photo"); im.src="img/"+cs.img; im.alt=""; q.append(im);
       q.append(el("div","profile",`<b>${esc(cs.name)}.</b> ${esc(cs.p)}`));
-      q.append(el("div","stems","<div>She has pain in her ___ / problems with her ___.</div><div>I think it's because ___.</div><div>I would recommend ___ because ___.</div>"));
+      q.append(el("div","stems","<div>He / She has pain in ___ / problems with ___.</div><div>I think it's because ___.</div><div>I would recommend ___ because ___.</div>"));
       const ta=el("textarea"); ta.placeholder="Write here"; ta.value=S.cases[i]; ta.disabled=locked();
       ta.oninput=()=>{ S.cases[i]=ta.value; HW.save(); };
       q.append(ta);
@@ -452,11 +489,10 @@
     const q=el("div","q"); q.append(el("div","prompt","Which person is most like your clients? Why?"));
     const ta=el("textarea"); ta.style.minHeight="70px"; ta.value=S.like; ta.disabled=locked(); ta.oninput=()=>{ S.like=ta.value; HW.save(); };
     q.append(ta); app.append(q);
-    app.append(el("p",null,'<small style="color:#6b665e">Exercise photos: Wikimedia Commons · Mary O\'Neill (public domain), Daniel Case (CC BY-SA 3.0), Klewis425 (CC BY-SA 3.0), PTPioneer (CC BY 2.0)</small>'));
   }
 
   function t6(app){
-    hwHead(app,6,"Your story","Tell me about your back and one of your clients. Use the words from this homework.");
+    hwHead(app,7,"Your story","Tell me about your back and one of your clients. Use the words from this homework.");
     const q=el("div","q");
     q.append(el("p",null,"Record a <b>voice message</b> in Telegram (2–3 minutes). <b>Don't read aloud</b>: look at the questions, then just talk."));
     q.append(el("p",null,"<b>1. Your story.</b> What happened when you were a child? What helped you? How is your back now?<br><b>2. One client.</b> What problem does he or she have, and why? What do you recommend?"));
@@ -484,7 +520,7 @@
     const n=el("div","nav"); const b=el("button","btn ghost","← Back"); b.onclick=()=>go(STEPS.length-1); n.append(b); app.append(n);
   }
 
-  const TASKS=[t1,t2,t3,t4,t5,t6];
+  const TASKS=[t1,t2,t3,tGap,t4,t5,t6];
   function render(){
     if(S.step<0||S.step>TASKS.length) S.step=0;
     const pr=document.getElementById("progress"); pr.innerHTML="";
@@ -507,18 +543,21 @@
     L.push("","Task 2 · Say it (word stress)");
     L.push(`Stress ${cnt(S.syl)}/${SYL.length}`);
     S.syl.forEach((st,i)=>L.push(line(st.ok,st.done,`${SYL[i].w} → ${st.tries.join(" → ")||"not done"}`)));
-    L.push("","Task 3 · Sentences and words");
-    L.push(`Unjumble ${cnt(S.u)}/${UNJ.length} · gap-fill ${cnt(S.g)}/${GAP.length}`);
+    L.push("","Task 3 · Sentences and collocations");
+    L.push(`Unjumble ${cnt(S.u)}/${UNJ.length} · halves ${cnt(S.co)}/${COLL.length}`);
     S.u.forEach((st,i)=>L.push(line(st.ok,st.done,`${UNJ[i].join(" ")} → ${st.tries.length?st.tries.join(" | ")+tr(st):"not done"}`)));
+    S.co.forEach((st,i)=>L.push(line(st.ok,st.done,`${COLL[i].l} ${COLL[i].r} → ${st.tries.join(" → ")||"not done"}${tr(st)}`)));
+    L.push("","Task 4 · Remember the phrases");
+    L.push(`Gap-fill ${cnt(S.g)}/${GAP.length}`);
     S.g.forEach((st,i)=>L.push(line(st.ok,st.done,`${GAP[i].c} → ${st.tries.join(" → ")||"not done"}${tr(st)}`)));
-    L.push("","Task 4 · Cause → problem → what helps");
+    L.push("","Task 5 · Cause → problem → what helps");
     L.push(`${cnt(S.so)}/${SORT.length} correct`);
     const nm={C:"cause",P:"problem",H:"what helps"};
     S.so.forEach((st,i)=>L.push(line(st.ok,st.done,`${SORT[i].t} → ${st.tries.map(x=>nm[x]).join(" → ")||"not done"}`)));
-    L.push("","Task 5 · Your clients");
+    L.push("","Task 6 · Your clients");
     CASES.forEach((cs,i)=>L.push(`${cs.name}: ${S.cases[i].trim()||"—"}`));
     L.push(`Most like my clients: ${S.like.trim()||"—"}`);
-    L.push("","Task 6 · Your story");
+    L.push("","Task 7 · Your story");
     L.push(`Voice message: ${S.voice?"sent":"not ticked"}`);
     L.push(`Words she says she used: ${BANK.filter((_,i)=>S.used[i]).join(", ")||"—"}`);
     L.push(`What I can say now: ${S.notice.trim()||"—"}`);
@@ -537,6 +576,7 @@
     if(same("g",GAP.length)) S.g=z.g;
     if(same("u",UNJ.length)) S.u=z.u;
     if(same("so",SORT.length)) S.so=z.so;
+    if(same("co",COLL.length)) S.co=z.co;
     if(same("cases",CASES.length)) S.cases=z.cases.map(String);
     if(same("used",BANK.length)) S.used=z.used.map(Boolean);
     S.like=String(z.like||""); S.notice=String(z.notice||""); S.feel=String(z.feel||"");
