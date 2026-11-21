@@ -107,7 +107,7 @@
   <a href="../" data-hw-back class="back-link">← My English</a>
   <header>
     <h1>Backs, injuries and your clients</h1>
-    <p>Homework · 7 short tasks · about 35 minutes · your answers save as you go</p>
+    <p>Homework · 6 short tasks · about 30 minutes · your answers save as you go</p>
   </header>
   <div class="progress" id="progress"></div>
   <main id="app"></main>
@@ -122,8 +122,8 @@
   const MEAN = [
     {img:"disc.webp", d:"The soft disc between two vertebrae moves out of its place and presses on a nerve.", o:["an injury","a herniated disc","sciatica"], a:1},
     {img:"sciatica.webp", d:"Pain that goes from your lower back down your leg.", o:["sciatica","a sedentary lifestyle","a herniated disc"], a:0},
-    {d:"You sit a lot (at work, in the car, on the sofa) and you don't move much.", o:["a set of exercises","an injury","a sedentary lifestyle"], a:2},
-    {d:"Pick up something very heavy at the gym, for example a barbell.", o:["roll down","lift heavy weights","work with a physiotherapist"], a:1},
+    {img:"office.webp", d:"You sit a lot (at work, in the car, on the sofa) and you don't move much.", o:["a set of exercises","an injury","a sedentary lifestyle"], a:2},
+    {img:"gym.webp", d:"Pick up something very heavy at the gym, for example a barbell.", o:["roll down","lift heavy weights","work with a physiotherapist"], a:1},
     {d:"Damage to your body, for example after a fall or bad training.", o:["an injury","sciatica","a set of exercises"], a:0},
     {img:"physio.webp", d:"Have sessions with a specialist who helps your body get better after an injury.", o:["lift heavy weights","have a sedentary lifestyle","work with a physiotherapist"], a:2},
     {d:"A few exercises you do together, for example every morning.", o:["a herniated disc","a set of exercises","an injury"], a:1},
@@ -135,10 +135,17 @@
     {w:"sciatica", s:["sci","at","i","ca"], a:1},
     {w:"vertebra", s:["ver","te","bra"], a:0},
     {w:"herniated", s:["her","ni","a","ted"], a:0},
-    {w:"injury", s:["in","ju","ry"], a:0},
     {w:"physiotherapist", s:["phy","sio","the","ra","pist"], a:2}
   ];
-  const REPEAT = ["a sedentary lifestyle","sciatica","a herniated disc","Roll down one vertebra at a time.","Do you have any injuries I should know about?","work with a physiotherapist"];
+  const REPEAT = [
+    {t:"a sedentary lifestyle", f:"p-sedentary-lifestyle"},
+    {t:"sciatica", f:"p-sciatica"},
+    {t:"a herniated disc", f:"p-herniated-disc"},
+    {t:"Roll down one vertebra at a time.", f:"p-roll-down"},
+    {t:"Do you have any injuries I should know about?", f:"p-any-injuries"},
+    {t:"work with a physiotherapist", f:"p-physio"}
+  ];
+  const BANK = ["upper / middle / lower back","pain in …","problems with …","a sedentary lifestyle","lift heavy weights","an injury","a herniated disc","sciatica","work with a physiotherapist","a set of exercises","one vertebra at a time"];
 
   const GAP = [
     {b:"Many office workers have", c:"a sedentary lifestyle", a:"."},
@@ -160,17 +167,6 @@
   ];
   const UNJ_MIX = [[3,0,4,2,1],[2,4,1,0,3],[3,1,4,0,2],[3,1,0,2],[2,3,0,1]];
 
-  const JUDGE = [
-    {s:"I have pain on my back.", ok:false, fix:["i have pain in my back"], why:"pain IN my back"},
-    {s:"I had an injury when I was a child.", ok:true},
-    {s:"My clients often have problems about their lower back.", ok:false, fix:["my clients often have problems with their lower back"], why:"problems WITH"},
-    {s:"A lot of people have a sedentary lifestyle.", ok:true},
-    {s:"She visits the gym three times a week.", ok:false, fix:["she goes to the gym three times a week"], why:"we GO TO the gym"},
-    {s:"Roll up slowly, one vertebra at a time.", ok:true},
-    {s:"He go to the gym every day and lifts heavy weights.", ok:false, fix:["he goes to the gym every day and lifts heavy weights"], why:"he GOES"},
-    {s:"I usually do two private lessons a week.", ok:false, fix:["i usually have two private lessons a week"], why:"I usually HAVE … lessons"}
-  ];
-
   const COLS = [{k:"C", t:"Why? (the cause)"},{k:"P", t:"The problem"},{k:"H", t:"What helps"}];
   const SORT = [
     {t:"a sedentary lifestyle", a:["C"]},
@@ -184,9 +180,13 @@
     {t:"rolling down one vertebra at a time", a:["H"]}
   ];
 
+  const WM = "https://thumb.wikimedia.org/wikipedia/commons/thumb/";
   const EXER = [
-    {n:"cat-cow"}, {n:"child's pose"}, {n:"glute bridge"},
-    {n:"bird dog"}, {n:"open book"}, {n:"roll-down", img:"rolldown.webp"}
+    {n:"cat-cow", src:WM+"b/be/Yoga_at_Your_Park_-_Bitilasana.jpg/500px-Yoga_at_Your_Park_-_Bitilasana.jpg"},
+    {n:"child's pose", src:WM+"5/55/Hatha_yoga_child_pose.jpg/500px-Hatha_yoga_child_pose.jpg"},
+    {n:"glute bridge", src:WM+"f/f9/Single_Leg_Bridge.jpg/500px-Single_Leg_Bridge.jpg"},
+    {n:"bird dog", src:WM+"7/76/Girl_doing_bird_dog_yoga_pose_2.jpg/500px-Girl_doing_bird_dog_yoga_pose_2.jpg"},
+    {n:"roll-down", src:"img/rolldown.webp"}
   ];
   const CASES = [
     {img:"office.webp", name:"Lena, 34", p:"Office manager. She sits at her computer 9 hours a day and drives to work. She doesn't do any sport."},
@@ -194,7 +194,7 @@
     {img:"gym.webp", name:"Kate, 31", p:"She goes to the gym four times a week. After training, her lower back sometimes hurts."}
   ];
 
-  const STEPS = ["Your back","Say it","Words and sentences","Right or wrong?","Cause → problem → what helps","Your clients","Then and now"];
+  const STEPS = ["Your back","Say it","Sentences and words","Cause → problem → what helps","Your clients","Your story"];
 
   /* ================= STATE ================= */
   const S = {
@@ -202,14 +202,12 @@
     z: ZASK.map(()=>({tries:[],ok:false,done:false})),
     m: MEAN.map(()=>({tries:[],ok:false,done:false})),
     syl: SYL.map(()=>({tries:[],ok:false,done:false})),
-    voice1:false,
     g: GAP.map(()=>({val:"",tries:[],ok:false,done:false})),
     u: UNJ.map(()=>({order:[],tries:[],ok:false,done:false})),
-    j: JUDGE.map(()=>({judge:null,val:"",tries:[],ok:false,done:false})),
     so: SORT.map(()=>({col:null,tries:[],ok:false,done:false})),
     cases: CASES.map(()=>""),
     like:"",
-    voice2:false, notice:""
+    voice:false, used:BANK.map(()=>false), notice:"", feel:""
   };
   let sel = null; // selected sort item (not saved)
 
@@ -219,15 +217,9 @@
   const hintOf = c => c.split(" ").map(w => w.length<=2 ? w : w[0] + "_".repeat(w.length-2) + w[w.length-1]).join(" ");
   const el = (tag, cls, html) => { const e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; };
   const tries = t => t.length + (t.length===1?" try":" tries");
-  function say(t){
-    try{
-      if(!window.speechSynthesis) return;
-      const u = new SpeechSynthesisUtterance(t); u.lang="en-GB"; u.rate=0.85;
-      const v = speechSynthesis.getVoices().find(v=>/^en[-_]GB/i.test(v.lang)) || speechSynthesis.getVoices().find(v=>/^en/i.test(v.lang));
-      if(v) u.voice=v; speechSynthesis.cancel(); speechSynthesis.speak(u);
-    }catch(e){}
-  }
-  function sayBtn(t){ const b=el("button","say","▶"); b.setAttribute("aria-label","Listen"); b.onclick=()=>say(t); return b; }
+  let player = null;
+  function say(f){ try{ if(player) player.pause(); player = new Audio("audio/"+f+".mp3"); player.play().catch(()=>{}); }catch(e){} }
+  function sayBtn(f){ const b=el("button","say","▶"); b.setAttribute("aria-label","Listen"); b.onclick=()=>say(f); return b; }
   const locked = () => HW.preview || HW.submitted;
   function go(n){ S.step=n; render(); window.scrollTo(0,0); }
   function nav(app){
@@ -323,7 +315,10 @@
   }
 
   function t2(app){
-    hwHead(app,2,"Say it","Tap ▶ and listen. Which part of the word is strong? Tap it.");
+    hwHead(app,2,"Say it","Нажми ▶ и послушай слово. Где ударение? Нажми на ударный слог.");
+    const ex=el("div","q"); const exl=el("div","line"); exl.append(sayBtn("injury")); exl.append(el("span",null,"<b>Пример:</b> injury → <b>IN</b>-ju-ry")); ex.append(exl);
+    const exs=el("div","syl"); ["in","ju","ry"].forEach((p,j)=>{ const b=el("button","opt"+(j===0?" correct":"")); b.textContent=p; b.disabled=true; exs.append(b); }); ex.append(exs);
+    app.append(ex);
     SYL.forEach((it,i)=>{
       const q=el("div","q"); const st=S.syl[i];
       const top=el("div","line"); top.append(sayBtn(it.w)); top.append(el("b",null,it.w)); q.append(top);
@@ -344,24 +339,12 @@
     });
     app.append(el("div","sub","Listen and repeat"));
     const q=el("div","q");
-    q.append(el("p",null,"Listen to each phrase and repeat it 2–3 times. Then record a <b>voice message</b> in Telegram: say all six phrases and send it to me."));
-    REPEAT.forEach(t=>{ const l=el("div","line"); l.append(sayBtn(t)); l.append(el("span",null,esc(t))); q.append(l); });
+    q.append(el("p",null,"Listen to each phrase and say it out loud 2–3 times."));
+    REPEAT.forEach(r=>{ const l=el("div","line"); l.append(sayBtn(r.f)); l.append(el("span",null,esc(r.t))); q.append(l); });
     app.append(q);
-    const c=el("label","check"); const cb=el("input"); cb.type="checkbox"; cb.checked=S.voice1; cb.disabled=locked();
-    cb.onchange=()=>{ S.voice1=cb.checked; HW.save(); }; c.append(cb, document.createTextNode("I sent my voice message")); app.append(c);
   }
 
-  function t3(app){
-    hwHead(app,3,"Words and sentences","<b>Part A:</b> type the missing phrase. You see the first and last letter of each word.<br><b>Part B:</b> put your own sentences from our lesson in order.");
-    app.append(el("div","sub","Part A · Complete the phrase"));
-    GAP.forEach((it,i)=>{
-      const q=el("div","q");
-      q.append(el("div","prompt",`<span class="num">${i+1}.</span>${esc(it.b)} ___ ${esc(it.a)}`));
-      q.append(el("span","hint",esc(hintOf(it.c))));
-      typed(q, S.g[i], [it.c, it.c.replace(/^a /,"")].concat(it.c==="lifts heavy weights"?["lifts heavy weight"]:[]), it.c);
-      app.append(q);
-    });
-    app.append(el("div","sub","Part B · Your sentences from 20 November"));
+  function unjumble(app){
     UNJ.forEach((tiles,i)=>{
       const q=el("div","q"); const st=S.u[i];
       q.append(el("div","prompt",`<span class="num">${i+1}.</span>Tap the parts in the right order.`));
@@ -391,34 +374,22 @@
       app.append(q);
     });
   }
-
-  function t4(app){
-    hwHead(app,4,"Right or wrong?","These sentences are from our lessons. Is each one right or wrong? If it's wrong, write the correct sentence.");
-    JUDGE.forEach((it,i)=>{
-      const q=el("div","q"); const st=S.j[i];
-      q.append(el("div","prompt",`<span class="num">${i+1}.</span>${esc(it.s)}`));
-      const row=el("div","opts row");
-      [["✓ Right",true],["✗ Wrong",false]].forEach(([lab,v])=>{
-        const b=el("button","opt"); b.textContent=lab;
-        if(st.judge!==null){ b.disabled=true; if(v===it.ok)b.classList.add("correct"); else if(st.judge===v)b.classList.add("wrong"); }
-        b.onclick=()=>{ if(st.judge!==null||locked())return; st.judge=v;
-          if(it.ok){ st.done=true; st.ok=(v===true); } render(); };
-        row.append(b);
-      });
-      q.append(row);
-      if(st.judge!==null){
-        if(it.ok){ q.append(el("div","fb "+(st.ok?"ok":"no"), st.ok?"✓ Yes, this one is right.":"✗ Actually, this one is right.")); }
-        else {
-          q.append(el("div","fb "+(st.judge===false?"ok":"no"), st.judge===false?"✓ Yes, it's wrong. Write it correctly:":"✗ It's wrong. Write it correctly:"));
-          typed(q, st, it.fix, it.fix[0].charAt(0).toUpperCase()+it.fix[0].slice(1)+". ("+it.why+")");
-        }
-      }
+  function t3(app){
+    hwHead(app,3,"Sentences and words","<b>Part A:</b> put your own sentences from our lesson in order.<br><b>Part B:</b> type the missing phrase. You see the first and last letter of each word.");
+    app.append(el("div","sub","Part A · Your sentences from 20 November"));
+    unjumble(app);
+    app.append(el("div","sub","Part B · Complete the phrase"));
+    GAP.forEach((it,i)=>{
+      const q=el("div","q");
+      q.append(el("div","prompt",`<span class="num">${i+1}.</span>${esc(it.b)} ___ ${esc(it.a)}`));
+      q.append(el("span","hint",esc(hintOf(it.c))));
+      typed(q, S.g[i], [it.c, it.c.replace(/^a /,"")].concat(it.c==="lifts heavy weights"?["lifts heavy weight"]:[]), it.c);
       app.append(q);
     });
   }
 
-  function t5(app){
-    hwHead(app,5,"Cause → problem → what helps","Tap a phrase, then tap the box where it goes. When all phrases are in boxes, tap <b>Check</b>.");
+  function t4(app){
+    hwHead(app,4,"Cause → problem → what helps","Tap a phrase, then tap the box where it goes. When all phrases are in boxes, tap <b>Check</b>.");
     const pool=el("div","pool");
     SORT.forEach((it,i)=>{ const st=S.so[i]; if(st.col)return;
       const b=el("button","tile"+(sel===i?" sel":"")); b.textContent=it.t;
@@ -449,8 +420,7 @@
         render(); };
       app.append(b);
     }
-    const wrongNow = S.so.some(s=>!s.done && s.tries.length);
-    if(wrongNow) app.append(el("div","fb no","Some phrases came back. Try them once more."));
+    if(S.so.some(s=>!s.done && s.tries.length)) app.append(el("div","fb no","Some phrases came back. Try them once more."));
     if(S.so.every(s=>s.done)) app.append(el("div","fb ok",`Done! ${S.so.filter(s=>s.ok).length} / ${SORT.length} correct. Red = I moved it to the right box.`));
   }
 
@@ -459,11 +429,12 @@
     ta.value = ta.value.slice(0,s) + text + ta.value.slice(ta.selectionEnd==null?s:ta.selectionEnd);
     ta.focus(); ta.dispatchEvent(new Event("input"));
   }
-  function t6(app){
-    hwHead(app,6,"Your clients","Three new clients. Look at each photo and read about the person. What's the problem, and why? Which exercises would you recommend? Write 2–3 sentences for each person.");
+  function t5(app){
+    hwHead(app,5,"Your clients","Three new clients. Look at each photo and read about the person. What's the problem, and why? Which exercises would you recommend? Write 2–3 sentences for each person.");
     app.append(el("div","sub","Exercises"));
     const bank=el("div","bank");
-    EXER.forEach(x=>{ const c=el("div","ex"); if(x.img){const im=el("img");im.src="img/"+x.img;im.alt=x.n;c.append(im);} else c.append(el("div","noimg","🧘")); c.append(document.createTextNode(x.n)); bank.append(c); });
+    EXER.forEach(x=>{ const c=el("div","ex"); const im=el("img"); im.src=x.src; im.alt=x.n; im.loading="lazy";
+      im.onerror=()=>{ im.replaceWith(el("div","noimg","🧘")); }; c.append(im); c.append(document.createTextNode(x.n)); bank.append(c); });
     app.append(bank);
     CASES.forEach((cs,i)=>{
       const q=el("div","q");
@@ -481,36 +452,39 @@
     const q=el("div","q"); q.append(el("div","prompt","Which person is most like your clients? Why?"));
     const ta=el("textarea"); ta.style.minHeight="70px"; ta.value=S.like; ta.disabled=locked(); ta.oninput=()=>{ S.like=ta.value; HW.save(); };
     q.append(ta); app.append(q);
+    app.append(el("p",null,'<small style="color:#6b665e">Exercise photos: Wikimedia Commons · Mary O\'Neill (public domain), Daniel Case (CC BY-SA 3.0), Klewis425 (CC BY-SA 3.0), PTPioneer (CC BY 2.0)</small>'));
   }
 
-  function t7(app){
-    hwHead(app,7,"Then and now","On 20 November you told me about your back. Here is what you said then. Now tell the story again, with the new words.");
-    app.append(el("div","then",`<b>What you said on 20 November</b>
-      <p>“When I have a lot of dance classes, and I have some elements when I use my lower back, after that I have pain in my lower back few days.”</p>
-      <p>“I had an injury when I was a child.”</p>
-      <p>“I lift… lifted heavy weights in the gym, at the gym.”</p>
-      <p>“I had herniated disc.”</p>
-      <p>“I had a rehabilitation. And I did special physical exercises every day.”</p>`));
+  function t6(app){
+    hwHead(app,6,"Your story","Tell me about your back and one of your clients. Use the words from this homework.");
     const q=el("div","q");
     q.append(el("p",null,"Record a <b>voice message</b> in Telegram (2–3 minutes). <b>Don't read aloud</b>: look at the questions, then just talk."));
     q.append(el("p",null,"<b>1. Your story.</b> What happened when you were a child? What helped you? How is your back now?<br><b>2. One client.</b> What problem does he or she have, and why? What do you recommend?"));
     q.append(el("div","stems","<div>When I was a child, I ___.</div><div>Now I sometimes have pain in ___.</div><div>One of my clients has problems with ___.</div>"));
     app.append(q);
-    const c=el("label","check"); const cb=el("input"); cb.type="checkbox"; cb.checked=S.voice2; cb.disabled=locked();
-    cb.onchange=()=>{ S.voice2=cb.checked; HW.save(); }; c.append(cb, document.createTextNode("I sent my voice message")); app.append(c);
-    const q2=el("div","q"); q2.append(el("div","prompt","Listen to your voice message. What can you say now that you couldn't say on 20 November?"));
+    const c=el("label","check"); const cb=el("input"); cb.type="checkbox"; cb.checked=S.voice; cb.disabled=locked();
+    cb.onchange=()=>{ S.voice=cb.checked; HW.save(); }; c.append(cb, document.createTextNode("I sent my voice message")); app.append(c);
+    const w=el("div","q"); w.append(el("div","prompt","Listen to your message. Which words did you use? Tap them."));
+    const chips=el("div","chips");
+    BANK.forEach((t,i)=>{ const b=el("button","opt"+(S.used[i]?" picked":"")); b.style.minHeight="40px"; b.style.padding="6px 10px"; b.textContent=t;
+      b.onclick=()=>{ if(locked())return; S.used[i]=!S.used[i]; render(); }; chips.append(b); });
+    w.append(chips); app.append(w);
+    const q2=el("div","q"); q2.append(el("div","prompt","What can you say now that you couldn't say before?"));
     const ta=el("textarea"); ta.style.minHeight="70px"; ta.value=S.notice; ta.disabled=locked(); ta.oninput=()=>{ S.notice=ta.value; HW.save(); };
     q2.append(ta); app.append(q2);
+    const q3=el("div","q"); q3.append(el("div","prompt","How do you feel when you talk about this in English?"));
+    const ta2=el("textarea"); ta2.style.minHeight="70px"; ta2.value=S.feel; ta2.disabled=locked(); ta2.oninput=()=>{ S.feel=ta2.value; HW.save(); };
+    q3.append(ta2); app.append(q3);
   }
 
   function finish(app){
-    const d=el("div","done-card","<h2>Well done, Anna! 🎉</h2><p>Check that you sent your two voice messages in Telegram. Then tap the button and I'll see your answers.</p>");
+    const d=el("div","done-card","<h2>Well done, Anna! 🎉</h2><p>Check that you sent your voice message in Telegram. Then tap the button and I'll see your answers.</p>");
     d.append(HW.sendBlock({lang:"en"}));
     app.append(d);
     const n=el("div","nav"); const b=el("button","btn ghost","← Back"); b.onclick=()=>go(STEPS.length-1); n.append(b); app.append(n);
   }
 
-  const TASKS=[t1,t2,t3,t4,t5,t6,t7];
+  const TASKS=[t1,t2,t3,t4,t5,t6];
   function render(){
     if(S.step<0||S.step>TASKS.length) S.step=0;
     const pr=document.getElementById("progress"); pr.innerHTML="";
@@ -525,32 +499,30 @@
   function summary(){
     const L=[];
     const cnt=a=>a.filter(x=>x.ok).length;
+    const tr=st=>st.tries.length?" ("+tries(st.tries)+")":"";
     L.push("Task 1 · Your back (zones + meanings)");
     L.push(`Zones ${cnt(S.z)}/${ZASK.length} · meanings ${cnt(S.m)}/${MEAN.length}`);
-    S.z.forEach((st,i)=>L.push(line(st.ok,st.done,`${ZASK[i]} back → ${st.tries.join(" → ")||"not done"}${st.tries.length?" ("+tries(st.tries)+")":""}`)));
-    S.m.forEach((st,i)=>L.push(line(st.ok,st.done,`${MEAN[i].o[MEAN[i].a]} → ${st.tries.join(" → ")||"not done"}${st.tries.length?" ("+tries(st.tries)+")":""}`)));
+    S.z.forEach((st,i)=>L.push(line(st.ok,st.done,`${ZASK[i]} back → ${st.tries.join(" → ")||"not done"}${tr(st)}`)));
+    S.m.forEach((st,i)=>L.push(line(st.ok,st.done,`${MEAN[i].o[MEAN[i].a]} → ${st.tries.join(" → ")||"not done"}${tr(st)}`)));
     L.push("","Task 2 · Say it (word stress)");
-    L.push(`Stress ${cnt(S.syl)}/${SYL.length} · voice message: ${S.voice1?"sent":"not ticked"}`);
+    L.push(`Stress ${cnt(S.syl)}/${SYL.length}`);
     S.syl.forEach((st,i)=>L.push(line(st.ok,st.done,`${SYL[i].w} → ${st.tries.join(" → ")||"not done"}`)));
-    L.push("","Task 3 · Words and sentences");
-    L.push(`Gap-fill ${cnt(S.g)}/${GAP.length} · unjumble ${cnt(S.u)}/${UNJ.length}`);
-    S.g.forEach((st,i)=>L.push(line(st.ok,st.done,`${GAP[i].c} → ${st.tries.join(" → ")||"not done"}${st.tries.length?" ("+tries(st.tries)+")":""}`)));
-    S.u.forEach((st,i)=>L.push(line(st.ok,st.done,`${UNJ[i].join(" ")} → ${st.tries.length?st.tries.join(" | ")+" ("+tries(st.tries)+")":"not done"}`)));
-    L.push("","Task 4 · Right or wrong?");
-    L.push(`Judged right ${S.j.filter((st,i)=>st.judge===JUDGE[i].ok).length}/${JUDGE.length} · fixed ${S.j.filter((st,i)=>!JUDGE[i].ok&&st.ok).length}/${JUDGE.filter(x=>!x.ok).length}`);
-    S.j.forEach((st,i)=>{ const it=JUDGE[i]; const jOk = st.judge===it.ok;
-      let t=`“${it.s}” → said ${st.judge===null?"—":st.judge?"right":"wrong"}`;
-      if(!it.ok && st.tries.length) t+=` · wrote: ${st.tries.join(" → ")} (${tries(st.tries)})`;
-      L.push(line(it.ok?jOk:(jOk&&st.ok), st.judge!==null&&(it.ok||st.done), t)); });
-    L.push("","Task 5 · Cause → problem → what helps");
+    L.push("","Task 3 · Sentences and words");
+    L.push(`Unjumble ${cnt(S.u)}/${UNJ.length} · gap-fill ${cnt(S.g)}/${GAP.length}`);
+    S.u.forEach((st,i)=>L.push(line(st.ok,st.done,`${UNJ[i].join(" ")} → ${st.tries.length?st.tries.join(" | ")+tr(st):"not done"}`)));
+    S.g.forEach((st,i)=>L.push(line(st.ok,st.done,`${GAP[i].c} → ${st.tries.join(" → ")||"not done"}${tr(st)}`)));
+    L.push("","Task 4 · Cause → problem → what helps");
     L.push(`${cnt(S.so)}/${SORT.length} correct`);
-    S.so.forEach((st,i)=>L.push(line(st.ok,st.done,`${SORT[i].t} → ${st.tries.join(" → ")||"not done"}`)));
-    L.push("","Task 6 · Your clients");
+    const nm={C:"cause",P:"problem",H:"what helps"};
+    S.so.forEach((st,i)=>L.push(line(st.ok,st.done,`${SORT[i].t} → ${st.tries.map(x=>nm[x]).join(" → ")||"not done"}`)));
+    L.push("","Task 5 · Your clients");
     CASES.forEach((cs,i)=>L.push(`${cs.name}: ${S.cases[i].trim()||"—"}`));
     L.push(`Most like my clients: ${S.like.trim()||"—"}`);
-    L.push("","Task 7 · Then and now");
-    L.push(`Voice message: ${S.voice2?"sent":"not ticked"}`);
+    L.push("","Task 6 · Your story");
+    L.push(`Voice message: ${S.voice?"sent":"not ticked"}`);
+    L.push(`Words she says she used: ${BANK.filter((_,i)=>S.used[i]).join(", ")||"—"}`);
     L.push(`What I can say now: ${S.notice.trim()||"—"}`);
+    L.push(`How I feel: ${S.feel.trim()||"—"}`);
     return L.join("\n");
   }
 
@@ -564,13 +536,14 @@
     if(same("syl",SYL.length)) S.syl=z.syl;
     if(same("g",GAP.length)) S.g=z.g;
     if(same("u",UNJ.length)) S.u=z.u;
-    if(same("j",JUDGE.length)) S.j=z.j;
     if(same("so",SORT.length)) S.so=z.so;
     if(same("cases",CASES.length)) S.cases=z.cases.map(String);
-    S.like=String(z.like||""); S.notice=String(z.notice||"");
-    S.voice1=!!z.voice1; S.voice2=!!z.voice2;
+    if(same("used",BANK.length)) S.used=z.used.map(Boolean);
+    S.like=String(z.like||""); S.notice=String(z.notice||""); S.feel=String(z.feel||"");
+    S.voice=!!z.voice;
   }
   HW.start({ id:"hw2", title:"Backs, injuries and your clients", get:()=>S, set:restore, summary, render });
+
 })();
 </script>
 </body>
