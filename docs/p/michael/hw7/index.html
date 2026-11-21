@@ -491,7 +491,7 @@ function go(i){S.stage=i;SEL=null;render();window.scrollTo(0,0);const t=tabs.chi
 document.getElementById("prev").onclick=()=>{if(S.stage>0)go(S.stage-1);};
 document.getElementById("next").onclick=()=>{if(S.stage<STAGES.length-1)go(S.stage+1);};
 function rr(){const y=window.scrollY;render();window.scrollTo(0,y);}
-function head(step,title,rubric,bannerSrcs){
+function hwHead(step,title,rubric,bannerSrcs){
   return el("div",{class:"stage-head"},
     bannerSrcs?banner(bannerSrcs,step,title):el("span",{class:"step"},step),
     bannerSrcs?null:el("h2",{},title),
@@ -502,7 +502,7 @@ function wrongNote(list,what){return list.length?el("p",{class:"fb info"},what+"
 /* ================= TASK 1 · words → photos ================= */
 function r1(){
   const box=el("section",{class:"stage"});
-  box.append(head("Задание 1 из 7","New words",null,["img/b-foods.webp"]));
+  box.append(hwHead("Задание 1 из 7","New words",null,["img/b-foods.webp"]));
   box.append(el("p",{class:"note"},"Повторение урока · ~25 минут · можно делать по частям. Ответы сохраняются автоматически."));
   box.append(el("p",{class:"rubric"},"Нажми на слово, потом на фото, которое ему подходит. Нажми 🔊, чтобы послушать."));
   DROP=(key,zone)=>{const st=S.t1.res[key];if(done(st))return;attempt(st,WORDS[+zone].w,String(key)===zone);if(st.ok)say(WORDS[key].say);};
@@ -535,7 +535,7 @@ function r1(){
 /* ================= TASK 2 · phrases → key verbs ================= */
 function r2(){
   const box=el("section",{class:"stage"});
-  box.append(head("Задание 2 из 7","Which verb?"));
+  box.append(hwHead("Задание 2 из 7","Which verb?"));
   box.append(el("div",{class:"fullpic"},el("img",{src:"img/b-book.webp",alt:""})));
   box.append(el("p",{class:"rubric"},"Нажми на фразу, потом на глагол, с которым она идёт."));
   DROP=(key,zone)=>{const st=S.t2.res[key];if(done(st))return;attempt(st,zone,T2[key].v===zone);};
@@ -559,7 +559,7 @@ function r2(){
 /* ================= TASK 3 · gap fill with a word bank ================= */
 function r3(){
   const box=el("section",{class:"stage"});
-  box.append(head("Задание 3 из 7","Complete the sentences","Нажми на фразу в word bank, потом на пропуск. Две фразы лишние."));
+  box.append(hwHead("Задание 3 из 7","Complete the sentences","Нажми на фразу в word bank, потом на пропуск. Две фразы лишние."));
   DROP=(key,zone)=>{const i=+zone,st=S.t3.res[i];if(done(st))return;attempt(st,key,key===T3[i].a);};
   const used=T3.filter((t,i)=>done(S.t3.res[i])).map(t=>t.a);
   const left=S.t3.chips.filter(c=>!used.includes(c));
@@ -585,7 +585,7 @@ function routineOk(it,v){const t=norm(v);return new RegExp("^(do you|how often d
 /* ================= TASK 4 · routine / experience table ================= */
 function r4(){
   const box=el("section",{class:"stage"});
-  box.append(head("Задание 4 из 7","Routine or experience?",
+  box.append(hwHead("Задание 4 из 7","Routine or experience?",
     "Routine — то, что человек делает регулярно: каждый день, раз в неделю, иногда. Experience — опыт в жизни: было это когда-нибудь или нет. Нажми на фразу, потом на нужную колонку."));
   DROP=(key,zone)=>{const st=S.t4.sort[key];if(done(st))return;attempt(st,zone,T4[key].c===zone);};
   const groups=[];for(let k=0;k<S.t4.chips.length;k+=10)groups.push(S.t4.chips.slice(k,k+10));
@@ -645,7 +645,7 @@ function r4(){
 function nowTime(i){return "10:"+String(12+i*2).padStart(2,"0");}
 function r5(){
   const box=el("section",{class:"stage"});
-  box.append(head("Задание 5 из 7","Your first client",
+  box.append(hwHead("Задание 5 из 7","Your first client",
     "Ты учишься на нутрициолога, и у тебя практика. Это твой первый клиент — Olivia. Задай ей вопросы, которые ты сортировал в задании 4. Над полем ввода — тема вопроса: напиши вопрос сам и отправь. Читай её ответы внимательно: потом нужно будет вспомнить, что она рассказала. Ошибки посмотрим после чата."));
   const wb=el("details",{},el("summary",{},"📖 Word bank: твоя таблица из задания 4 (нажми, чтобы открыть)"));
   const tt=el("div",{class:"ttable",style:"margin-top:8px"});
@@ -715,7 +715,7 @@ function feedback(){
 /* ================= TASK 6 · remember (tick her answers) ================= */
 function r6(){
   const box=el("section",{class:"stage"});
-  box.append(head("Задание 6 из 7","What did Olivia answer?","Не смотри в чат! Вот твои вопросы к Olivia. Что она ответила? Выбери ответ. Потом увидишь её сообщение полностью."));
+  box.append(hwHead("Задание 6 из 7","What did Olivia answer?","Не смотри в чат! Вот твои вопросы к Olivia. Что она ответила? Выбери ответ. Потом увидишь её сообщение полностью."));
   if(S.t5.qs.length<CHAT.length){box.append(el("p",{class:"fb info"},"Сначала закончи чат с Olivia (задание 5)."));return box;}
   const list=el("div",{class:"list"});
   CHAT.forEach((c,i)=>{const st=S.t6[i],V=VARS[c.id][S.t5.keys[i]||"yn"];
@@ -736,7 +736,7 @@ function r6(){
 /* ================= TASK 7 · voice ================= */
 function r7(){
   const box=el("section",{class:"stage"});
-  box.append(head("Задание 7 из 7","Tell your supervisor",
+  box.append(hwHead("Задание 7 из 7","Tell your supervisor",
     "Ты практикант, а я твой supervisor. Запиши мне голосовое в Telegram про твоего клиента Olivia: что она рассказала про сон, спорт, завтрак, витамины, болезни, головную боль, диеты и fasting. И что, по-твоему, ей нужно. Говори своими словами, не читай с экрана. Можно смотреть в ответы в задании 6.",["img/b-notebook.webp"]));
   box.append(el("div",{class:"stembox"},
     el("p",{},"Olivia usually … / She doesn't …"),

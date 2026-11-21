@@ -136,3 +136,6 @@ Note: the front "Homework" card on a student page shows only the open homework w
   (drops that phone's saved copy, reloads) and a grey technical line (error + iOS version). Ask the student for a screenshot of it.
 - Student pages: when a homework link has no login in it (device blocks browser storage, seen on Maria's iPad), the click handler
   adds the login from the page itself, so the kit doesn't fall back to "saves only on this phone".
+- Cause of Maria's blank page: inside Telegram on iOS, the global name `head` is taken by the page's <head> element, so a
+  homework that defines `function head(...)` crashes on iPhone ("head is not a function"). Renamed to `hwHead` in Maria hw1
+  and Michael hw7. **Never name a top-level function `head`** (or other DOM-ish names: `title`, `name`, `top`, `parent`, `status`).

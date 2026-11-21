@@ -135,7 +135,7 @@ const norm = s => String(s||"").toLowerCase().replace(/[’']/g,"'").replace(/[^
 const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
-function head(n, title, ps){
+function hwHead(n, title, ps){
   const h = el("div","head");
   h.append(el("div","n", n ? "Шаг "+n+" из "+STEPS : "Готово"), el("h2","",title));
   ps.forEach(p => h.append(el("p","",p)));
@@ -160,7 +160,7 @@ function wordBank(open){
 
 /* ---------- step 1: sort ---------- */
 function step1(app){
-  app.append(head(1, "Which verb?", ["Сначала посмотри на шесть глаголов. Потом нажми на фразу внизу и на глагол, с которым она сочетается."]));
+  app.append(hwHead(1, "Which verb?", ["Сначала посмотри на шесть глаголов. Потом нажми на фразу внизу и на глагол, с которым она сочетается."]));
   const boxes = el("div","boxes");
   VERBS.forEach(v => {
     const b = el("button","box"+(armed!=null?" armed":""));
@@ -198,7 +198,7 @@ function ph(w){
   return w[0]+" "+"_ ".repeat(w.length-2)+w[w.length-1];
 }
 function step2(app){
-  app.append(head(2, "Fill the gaps", ["Это предложения про твою неделю. Впиши пропущенные слова: видны первая и последняя буквы.", "Не помнишь фразу?"]));
+  app.append(hwHead(2, "Fill the gaps", ["Это предложения про твою неделю. Впиши пропущенные слова: видны первая и последняя буквы.", "Не помнишь фразу?"]));
   const lk = el("button","link","Вернись к шагу 1"); lk.onclick = () => go(0); app.querySelector(".head p:last-child").append(" ", lk);
   GAPS.forEach((s, i) => {
     const st = S.gaps[i], box = el("div","item"); let k = 0;
@@ -231,7 +231,7 @@ function step2(app){
 /* ---------- step 3: my phrases (her own groups) ---------- */
 let armedP = null;
 function step3g(app){
-  app.append(head(3, "My phrases", ["Разложи фразы на 4 группы. Какие будут группы, решаешь ты: например, по времени дня или по месту.", "Назови каждую группу. Нажми на фразу, потом на группу. Чтобы убрать фразу из группы, нажми на неё."]));
+  app.append(hwHead(3, "My phrases", ["Разложи фразы на 4 группы. Какие будут группы, решаешь ты: например, по времени дня или по месту.", "Назови каждую группу. Нажми на фразу, потом на группу. Чтобы убрать фразу из группы, нажми на неё."]));
   const boxes = el("div","boxes");
   S.groups.forEach((g, gi) => {
     const b = el("div","box"+(armedP!=null?" armed":"")); b.style.cursor = "pointer";
@@ -257,7 +257,7 @@ function step3g(app){
 
 /* ---------- step 4: voice ---------- */
 function step3(app){
-  app.append(head(4, "My week", ["Ответь на три вопроса в одном голосовом сообщении. Используй свои фразы."]));
+  app.append(hwHead(4, "My week", ["Ответь на три вопроса в одном голосовом сообщении. Используй свои фразы."]));
   const mine = S.groups.filter(g => g.items.length);
   if (mine.length){ const pl = el("div","wb"); pl.innerHTML = "<b>Твои группы</b>" + mine.map(g => '<div class="row"><span>'+esc(g.name||"Группа")+'</span>'+g.items.map(i=>esc(PHR[i])).join(" · ")+'</div>').join(""); app.append(pl); }
   const v = el("div","voice"); v.innerHTML = "<p><b>Запиши мне голосовое в Telegram</b> (1–2 минуты). Не читай с экрана: посмотри на вопросы и говори.</p>"; app.append(v);
@@ -271,7 +271,7 @@ function step3(app){
 
 /* ---------- step 5: boyfriend ---------- */
 function step4(app){
-  app.append(head(5, "And your boyfriend?", ["Теперь напиши про своего парня: 1–2 предложения на каждый вопрос.", "Помни: he <b>has</b>, he <b>doesn't</b>, he <b>gets</b>."]));
+  app.append(hwHead(5, "And your boyfriend?", ["Теперь напиши про своего парня: 1–2 предложения на каждый вопрос.", "Помни: he <b>has</b>, he <b>doesn't</b>, he <b>gets</b>."]));
   BF.forEach((s, i) => {
     const lb = el("label","stem", esc(s)); lb.htmlFor = "bf"+i; app.append(lb);
     const t = document.createElement("textarea"); t.id = "bf"+i; t.value = S.bf[i];
@@ -285,7 +285,7 @@ function step4(app){
 /* ---------- step 6: video ---------- */
 const VIDEO = "G95UnUuBaTA";
 function step6(app){
-  app.append(head(6, "Her day and your day", ["Посмотри видео: смотри столько, сколько тебе комфортно.", "Пока смотришь, подумай: Is her day similar to yours?"]));
+  app.append(hwHead(6, "Her day and your day", ["Посмотри видео: смотри столько, сколько тебе комфортно.", "Пока смотришь, подумай: Is her day similar to yours?"]));
   const fr = el("div",""); fr.style.cssText = "position:relative;width:100%;max-width:560px;margin:0 auto 8px;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000";
   fr.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/'+VIDEO+'?playsinline=1&rel=0" title="Video" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
   app.append(fr);
@@ -304,7 +304,7 @@ function step6(app){
 
 /* ---------- final ---------- */
 function stepEnd(app){
-  app.append(head(0, "Well done, Маша!", ["Проверь, что ты отправила оба голосовых в Telegram. Потом нажми на кнопку."]));
+  app.append(hwHead(0, "Well done, Маша!", ["Проверь, что ты отправила оба голосовых в Telegram. Потом нажми на кнопку."]));
   app.append(HW.sendBlock());
   const n = el("div","nav"); const b = el("button","btn ghost","← Назад"); b.onclick = () => go(S.step-1); n.append(b); app.append(n);
 }
