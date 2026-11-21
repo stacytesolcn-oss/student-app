@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Backs, injuries and your clients</title>
+<style>
+  :root{
+    --bg:#f4f1ec; --card:#fff; --ink:#1f1d1a; --muted:#6b665e; --line:#e4ded4;
+    --accent:#d9572b; --ok:#1d8a4e; --ok-soft:#e2f4ea;
+    --bad:#c23b3b; --bad-soft:#fbe4e4; --blue:#2f5fa7; --blue-soft:#e6eefa;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+  .wrap{max-width:560px;margin:0 auto;padding:16px 14px 80px}
+  header h1{font-size:22px;margin:4px 0 2px}
+  header p{margin:0;color:var(--muted);font-size:14px}
+  .progress{display:flex;gap:6px;margin:16px 0 18px}
+  .progress span{flex:1;height:6px;border-radius:3px;background:var(--line)}
+  .progress span.on{background:var(--accent)}
+  .task-head{background:var(--card);border-radius:14px;padding:14px 16px;margin-bottom:12px;border:1px solid var(--line)}
+  .task-head .n{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+  .task-head h2{font-size:19px;margin:2px 0 6px}
+  .task-head p{margin:0;color:var(--muted);font-size:15px}
+  .sub{font-weight:700;margin:18px 0 8px;font-size:16px}
+  .q{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px}
+  .q .prompt{font-weight:600;margin-bottom:10px}
+  .num{color:var(--muted);font-weight:500;margin-right:4px}
+  .opts{display:flex;flex-direction:column;gap:8px}
+  .opts.row{flex-direction:row;flex-wrap:wrap}
+  .opt{appearance:none;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:11px 12px;font:inherit;text-align:left;cursor:pointer;color:var(--ink);min-height:44px}
+  .opts.row .opt{flex:1;text-align:center;min-width:64px}
+  .opt.correct{border-color:var(--ok);background:var(--ok-soft)}
+  .opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+  .opt.picked{border-color:var(--blue);background:var(--blue-soft)}
+  .opt:disabled{cursor:default}
+  .fb{font-size:14px;margin-top:8px}
+  .fb.ok{color:var(--ok)} .fb.no{color:var(--bad)}
+  .hint{font-family:ui-monospace,Menlo,monospace;color:var(--blue);font-size:15px;letter-spacing:.06em;background:var(--blue-soft);border-radius:6px;padding:2px 6px;display:inline-block;margin:4px 0 8px}
+  input[type=text],textarea{width:100%;font:inherit;padding:10px;border:1.5px solid var(--line);border-radius:10px;min-height:44px}
+  textarea{min-height:110px;resize:vertical}
+  input.correct{border-color:var(--ok);background:var(--ok-soft)}
+  input.wrong{border-color:var(--bad);background:var(--bad-soft)}
+  .btn{appearance:none;border:0;border-radius:10px;padding:12px 16px;font:inherit;font-weight:600;cursor:pointer;min-height:44px}
+  .btn.small{padding:8px 14px;min-height:40px;font-size:15px}
+  .btn.main{background:var(--accent);color:#fff;width:100%;margin-top:8px}
+  .btn.sec{background:var(--blue-soft);color:var(--blue)}
+  .btn.ghost{background:#fff;border:1.5px solid var(--line);color:var(--ink)}
+  .btn:disabled{opacity:.5;cursor:default}
+  .rowb{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .nav{display:flex;gap:10px;margin-top:16px}
+  .nav .btn{flex:1}
+  .photo{display:block;width:100%;max-height:360px;object-fit:cover;border-radius:12px;margin:0 0 10px}
+  .photo.small{max-height:220px;object-fit:contain;background:#f7f5f1}
+  /* back zones */
+  .zonebox{position:relative;max-width:340px;margin:0 auto 10px;border-radius:12px;overflow:hidden}
+  .zonebox img{display:block;width:100%}
+  .zone{position:absolute;left:20%;width:62%;border:0;background:transparent;cursor:pointer;padding:0}
+  .zone.show{background:rgba(29,138,78,.35);outline:2px solid #8be0ae}
+  .zone.badz{background:rgba(194,59,59,.35)}
+  .zone span{color:#fff;font-weight:700;font-size:14px;text-shadow:0 1px 3px #000}
+  .ask{background:var(--ink);color:#fff;border-radius:12px;padding:10px 14px;margin-bottom:10px;font-weight:600}
+  /* syllables */
+  .syl{display:flex;gap:6px;flex-wrap:wrap}
+  .syl .opt{flex:0 0 auto;text-align:center;min-width:56px;font-family:ui-monospace,Menlo,monospace}
+  .say{appearance:none;border:0;background:var(--blue-soft);color:var(--blue);border-radius:50%;width:40px;height:40px;font-size:16px;cursor:pointer;flex:0 0 40px}
+  .line{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+  .line:last-child{border-bottom:0}
+  /* unjumble */
+  .built{min-height:48px;border:1.5px dashed var(--line);border-radius:10px;padding:6px;display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+  .tiles{display:flex;flex-wrap:wrap;gap:6px}
+  .tile{appearance:none;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:8px 12px;font:inherit;cursor:pointer;min-height:40px}
+  .tile.in{background:var(--blue-soft);border-color:var(--blue);color:var(--blue)}
+  /* sort */
+  .pool{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;min-height:44px}
+  .tile.sel{outline:3px solid var(--accent)}
+  .tile.okp{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+  .tile.badp{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+  .cols{display:flex;flex-direction:column;gap:10px}
+  .col{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:10px}
+  .col h3{margin:0 0 6px;font-size:15px}
+  .col .items{display:flex;flex-wrap:wrap;gap:6px;min-height:40px}
+  .col.target{border-color:var(--accent);cursor:pointer}
+  /* exercises */
+  .bank{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+  .ex{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px;text-align:center;font-size:14px;font-weight:600}
+  .ex img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;display:block;margin-bottom:4px}
+  .ex .noimg{width:100%;aspect-ratio:1;border-radius:8px;background:#f2eee7;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:4px}
+  .profile{background:#faf8f4;border-radius:10px;padding:8px 10px;margin-bottom:10px;font-size:15px}
+  .stems{background:var(--blue-soft);color:var(--blue);border-radius:10px;padding:8px 12px;font-weight:600;font-size:15px;margin-bottom:8px}
+  .stems div{margin:2px 0}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .chip{appearance:none;border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 10px;font:inherit;font-size:14px;cursor:pointer}
+  .then{background:#faf8f4;border-left:4px solid var(--line);border-radius:8px;padding:8px 12px;font-size:15px;margin-bottom:10px}
+  .then p{margin:4px 0}
+  .check{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin:10px 0;font-weight:600}
+  .check input{width:24px;height:24px}
+  .done-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center}
+  .done-card h2{margin:4px 0 8px}
+  .back-link{display:inline-block;color:var(--muted);text-decoration:none;font-size:15px;padding:6px 0;min-height:44px}
+  .hw-sent{background:var(--ok-soft);color:var(--ok);font-weight:700;border-radius:10px;padding:12px 14px;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a href="../" data-hw-back class="back-link">← My English</a>
+  <header>
+    <h1>Backs, injuries and your clients</h1>
+    <p>Homework · 7 short tasks · about 35 minutes · your answers save as you go</p>
+  </header>
+  <div class="progress" id="progress"></div>
+  <main id="app"></main>
+</div>
+<script src="../../../kit/hw.js"></script>
+<script>
+(function(){
+  /* ================= CONTENT ================= */
+  const ZONES = [ {k:"upper", top:35, h:16}, {k:"middle", top:51, h:17}, {k:"lower", top:68, h:18} ];
+  const ZASK = ["lower","upper","middle"];
+
+  const MEAN = [
+    {img:"disc.webp", d:"The soft disc between two vertebrae moves out of its place and presses on a nerve.", o:["an injury","a herniated disc","sciatica"], a:1},
+    {img:"sciatica.webp", d:"Pain that goes from your lower back down your leg.", o:["sciatica","a sedentary lifestyle","a herniated disc"], a:0},
+    {d:"You sit a lot (at work, in the car, on the sofa) and you don't move much.", o:["a set of exercises","an injury","a sedentary lifestyle"], a:2},
+    {d:"Pick up something very heavy at the gym, for example a barbell.", o:["roll down","lift heavy weights","work with a physiotherapist"], a:1},
+    {d:"Damage to your body, for example after a fall or bad training.", o:["an injury","sciatica","a set of exercises"], a:0},
+    {img:"physio.webp", d:"Have sessions with a specialist who helps your body get better after an injury.", o:["lift heavy weights","have a sedentary lifestyle","work with a physiotherapist"], a:2},
+    {d:"A few exercises you do together, for example every morning.", o:["a herniated disc","a set of exercises","an injury"], a:1},
+    {img:"vertebra.webp", d:"This is one bone of your spine. “Roll down slowly, one ___ at a time.”", o:["disc","back","vertebra"], a:2}
+  ];
+
+  const SYL = [
+    {w:"sedentary", s:["sed","en","ta","ry"], a:0},
+    {w:"sciatica", s:["sci","at","i","ca"], a:1},
+    {w:"vertebra", s:["ver","te","bra"], a:0},
+    {w:"herniated", s:["her","ni","a","ted"], a:0},
+    {w:"injury", s:["in","ju","ry"], a:0},
+    {w:"physiotherapist", s:["phy","sio","the","ra","pist"], a:2}
+  ];
+  const REPEAT = ["a sedentary lifestyle","sciatica","a herniated disc","Roll down one vertebra at a time.","Do you have any injuries I should know about?","work with a physiotherapist"];
+
+  const GAP = [
+    {b:"Many office workers have", c:"a sedentary lifestyle", a:"."},
+    {b:"My client sits all day, so she has pain in her", c:"lower back", a:"."},
+    {b:"At the gym, he", c:"lifts heavy weights", a:"— 100 kilos!"},
+    {b:"Before the first class I always ask: “Do you have any", c:"injuries", a:"I should know about?”"},
+    {b:"Pain from your lower back down your leg is called", c:"sciatica", a:"."},
+    {b:"The doctor saw", c:"a herniated disc", a:"on his CT scan."},
+    {b:"After the injury, she", c:"worked with a physiotherapist", a:"for three months."},
+    {b:"I give my clients an easy", c:"set of exercises", a:"to do at home."},
+    {b:"Roll down slowly, one", c:"vertebra", a:"at a time."}
+  ];
+  const UNJ = [
+    ["My clients","often","have problems with","their","lower back"],
+    ["I","had an injury","when","I was","a child"],
+    ["I","also","lifted","heavy weights","at the gym"],
+    ["I","have pain in","my","upper back"],
+    ["My friend Ola","also","had","a sedentary lifestyle"]
+  ];
+  const UNJ_MIX = [[3,0,4,2,1],[2,4,1,0,3],[3,1,4,0,2],[3,1,0,2],[2,3,0,1]];
+
+  const JUDGE = [
+    {s:"I have pain on my back.", ok:false, fix:["i have pain in my back"], why:"pain IN my back"},
+    {s:"I had an injury when I was a child.", ok:true},
+    {s:"My clients often have problems about their lower back.", ok:false, fix:["my clients often have problems with their lower back"], why:"problems WITH"},
+    {s:"A lot of people have a sedentary lifestyle.", ok:true},
+    {s:"She visits the gym three times a week.", ok:false, fix:["she goes to the gym three times a week"], why:"we GO TO the gym"},
+    {s:"Roll up slowly, one vertebra at a time.", ok:true},
+    {s:"He go to the gym every day and lifts heavy weights.", ok:false, fix:["he goes to the gym every day and lifts heavy weights"], why:"he GOES"},
+    {s:"I usually do two private lessons a week.", ok:false, fix:["i usually have two private lessons a week"], why:"I usually HAVE … lessons"}
+  ];
+
+  const COLS = [{k:"C", t:"Why? (the cause)"},{k:"P", t:"The problem"},{k:"H", t:"What helps"}];
+  const SORT = [
+    {t:"a sedentary lifestyle", a:["C"]},
+    {t:"a herniated disc", a:["P"]},
+    {t:"a set of exercises", a:["H"]},
+    {t:"lifting heavy weights", a:["C"]},
+    {t:"sciatica", a:["P"]},
+    {t:"working with a physiotherapist", a:["H"]},
+    {t:"pain in the lower back", a:["P"]},
+    {t:"an injury", a:["C","P"]},
+    {t:"rolling down one vertebra at a time", a:["H"]}
+  ];
+
+  const EXER = [
+    {n:"cat-cow"}, {n:"child's pose"}, {n:"glute bridge"},
+    {n:"bird dog"}, {n:"open book"}, {n:"roll-down", img:"rolldown.webp"}
+  ];
+  const CASES = [
+    {img:"office.webp", name:"Lena, 34", p:"Office manager. She sits at her computer 9 hours a day and drives to work. She doesn't do any sport."},
+    {img:"neck.webp", name:"Mira, 27", p:"Designer. She works on her laptop and phone all day. Her neck and shoulders hurt in the evening."},
+    {img:"gym.webp", name:"Kate, 31", p:"She goes to the gym four times a week. After training, her lower back sometimes hurts."}
+  ];
+
+  const STEPS = ["Your back","Say it","Words and sentences","Right or wrong?","Cause → problem → what helps","Your clients","Then and now"];
+
+  /* ================= STATE ================= */
+  const S = {
+    step:0,
+    z: ZASK.map(()=>({tries:[],ok:false,done:false})),
+    m: MEAN.map(()=>({tries:[],ok:false,done:false})),
+    syl: SYL.map(()=>({tries:[],ok:false,done:false})),
+    voice1:false,
+    g: GAP.map(()=>({val:"",tries:[],ok:false,done:false})),
+    u: UNJ.map(()=>({order:[],tries:[],ok:false,done:false})),
+    j: JUDGE.map(()=>({judge:null,val:"",tries:[],ok:false,done:false})),
+    so: SORT.map(()=>({col:null,tries:[],ok:false,done:false})),
+    cases: CASES.map(()=>""),
+    like:"",
+    voice2:false, notice:""
+  };
+  let sel = null; // selected sort item (not saved)
+
+  /* ================= HELPERS ================= */
+  const norm = s => String(s).toLowerCase().replace(/[’‘`]/g,"'").replace(/[“”".,!?—–-]+/g," ").replace(/\s+/g," ").trim();
+  const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const hintOf = c => c.split(" ").map(w => w.length<=2 ? w : w[0] + "_".repeat(w.length-2) + w[w.length-1]).join(" ");
+  const el = (tag, cls, html) => { const e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; };
+  const tries = t => t.length + (t.length===1?" try":" tries");
+  function say(t){
+    try{
+      if(!window.speechSynthesis) return;
+      const u = new SpeechSynthesisUtterance(t); u.lang="en-GB"; u.rate=0.85;
+      const v = speechSynthesis.getVoices().find(v=>/^en[-_]GB/i.test(v.lang)) || speechSynthesis.getVoices().find(v=>/^en/i.test(v.lang));
+      if(v) u.voice=v; speechSynthesis.cancel(); speechSynthesis.speak(u);
+    }catch(e){}
+  }
+  function sayBtn(t){ const b=el("button","say","▶"); b.setAttribute("aria-label","Listen"); b.onclick=()=>say(t); return b; }
+  const locked = () => HW.preview || HW.submitted;
+  function go(n){ S.step=n; render(); window.scrollTo(0,0); }
+  function nav(app){
+    const n=el("div","nav");
+    if(S.step>0){ const b=el("button","btn ghost","← Back"); b.onclick=()=>go(S.step-1); n.append(b); }
+    const f=el("button","btn main", S.step<STEPS.length-1 ? "Next →" : "Finish →"); f.onclick=()=>go(S.step+1); n.append(f);
+    app.append(n);
+  }
+  function head(app, n, title, text){
+    app.append(el("div","task-head",`<div class="n">Task ${n}</div><h2>${title}</h2><p>${text}</p>`));
+  }
+
+  /* MCQ with 2 tries, then show answer */
+  function mcq(box, opts, a, st, row){
+    const wrap = el("div","opts"+(row?" row":""));
+    const fb = el("div","fb");
+    opts.forEach((t,j)=>{
+      const b=el("button","opt"); b.textContent=t;
+      if(st.done){ b.disabled=true; if(j===a)b.classList.add("correct"); else if(st.tries.indexOf(t)>-1)b.classList.add("wrong"); }
+      else if(st.tries.indexOf(t)>-1){ b.disabled=true; b.classList.add("wrong"); }
+      b.onclick=()=>{
+        if(st.done||locked())return;
+        st.tries.push(t);
+        if(j===a){ st.ok=true; st.done=true; }
+        else if(st.tries.length>=2){ st.done=true; }
+        render();
+      };
+      wrap.append(b);
+    });
+    if(st.done){ fb.className="fb "+(st.ok?"ok":"no"); fb.textContent = st.ok ? "✓ Correct!" : "✗ The right answer is: " + opts[a]; }
+    else if(st.tries.length){ fb.className="fb no"; fb.textContent="Not quite. Try once more."; }
+    box.append(wrap, fb);
+  }
+
+  /* typed answer with 2 tries */
+  function typed(box, st, answers, showRight){
+    const inp=el("input"); inp.type="text"; inp.value=st.val; inp.autocapitalize="off"; inp.autocomplete="off"; inp.spellcheck=false;
+    inp.disabled=st.done||locked();
+    if(st.done) inp.className = st.ok?"correct":"wrong";
+    inp.oninput=()=>{ st.val=inp.value; HW.save(); };
+    box.append(inp);
+    const fb=el("div","fb");
+    if(!st.done){
+      const b=el("button","btn sec small","Check"); b.style.marginTop="8px";
+      b.onclick=()=>{
+        if(locked())return; const v=st.val.trim(); if(!v)return;
+        st.tries.push(v);
+        if(answers.map(norm).indexOf(norm(v))>-1){ st.ok=true; st.done=true; }
+        else if(st.tries.length>=2){ st.done=true; }
+        render();
+      };
+      box.append(b);
+      if(st.tries.length){ fb.className="fb no"; fb.textContent="Not quite. Check the spelling and try once more."; }
+    } else {
+      fb.className="fb "+(st.ok?"ok":"no"); fb.textContent = st.ok ? "✓ Correct!" : "✗ The right answer: " + showRight;
+    }
+    box.append(fb);
+  }
+
+  /* ================= TASKS ================= */
+  function t1(app){
+    head(app,1,"Your back","Tap the part of the back on the photo. Then choose the right phrase for each meaning.");
+    app.append(el("div","sub","Part A · Upper, middle or lower back?"));
+    const cur = S.z.findIndex(z=>!z.done);
+    const ask = el("div","ask", cur>-1 ? `Tap: the <u>${ZASK[cur]} back</u> (${cur+1} / ${ZASK.length})` : "✓ Done! " + S.z.filter(z=>z.ok).length + " / " + ZASK.length + " on the first or second try.");
+    app.append(ask);
+    const box = el("div","zonebox"); const img=el("img"); img.src="img/back.webp"; img.alt="A person's bare back"; box.append(img);
+    ZONES.forEach(zn=>{
+      const b=el("button","zone"); b.style.top=zn.top+"%"; b.style.height=zn.h+"%";
+      const shown = S.z.some((z,i)=>z.done && ZASK[i]===zn.k);
+      if(shown){ b.classList.add("show"); b.innerHTML=`<span>${zn.k} back</span>`; }
+      b.onclick=()=>{
+        if(cur<0||locked())return; const st=S.z[cur];
+        st.tries.push(zn.k);
+        if(zn.k===ZASK[cur]){ st.ok=true; st.done=true; }
+        else if(st.tries.length>=2){ st.done=true; }
+        else { b.classList.add("badz"); HW.save(); setTimeout(()=>b.classList.remove("badz"),700); return; }
+        render();
+      };
+      box.append(b);
+    });
+    app.append(box);
+    if(cur>-1 && S.z[cur].tries.length) app.append(el("div","fb no","Not quite. Try once more."));
+
+    app.append(el("div","sub","Part B · What does it mean?"));
+    MEAN.forEach((it,i)=>{
+      const q=el("div","q");
+      if(it.img){ const im=el("img","photo small"); im.src="img/"+it.img; im.alt=""; q.append(im); }
+      q.append(el("div","prompt",`<span class="num">${i+1}.</span>${esc(it.d)}`));
+      mcq(q, it.o, it.a, S.m[i]);
+      app.append(q);
+    });
+  }
+
+  function t2(app){
+    head(app,2,"Say it","Tap ▶ and listen. Which part of the word is strong? Tap it.");
+    SYL.forEach((it,i)=>{
+      const q=el("div","q"); const st=S.syl[i];
+      const top=el("div","line"); top.append(sayBtn(it.w)); top.append(el("b",null,it.w)); q.append(top);
+      const wrap=el("div","syl");
+      it.s.forEach((p,j)=>{
+        const b=el("button","opt"); b.textContent=p;
+        if(st.done){ b.disabled=true; if(j===it.a)b.classList.add("correct"); else if(st.tries.indexOf(p)>-1)b.classList.add("wrong"); }
+        else if(st.tries.indexOf(p)>-1){ b.disabled=true; b.classList.add("wrong"); }
+        b.onclick=()=>{ if(st.done||locked())return; st.tries.push(p);
+          if(j===it.a){st.ok=true;st.done=true;} else if(st.tries.length>=2){st.done=true;} render(); };
+        wrap.append(b);
+      });
+      q.append(wrap);
+      const fb=el("div","fb");
+      if(st.done){ fb.className="fb "+(st.ok?"ok":"no"); fb.textContent=(st.ok?"✓ Yes! ":"✗ ")+it.s.map((p,j)=>j===it.a?p.toUpperCase():p).join("-"); }
+      else if(st.tries.length){ fb.className="fb no"; fb.textContent="Listen again and try once more."; }
+      q.append(fb); app.append(q);
+    });
+    app.append(el("div","sub","Listen and repeat"));
+    const q=el("div","q");
+    q.append(el("p",null,"Listen to each phrase and repeat it 2–3 times. Then record a <b>voice message</b> in Telegram: say all six phrases and send it to me."));
+    REPEAT.forEach(t=>{ const l=el("div","line"); l.append(sayBtn(t)); l.append(el("span",null,esc(t))); q.append(l); });
+    app.append(q);
+    const c=el("label","check"); const cb=el("input"); cb.type="checkbox"; cb.checked=S.voice1; cb.disabled=locked();
+    cb.onchange=()=>{ S.voice1=cb.checked; HW.save(); }; c.append(cb, document.createTextNode("I sent my voice message")); app.append(c);
+  }
+
+  function t3(app){
+    head(app,3,"Words and sentences","<b>Part A:</b> type the missing phrase. You see the first and last letter of each word.<br><b>Part B:</b> put your own sentences from our lesson in order.");
+    app.append(el("div","sub","Part A · Complete the phrase"));
+    GAP.forEach((it,i)=>{
+      const q=el("div","q");
+      q.append(el("div","prompt",`<span class="num">${i+1}.</span>${esc(it.b)} ___ ${esc(it.a)}`));
+      q.append(el("span","hint",esc(hintOf(it.c))));
+      typed(q, S.g[i], [it.c, it.c.replace(/^a /,"")].concat(it.c==="lifts heavy weights"?["lifts heavy weight"]:[]), it.c);
+      app.append(q);
+    });
+    app.append(el("div","sub","Part B · Your sentences from 20 November"));
+    UNJ.forEach((tiles,i)=>{
+      const q=el("div","q"); const st=S.u[i];
+      q.append(el("div","prompt",`<span class="num">${i+1}.</span>Tap the parts in the right order.`));
+      const built=el("div","built");
+      st.order.forEach((ti,pos)=>{ const b=el("button","tile in"); b.textContent=tiles[ti];
+        b.onclick=()=>{ if(st.done||locked())return; st.order.splice(pos,1); render(); }; built.append(b); });
+      q.append(built);
+      if(!st.done){
+        const pool=el("div","tiles");
+        UNJ_MIX[i].forEach(ti=>{ if(st.order.indexOf(ti)>-1)return; const b=el("button","tile"); b.textContent=tiles[ti];
+          b.onclick=()=>{ if(locked())return; st.order.push(ti); render(); }; pool.append(b); });
+        q.append(pool);
+        if(st.order.length===tiles.length){
+          const c=el("button","btn sec small","Check"); c.style.marginTop="8px";
+          c.onclick=()=>{ if(locked())return; const s=st.order.map(t=>tiles[t]).join(" ");
+            st.tries.push(s);
+            if(st.order.every((t,k)=>t===k)){st.ok=true;st.done=true;}
+            else if(st.tries.length>=2){st.done=true; st.order=tiles.map((_,k)=>k);}
+            else { st.order=[]; }
+            render(); };
+          q.append(c);
+        }
+        if(st.tries.length && !st.done) q.append(el("div","fb no","Not quite. Try once more."));
+      } else {
+        q.append(el("div","fb "+(st.ok?"ok":"no"), st.ok?"✓ Correct!":"✗ Here is the right order."));
+      }
+      app.append(q);
+    });
+  }
+
+  function t4(app){
+    head(app,4,"Right or wrong?","These sentences are from our lessons. Is each one right or wrong? If it's wrong, write the correct sentence.");
+    JUDGE.forEach((it,i)=>{
+      const q=el("div","q"); const st=S.j[i];
+      q.append(el("div","prompt",`<span class="num">${i+1}.</span>${esc(it.s)}`));
+      const row=el("div","opts row");
+      [["✓ Right",true],["✗ Wrong",false]].forEach(([lab,v])=>{
+        const b=el("button","opt"); b.textContent=lab;
+        if(st.judge!==null){ b.disabled=true; if(v===it.ok)b.classList.add("correct"); else if(st.judge===v)b.classList.add("wrong"); }
+        b.onclick=()=>{ if(st.judge!==null||locked())return; st.judge=v;
+          if(it.ok){ st.done=true; st.ok=(v===true); } render(); };
+        row.append(b);
+      });
+      q.append(row);
+      if(st.judge!==null){
+        if(it.ok){ q.append(el("div","fb "+(st.ok?"ok":"no"), st.ok?"✓ Yes, this one is right.":"✗ Actually, this one is right.")); }
+        else {
+          q.append(el("div","fb "+(st.judge===false?"ok":"no"), st.judge===false?"✓ Yes, it's wrong. Write it correctly:":"✗ It's wrong. Write it correctly:"));
+          typed(q, st, it.fix, it.fix[0].charAt(0).toUpperCase()+it.fix[0].slice(1)+". ("+it.why+")");
+        }
+      }
+      app.append(q);
+    });
+  }
+
+  function t5(app){
+    head(app,5,"Cause → problem → what helps","Tap a phrase, then tap the box where it goes. When all phrases are in boxes, tap <b>Check</b>.");
+    const pool=el("div","pool");
+    SORT.forEach((it,i)=>{ const st=S.so[i]; if(st.col)return;
+      const b=el("button","tile"+(sel===i?" sel":"")); b.textContent=it.t;
+      b.onclick=()=>{ if(locked())return; sel=(sel===i?null:i); render(); }; pool.append(b); });
+    if(!pool.children.length) pool.append(el("span","fb","All phrases are in boxes."));
+    app.append(pool);
+    const cols=el("div","cols");
+    COLS.forEach(c=>{
+      const box=el("div","col"+(sel!==null?" target":"")); box.append(el("h3",null,c.t));
+      const items=el("div","items");
+      SORT.forEach((it,i)=>{ const st=S.so[i]; if(st.col!==c.k)return;
+        const b=el("button","tile"+(st.done?(st.ok?" okp":" badp"):"")); b.textContent=it.t;
+        b.onclick=(e)=>{ e.stopPropagation(); if(st.done||locked())return; st.col=null; render(); };
+        items.append(b); });
+      box.append(items);
+      box.onclick=()=>{ if(sel===null||locked())return; S.so[sel].col=c.k; sel=null; render(); };
+      cols.append(box);
+    });
+    app.append(cols);
+    const open = S.so.filter(s=>!s.done);
+    if(open.length && open.every(s=>s.col)){
+      const b=el("button","btn sec","Check"); b.style.marginTop="10px"; b.style.width="100%";
+      b.onclick=()=>{ if(locked())return;
+        S.so.forEach((st,i)=>{ if(st.done)return; st.tries.push(st.col);
+          if(SORT[i].a.indexOf(st.col)>-1){st.ok=true;st.done=true;}
+          else if(st.tries.length>=2){st.done=true; st.col=SORT[i].a[0];}
+          else st.col=null; });
+        render(); };
+      app.append(b);
+    }
+    const wrongNow = S.so.some(s=>!s.done && s.tries.length);
+    if(wrongNow) app.append(el("div","fb no","Some phrases came back. Try them once more."));
+    if(S.so.every(s=>s.done)) app.append(el("div","fb ok",`Done! ${S.so.filter(s=>s.ok).length} / ${SORT.length} correct. Red = I moved it to the right box.`));
+  }
+
+  function insertAt(ta, text){
+    const s=ta.selectionStart==null?ta.value.length:ta.selectionStart;
+    ta.value = ta.value.slice(0,s) + text + ta.value.slice(ta.selectionEnd==null?s:ta.selectionEnd);
+    ta.focus(); ta.dispatchEvent(new Event("input"));
+  }
+  function t6(app){
+    head(app,6,"Your clients","Three new clients. Look at each photo and read about the person. What's the problem, and why? Which exercises would you recommend? Write 2–3 sentences for each person.");
+    app.append(el("div","sub","Exercises"));
+    const bank=el("div","bank");
+    EXER.forEach(x=>{ const c=el("div","ex"); if(x.img){const im=el("img");im.src="img/"+x.img;im.alt=x.n;c.append(im);} else c.append(el("div","noimg","🧘")); c.append(document.createTextNode(x.n)); bank.append(c); });
+    app.append(bank);
+    CASES.forEach((cs,i)=>{
+      const q=el("div","q");
+      const im=el("img","photo"); im.src="img/"+cs.img; im.alt=""; q.append(im);
+      q.append(el("div","profile",`<b>${esc(cs.name)}.</b> ${esc(cs.p)}`));
+      q.append(el("div","stems","<div>She has pain in her ___ / problems with her ___.</div><div>I think it's because ___.</div><div>I would recommend ___ because ___.</div>"));
+      const ta=el("textarea"); ta.placeholder="Write here"; ta.value=S.cases[i]; ta.disabled=locked();
+      ta.oninput=()=>{ S.cases[i]=ta.value; HW.save(); };
+      q.append(ta);
+      const chips=el("div","chips");
+      EXER.forEach(x=>{ const b=el("button","chip",esc(x.n)); b.onclick=()=>{ if(!locked()) insertAt(ta, x.n); }; chips.append(b); });
+      q.append(chips);
+      app.append(q);
+    });
+    const q=el("div","q"); q.append(el("div","prompt","Which person is most like your clients? Why?"));
+    const ta=el("textarea"); ta.style.minHeight="70px"; ta.value=S.like; ta.disabled=locked(); ta.oninput=()=>{ S.like=ta.value; HW.save(); };
+    q.append(ta); app.append(q);
+  }
+
+  function t7(app){
+    head(app,7,"Then and now","On 20 November you told me about your back. Here is what you said then. Now tell the story again, with the new words.");
+    app.append(el("div","then",`<b>What you said on 20 November</b>
+      <p>“When I have a lot of dance classes, and I have some elements when I use my lower back, after that I have pain in my lower back few days.”</p>
+      <p>“I had an injury when I was a child.”</p>
+      <p>“I lift… lifted heavy weights in the gym, at the gym.”</p>
+      <p>“I had herniated disc.”</p>
+      <p>“I had a rehabilitation. And I did special physical exercises every day.”</p>`));
+    const q=el("div","q");
+    q.append(el("p",null,"Record a <b>voice message</b> in Telegram (2–3 minutes). <b>Don't read aloud</b>: look at the questions, then just talk."));
+    q.append(el("p",null,"<b>1. Your story.</b> What happened when you were a child? What helped you? How is your back now?<br><b>2. One client.</b> What problem does he or she have, and why? What do you recommend?"));
+    q.append(el("div","stems","<div>When I was a child, I ___.</div><div>Now I sometimes have pain in ___.</div><div>One of my clients has problems with ___.</div>"));
+    app.append(q);
+    const c=el("label","check"); const cb=el("input"); cb.type="checkbox"; cb.checked=S.voice2; cb.disabled=locked();
+    cb.onchange=()=>{ S.voice2=cb.checked; HW.save(); }; c.append(cb, document.createTextNode("I sent my voice message")); app.append(c);
+    const q2=el("div","q"); q2.append(el("div","prompt","Listen to your voice message. What can you say now that you couldn't say on 20 November?"));
+    const ta=el("textarea"); ta.style.minHeight="70px"; ta.value=S.notice; ta.disabled=locked(); ta.oninput=()=>{ S.notice=ta.value; HW.save(); };
+    q2.append(ta); app.append(q2);
+  }
+
+  function finish(app){
+    const d=el("div","done-card","<h2>Well done, Anna! 🎉</h2><p>Check that you sent your two voice messages in Telegram. Then tap the button and I'll see your answers.</p>");
+    d.append(HW.sendBlock({lang:"en"}));
+    app.append(d);
+    const n=el("div","nav"); const b=el("button","btn ghost","← Back"); b.onclick=()=>go(STEPS.length-1); n.append(b); app.append(n);
+  }
+
+  const TASKS=[t1,t2,t3,t4,t5,t6,t7];
+  function render(){
+    if(S.step<0||S.step>TASKS.length) S.step=0;
+    const pr=document.getElementById("progress"); pr.innerHTML="";
+    for(let i=0;i<=TASKS.length;i++){ const s=el("span"); if(i<=S.step)s.className="on"; pr.append(s); }
+    const app=document.getElementById("app"); app.innerHTML="";
+    if(S.step<TASKS.length){ TASKS[S.step](app); nav(app); } else finish(app);
+    HW.save();
+  }
+
+  /* ================= SUMMARY (for Stacy) ================= */
+  function line(ok, done, text){ return (done ? (ok?"✓ ":"✗ ") : "— ") + text; }
+  function summary(){
+    const L=[];
+    const cnt=a=>a.filter(x=>x.ok).length;
+    L.push("Task 1 · Your back (zones + meanings)");
+    L.push(`Zones ${cnt(S.z)}/${ZASK.length} · meanings ${cnt(S.m)}/${MEAN.length}`);
+    S.z.forEach((st,i)=>L.push(line(st.ok,st.done,`${ZASK[i]} back → ${st.tries.join(" → ")||"not done"}${st.tries.length?" ("+tries(st.tries)+")":""}`)));
+    S.m.forEach((st,i)=>L.push(line(st.ok,st.done,`${MEAN[i].o[MEAN[i].a]} → ${st.tries.join(" → ")||"not done"}${st.tries.length?" ("+tries(st.tries)+")":""}`)));
+    L.push("","Task 2 · Say it (word stress)");
+    L.push(`Stress ${cnt(S.syl)}/${SYL.length} · voice message: ${S.voice1?"sent":"not ticked"}`);
+    S.syl.forEach((st,i)=>L.push(line(st.ok,st.done,`${SYL[i].w} → ${st.tries.join(" → ")||"not done"}`)));
+    L.push("","Task 3 · Words and sentences");
+    L.push(`Gap-fill ${cnt(S.g)}/${GAP.length} · unjumble ${cnt(S.u)}/${UNJ.length}`);
+    S.g.forEach((st,i)=>L.push(line(st.ok,st.done,`${GAP[i].c} → ${st.tries.join(" → ")||"not done"}${st.tries.length?" ("+tries(st.tries)+")":""}`)));
+    S.u.forEach((st,i)=>L.push(line(st.ok,st.done,`${UNJ[i].join(" ")} → ${st.tries.length?st.tries.join(" | ")+" ("+tries(st.tries)+")":"not done"}`)));
+    L.push("","Task 4 · Right or wrong?");
+    L.push(`Judged right ${S.j.filter((st,i)=>st.judge===JUDGE[i].ok).length}/${JUDGE.length} · fixed ${S.j.filter((st,i)=>!JUDGE[i].ok&&st.ok).length}/${JUDGE.filter(x=>!x.ok).length}`);
+    S.j.forEach((st,i)=>{ const it=JUDGE[i]; const jOk = st.judge===it.ok;
+      let t=`“${it.s}” → said ${st.judge===null?"—":st.judge?"right":"wrong"}`;
+      if(!it.ok && st.tries.length) t+=` · wrote: ${st.tries.join(" → ")} (${tries(st.tries)})`;
+      L.push(line(it.ok?jOk:(jOk&&st.ok), st.judge!==null&&(it.ok||st.done), t)); });
+    L.push("","Task 5 · Cause → problem → what helps");
+    L.push(`${cnt(S.so)}/${SORT.length} correct`);
+    S.so.forEach((st,i)=>L.push(line(st.ok,st.done,`${SORT[i].t} → ${st.tries.join(" → ")||"not done"}`)));
+    L.push("","Task 6 · Your clients");
+    CASES.forEach((cs,i)=>L.push(`${cs.name}: ${S.cases[i].trim()||"—"}`));
+    L.push(`Most like my clients: ${S.like.trim()||"—"}`);
+    L.push("","Task 7 · Then and now");
+    L.push(`Voice message: ${S.voice2?"sent":"not ticked"}`);
+    L.push(`What I can say now: ${S.notice.trim()||"—"}`);
+    return L.join("\n");
+  }
+
+  /* ================= START ================= */
+  function restore(z){
+    if(!z) return;
+    if(typeof z.step==="number") S.step=z.step;
+    const same=(k,n)=>Array.isArray(z[k])&&z[k].length===n;
+    if(same("z",ZASK.length)) S.z=z.z;
+    if(same("m",MEAN.length)) S.m=z.m;
+    if(same("syl",SYL.length)) S.syl=z.syl;
+    if(same("g",GAP.length)) S.g=z.g;
+    if(same("u",UNJ.length)) S.u=z.u;
+    if(same("j",JUDGE.length)) S.j=z.j;
+    if(same("so",SORT.length)) S.so=z.so;
+    if(same("cases",CASES.length)) S.cases=z.cases.map(String);
+    S.like=String(z.like||""); S.notice=String(z.notice||"");
+    S.voice1=!!z.voice1; S.voice2=!!z.voice2;
+  }
+  HW.start({ id:"hw2", title:"Backs, injuries and your clients", get:()=>S, set:restore, summary, render });
+})();
+</script>
+</body>
+</html>
