@@ -209,7 +209,7 @@ html,body{overflow-x:clip}
   document.addEventListener("click", function(e){
     var a = e.target && e.target.closest ? e.target.closest("a[href]") : null; if (!a) return;
     var u; try{ u = new URL(a.getAttribute("href"), location.href.split("#")[0].split("?")[0]); }catch(_){ return; }
-    if (u.origin === location.origin && /\/hw[\w-]*\/$/.test(u.pathname)){ e.preventDefault(); location.href = u.href + (preview && k ? "?preview=1&k=" + k : ""); }
+    if (u.origin === location.origin && /\/hw[\w-]*\/$/.test(u.pathname)){ e.preventDefault(); if (!(preview && k) && !/(^#|&)(tgWebAppData|k)=/.test(u.hash) && typeof AUTH === "string" && AUTH){ /* the link lost its login (storage blocked on this device): add it from this page */ u.hash = AUTH.indexOf("tg ") === 0 ? "tgWebAppData=" + encodeURIComponent(AUTH.slice(3)) : "k=" + encodeURIComponent(AUTH.slice(4)); } location.href = u.href + (preview && k ? "?preview=1&k=" + k : ""); }
   }, true);
 
   function note(t){ var n = document.createElement("div"); n.className = "syncnote"; n.textContent = t; document.body.appendChild(n); }

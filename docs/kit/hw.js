@@ -37,6 +37,27 @@
     b.textContent = (opts && opts.label) || (en ? "Done — send to Stacy" : "Готово — отправить Stacy");
     b.onclick = function(){ HW.submit(); }; box.appendChild(b); return box;
   };
+  /* If the page can't draw itself, say so on screen (instead of a blank page) and show the technical reason,
+     so a screenshot from the student tells us what broke. "Обновить" drops this phone's saved copy and reloads. */
+  var errShown = false;
+  function showError(err){
+    if (errShown) return; errShown = true;
+    var box = document.createElement("div"); box.setAttribute("lang", "ru");
+    box.style.cssText = "margin:16px 0;background:#fbe6d8;color:#1b2624;border-radius:14px;padding:14px 16px;font:15px/1.45 system-ui,-apple-system,sans-serif";
+    var t = document.createElement("p"); t.style.margin = "0 0 10px"; t.style.fontWeight = "600";
+    t.textContent = "Домашка не загрузилась. Нажмите «Обновить». Если не поможет, пришлите Stacy скриншот этого экрана.";
+    var b = document.createElement("button"); b.type = "button"; b.textContent = "Обновить";
+    b.style.cssText = "font:700 16px system-ui,sans-serif;border:0;border-radius:12px;padding:12px 18px;background:#643A24;color:#F6F1E7";
+    b.onclick = function(){ try{ localStorage.removeItem(LS || ("hw:" + location.pathname)); }catch(e){} location.reload(); };
+    var d = document.createElement("p"); d.style.cssText = "margin:10px 0 0;font:12px/1.4 ui-monospace,Menlo,monospace;color:#6E5C52;word-break:break-word";
+    var ios = (navigator.userAgent.match(/OS (\d+[_\d]*) like Mac/) || [])[1];
+    d.textContent = String(err && (err.message || err) || "error").slice(0, 200) + (err && err.stack ? " | " + String(err.stack).split("\n")[0].slice(0, 120) : "") + " | " + (ios ? "iOS " + ios.replace(/_/g, ".") : navigator.userAgent.slice(0, 80)) + (AUTH ? "" : " | no login");
+    box.append(t, b, d);
+    var app = document.getElementById("app") || document.body; app.appendChild(box);
+  }
+  /* The page's own script failed before it could start (e.g. an old phone can't read it): show the same box. */
+  window.addEventListener("error", function(e){ if (!HW.ready && e && e.message) setTimeout(function(){ if (!HW.ready) showError(e.error || e.message); }, 0); });
+  window.addEventListener("load", function(){ setTimeout(function(){ if (!cfg && !HW.ready) showError("HW.start was not called"); }, 1500); });
   /* opts: { id, title, get(), set(savedState), summary(), render() }.
      get() returns plain JSON-safe state; set() restores it (validate lengths!); summary() is the text Stacy reads;
      render() draws the page. The kit calls set() (if there is saved state) and then render() once. */
@@ -45,7 +66,8 @@
     var done = false, fin = function(d){
       if (done) return; done = true;
       try{ if (d && d.s){ cfg.set(d.s); HW.submitted = !!d.submitted; } }catch(e){}
-      loaded = true; HW.ready = true; cfg.render();
+      loaded = true; HW.ready = true;
+      try{ cfg.render(); }catch(err){ showError(err); return; }
       if (preview){ var n = document.createElement("div"); n.textContent = "Preview for Stacy: the student's answers. Nothing you tap here is saved.";
         n.style.cssText = "position:sticky;top:0;z-index:99;background:#fbe6d8;color:#1b2624;padding:8px 14px;font:600 14px system-ui,sans-serif"; document.body.insertBefore(n, document.body.firstChild);
         document.querySelectorAll("[data-hw-back]").forEach(function(a){ a.remove(); }); }

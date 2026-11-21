@@ -130,3 +130,9 @@ Teacher view lists every `student_state` key that starts with `hw:`. To hide one
 `update student_state set key='checked:<hwId>' where key='hw:<hwId>' and student_id=(select id from students where page='p/<slug>/');`
 Also mark it finished on the student's page: `select app_homework_done('<slug>','<hwId>');`
 Note: the front "Homework" card on a student page shows only the open homework with the earliest due date, so an old open one hides a new one.
+
+## Homework troubleshooting (Nov 21, 2026 — Maria hw1)
+- Kit (`hw.js`): if a homework page can't draw itself, it shows a pink box "Домашка не загрузилась" with an «Обновить» button
+  (drops that phone's saved copy, reloads) and a grey technical line (error + iOS version). Ask the student for a screenshot of it.
+- Student pages: when a homework link has no login in it (device blocks browser storage, seen on Maria's iPad), the click handler
+  adds the login from the page itself, so the kit doesn't fall back to "saves only on this phone".
