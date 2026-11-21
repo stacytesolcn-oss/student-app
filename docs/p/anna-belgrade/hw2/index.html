@@ -223,7 +223,7 @@
     so: SORT.map(()=>({col:null,tries:[],ok:false,done:false})),
     cases: CASES.map(()=>""),
     like:"",
-    voice:false, used:BANK.map(()=>false), notice:"", feel:""
+    cvoice:false, voice:false, used:BANK.map(()=>false), notice:"", feel:""
   };
   let sel = null; let csel = null; // selected sort item (not saved)
 
@@ -493,6 +493,9 @@
     const q=el("div","q"); q.append(el("div","prompt","Which person is most like your clients? Why?"));
     const ta=el("textarea"); ta.style.minHeight="70px"; ta.value=S.like; ta.disabled=locked(); ta.oninput=()=>{ S.like=ta.value; HW.save(); };
     q.append(ta); app.append(q);
+    const v=el("div","q"); v.append(el("p",null,"Now record a <b>voice message</b> in Telegram: tell me about two of these clients — the problem, why, and what they should do. <b>Don't read aloud</b>: look at the photos and just talk."));
+    const c=el("label","check"); const cb=el("input"); cb.type="checkbox"; cb.checked=S.cvoice; cb.disabled=locked();
+    cb.onchange=()=>{ S.cvoice=cb.checked; HW.save(); }; c.append(cb, document.createTextNode("I sent my voice message")); v.append(c); app.append(v);
   }
 
   function t6(app){
@@ -518,7 +521,7 @@
   }
 
   function finish(app){
-    const d=el("div","done-card","<h2>Well done, Anna! 🎉</h2><p>Check that you sent your voice message in Telegram. Then tap the button and I'll see your answers.</p>");
+    const d=el("div","done-card","<h2>Well done, Anna! 🎉</h2><p>Check that you sent your two voice messages in Telegram. Then tap the button and I'll see your answers.</p>");
     d.append(HW.sendBlock({lang:"en"}));
     app.append(d);
     const n=el("div","nav"); const b=el("button","btn ghost","← Back"); b.onclick=()=>go(STEPS.length-1); n.append(b); app.append(n);
@@ -561,6 +564,7 @@
     L.push("","Task 6 · Your clients");
     CASES.forEach((cs,i)=>L.push(`${cs.name}: ${S.cases[i].trim()||"—"}`));
     L.push(`Most like my clients: ${S.like.trim()||"—"}`);
+    L.push(`Voice message about two clients: ${S.cvoice?"sent":"not ticked"}`);
     L.push("","Task 7 · Your story");
     L.push(`Voice message: ${S.voice?"sent":"not ticked"}`);
     L.push(`Words she says she used: ${BANK.filter((_,i)=>S.used[i]).join(", ")||"—"}`);
@@ -584,7 +588,7 @@
     if(same("cases",CASES.length)) S.cases=z.cases.map(String);
     if(same("used",BANK.length)) S.used=z.used.map(Boolean);
     S.like=String(z.like||""); S.notice=String(z.notice||""); S.feel=String(z.feel||"");
-    S.voice=!!z.voice;
+    S.voice=!!z.voice; S.cvoice=!!z.cvoice;
   }
   HW.start({ id:"hw2", title:"Backs, injuries and your clients", get:()=>S, set:restore, summary, render });
 
