@@ -236,7 +236,7 @@
     const f=el("button","btn main", S.step<STEPS.length-1 ? "Next →" : "Finish →"); f.onclick=()=>go(S.step+1); n.append(f);
     app.append(n);
   }
-  function head(app, n, title, text){
+  function hwHead(app, n, title, text){
     app.append(el("div","task-head",`<div class="n">Task ${n}</div><h2>${title}</h2><p>${text}</p>`));
   }
 
@@ -289,7 +289,7 @@
 
   /* ================= TASKS ================= */
   function t1(app){
-    head(app,1,"Your back","Tap the part of the back on the photo. Then choose the right phrase for each meaning.");
+    hwHead(app,1,"Your back","Tap the part of the back on the photo. Then choose the right phrase for each meaning.");
     app.append(el("div","sub","Part A · Upper, middle or lower back?"));
     const cur = S.z.findIndex(z=>!z.done);
     const ask = el("div","ask", cur>-1 ? `Tap: the <u>${ZASK[cur]} back</u> (${cur+1} / ${ZASK.length})` : "✓ Done! " + S.z.filter(z=>z.ok).length + " / " + ZASK.length + " on the first or second try.");
@@ -323,7 +323,7 @@
   }
 
   function t2(app){
-    head(app,2,"Say it","Tap ▶ and listen. Which part of the word is strong? Tap it.");
+    hwHead(app,2,"Say it","Tap ▶ and listen. Which part of the word is strong? Tap it.");
     SYL.forEach((it,i)=>{
       const q=el("div","q"); const st=S.syl[i];
       const top=el("div","line"); top.append(sayBtn(it.w)); top.append(el("b",null,it.w)); q.append(top);
@@ -352,7 +352,7 @@
   }
 
   function t3(app){
-    head(app,3,"Words and sentences","<b>Part A:</b> type the missing phrase. You see the first and last letter of each word.<br><b>Part B:</b> put your own sentences from our lesson in order.");
+    hwHead(app,3,"Words and sentences","<b>Part A:</b> type the missing phrase. You see the first and last letter of each word.<br><b>Part B:</b> put your own sentences from our lesson in order.");
     app.append(el("div","sub","Part A · Complete the phrase"));
     GAP.forEach((it,i)=>{
       const q=el("div","q");
@@ -393,7 +393,7 @@
   }
 
   function t4(app){
-    head(app,4,"Right or wrong?","These sentences are from our lessons. Is each one right or wrong? If it's wrong, write the correct sentence.");
+    hwHead(app,4,"Right or wrong?","These sentences are from our lessons. Is each one right or wrong? If it's wrong, write the correct sentence.");
     JUDGE.forEach((it,i)=>{
       const q=el("div","q"); const st=S.j[i];
       q.append(el("div","prompt",`<span class="num">${i+1}.</span>${esc(it.s)}`));
@@ -418,7 +418,7 @@
   }
 
   function t5(app){
-    head(app,5,"Cause → problem → what helps","Tap a phrase, then tap the box where it goes. When all phrases are in boxes, tap <b>Check</b>.");
+    hwHead(app,5,"Cause → problem → what helps","Tap a phrase, then tap the box where it goes. When all phrases are in boxes, tap <b>Check</b>.");
     const pool=el("div","pool");
     SORT.forEach((it,i)=>{ const st=S.so[i]; if(st.col)return;
       const b=el("button","tile"+(sel===i?" sel":"")); b.textContent=it.t;
@@ -460,7 +460,7 @@
     ta.focus(); ta.dispatchEvent(new Event("input"));
   }
   function t6(app){
-    head(app,6,"Your clients","Three new clients. Look at each photo and read about the person. What's the problem, and why? Which exercises would you recommend? Write 2–3 sentences for each person.");
+    hwHead(app,6,"Your clients","Three new clients. Look at each photo and read about the person. What's the problem, and why? Which exercises would you recommend? Write 2–3 sentences for each person.");
     app.append(el("div","sub","Exercises"));
     const bank=el("div","bank");
     EXER.forEach(x=>{ const c=el("div","ex"); if(x.img){const im=el("img");im.src="img/"+x.img;im.alt=x.n;c.append(im);} else c.append(el("div","noimg","🧘")); c.append(document.createTextNode(x.n)); bank.append(c); });
@@ -484,7 +484,7 @@
   }
 
   function t7(app){
-    head(app,7,"Then and now","On 20 November you told me about your back. Here is what you said then. Now tell the story again, with the new words.");
+    hwHead(app,7,"Then and now","On 20 November you told me about your back. Here is what you said then. Now tell the story again, with the new words.");
     app.append(el("div","then",`<b>What you said on 20 November</b>
       <p>“When I have a lot of dance classes, and I have some elements when I use my lower back, after that I have pain in my lower back few days.”</p>
       <p>“I had an injury when I was a child.”</p>
