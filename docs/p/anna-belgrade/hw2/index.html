@@ -190,6 +190,7 @@
     {n:"open book", src:"img/ex-openbook.webp"},
     {n:"roll-down", src:"img/rolldown.webp"}
   ];
+  const IDEAS = ["work with a physiotherapist","stop lifting heavy weights for a while","have a more active lifestyle","do a set of exercises at home"];
   const COLL = [
     {l:"pain", r:"in my lower back"},
     {l:"problems", r:"with their back"},
@@ -467,22 +468,25 @@
     ta.focus(); ta.dispatchEvent(new Event("input"));
   }
   function t5(app){
-    hwHead(app,6,"Your clients","Four new clients. Look at each photo and read about the person. What's the problem, and why? What would you recommend? Write 2–3 sentences for each person.<br>You can choose exercises from the list or name your own.");
-    app.append(el("div","sub","Exercises"));
+    hwHead(app,6,"Your clients","Four new clients. Look at each photo and read about the person. What's the problem, and why? What should he or she do? Write 2–3 sentences for each person.<br>You can use the ideas below or your own: exercises, changes in lifestyle, a specialist…");
+    app.append(el("div","sub","Ideas: exercises"));
     const bank=el("div","bank");
     EXER.forEach(x=>{ const c=el("div","ex"); const im=el("img"); im.src=x.src; im.alt=x.n; im.loading="lazy";
       im.onerror=()=>{ im.replaceWith(el("div","noimg","🧘")); }; c.append(im); c.append(document.createTextNode(x.n)); bank.append(c); });
     app.append(bank);
+    app.append(el("div","sub","Ideas: other things that can help"));
+    const ib=el("div","chips"); ib.style.marginBottom="12px";
+    IDEAS.forEach(t=>ib.append(el("span","chip",esc(t)))); app.append(ib);
     CASES.forEach((cs,i)=>{
       const q=el("div","q");
       const im=el("img","photo"); im.src="img/"+cs.img; im.alt=""; q.append(im);
       q.append(el("div","profile",`<b>${esc(cs.name)}.</b> ${esc(cs.p)}`));
-      q.append(el("div","stems","<div>He / She has pain in ___ / problems with ___.</div><div>I think it's because ___.</div><div>I would recommend ___ because ___.</div>"));
+      q.append(el("div","stems","<div>He / She has pain in ___ / problems with ___.</div><div>I think it's because ___.</div><div>She / He should ___. I would recommend ___.</div>"));
       const ta=el("textarea"); ta.placeholder="Write here"; ta.value=S.cases[i]; ta.disabled=locked();
       ta.oninput=()=>{ S.cases[i]=ta.value; HW.save(); };
       q.append(ta);
       const chips=el("div","chips");
-      EXER.forEach(x=>{ const b=el("button","chip",esc(x.n)); b.onclick=()=>{ if(!locked()) insertAt(ta, x.n); }; chips.append(b); });
+      EXER.map(x=>x.n).concat(IDEAS).forEach(n=>{ const b=el("button","chip",esc(n)); b.onclick=()=>{ if(!locked()) insertAt(ta, n); }; chips.append(b); });
       q.append(chips);
       app.append(q);
     });
