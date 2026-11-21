@@ -123,7 +123,7 @@ Separate Edge Function `notify` (repo: `supabase/functions/notify/`, the main `a
 Send from SQL with pg_net, the key stays in the database:
 `select net.http_post(url := 'https://nrnjubhnpaicuokidnjl.supabase.co/functions/v1/notify', body := jsonb_build_object('page','p/<slug>/','button','Do my homework','text','Hi <Name>! …'), headers := jsonb_build_object('content-type','application/json','x-auth','key '||(select value from app_config where key='TEACHER_KEY')));`
 Check: `select status_code, content from net._http_response where id = <request_id>;` → 200 {"ok":true}. Messages in English, student's name.
-The text must tell the student to open the homework right there, with the button under this message (not from an old link or tab), so answers save in the app. Example ending: "Tap the button below to open it — your answers save as you go." (Sabina did hw-gives-helps on an old copy-paste tab in Nov 2026 and nothing reached the app.)
+Sabina only (not other students): her new-homework message must tell her to open it right there — with the button under the message or from My English in the Telegram bot — so the app saves her answers. Example ending: "Open it with the button below or from My English here in Telegram, so your answers save." (Nov 2026 she did hw-gives-helps on an old copy-paste tab and nothing reached the app.)
 
 ## Removing checked homework from Teacher view (Nov 20, 2026)
 Teacher view lists every `student_state` key that starts with `hw:`. To hide one Stacy has checked, keep the answers but rename the key:
