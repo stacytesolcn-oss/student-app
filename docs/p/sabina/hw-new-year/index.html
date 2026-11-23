@@ -114,12 +114,16 @@ textarea{min-height:72px;resize:vertical}
 .hwback{display:inline-flex;align-items:center;min-height:36px;font-size:.9rem;color:inherit;opacity:.7;text-decoration:none}
 .prog{font-size:.9rem}
 .hero{width:100%;max-height:240px;object-fit:contain;border-radius:20px;display:block}
-.phead{display:flex;align-items:center;gap:12px;justify-content:space-between}
+.phead{display:flex;align-items:center;gap:14px;justify-content:space-between}
 .phead>div{display:grid;gap:6px;min-width:0}
-.deco{width:110px;max-width:32vw;height:auto;border-radius:14px;flex:none;transform:rotate(2deg);box-shadow:0 3px 10px rgba(0,0,0,.08)}
-.writecard{position:relative;padding-top:18px}
-.sticker{position:absolute;top:-22px;right:-6px;width:104px;max-width:28vw;height:auto;transform:rotate(6deg);pointer-events:none;filter:drop-shadow(0 3px 6px rgba(0,0,0,.12))}
-.writecard .stem:first-of-type{padding-right:88px}
+.polaroid{position:relative;flex:none;width:118px;max-width:33vw;background:#fff;padding:6px 6px 14px;border-radius:4px;transform:rotate(3deg);box-shadow:0 1px 2px rgba(0,0,0,.08),0 8px 18px rgba(60,40,20,.14);margin-top:10px}
+.polaroid img{display:block;width:100%;height:auto;border-radius:2px}
+.polaroid::before{content:"";position:absolute;top:-10px;left:50%;width:54px;height:18px;transform:translateX(-50%) rotate(-4deg);background:rgba(244,220,150,.78);border-left:1px dashed rgba(100,58,36,.18);border-right:1px dashed rgba(100,58,36,.18)}
+.polaroid.tilt{transform:rotate(-3deg)}
+.notepad{position:relative;margin:4px 0 30px}
+.notepad textarea{resize:none;overflow:hidden;min-height:240px;padding:14px 14px 84px;line-height:1.7;background:#FFFDF7 repeating-linear-gradient(transparent 0 calc(1.7em - 1px),rgba(100,58,36,.10) calc(1.7em - 1px) 1.7em);background-attachment:local;background-position:0 13px;border-radius:16px}
+@media (prefers-color-scheme: dark){.notepad textarea{background:var(--bg)}}
+.sticker{position:absolute;right:-12px;bottom:-30px;width:118px;max-width:32vw;height:auto;transform:rotate(-7deg);pointer-events:none;filter:drop-shadow(0 2px 2px rgba(0,0,0,.10)) drop-shadow(0 8px 14px rgba(60,40,20,.16))}
 </style></head><body>
 <div class="wrap">
   <a class="hwback" href="../" data-hw-back>← My English</a>
@@ -148,7 +152,7 @@ textarea{min-height:72px;resize:vertical}
     <div class="phead"><div>
     <span class="eyebrow">Part 2 of 6</span>
     <h2 id="t2">Key words</h2>
-    </div><img class="deco" src="img/moodboard.webp" alt="" loading="lazy"></div>
+    </div><figure class="polaroid" style="margin:10px 0 0"><img src="img/moodboard.webp" alt="" loading="lazy"></figure></div>
     <div class="how"><ol>
       <li>You can see the first and the last letter. Write the whole word.</li>
       <li>Tap <b>Check</b>. You have two tries.</li>
@@ -171,7 +175,7 @@ textarea{min-height:72px;resize:vertical}
     <div class="phead"><div>
     <span class="eyebrow">Part 4 of 6</span>
     <h2 id="t4">Build your sentences</h2>
-    </div><img class="deco" src="img/same-me.webp" alt="" loading="lazy"></div>
+    </div><figure class="polaroid tilt" style="margin:10px 0 0"><img src="img/same-me.webp" alt="" loading="lazy"></figure></div>
     <div class="how"><ol>
       <li>Choose a <b>situation</b>: what people usually do.</li>
       <li>Choose an <b>idea</b> from the article: what HOLI suggests.</li>
@@ -211,8 +215,7 @@ textarea{min-height:72px;resize:vertical}
         <li>How can people mark the occasion without a big party?</li>
       </ul>
     </div>
-    <div class="card writecard">
-      <img class="sticker" src="img/do-less.webp" alt="">
+    <div class="card">
       <span class="eyebrow">Starters</span>
       <p class="stem">This year at HOLI, our New Year theme is…</p>
       <p class="model">e.g. This year at HOLI, our New Year theme is a pause before the new year.</p>
@@ -221,7 +224,10 @@ textarea{min-height:72px;resize:vertical}
       <p class="stem">Give yourself…</p>
       <p class="model">e.g. Give yourself something to look forward to.</p>
       <div class="row"><button type="button" class="ghost" id="addStarters">Put the starters in my text</button></div>
-      <textarea id="post" style="min-height:220px" autocapitalize="sentences" aria-label="Your post for HOLI" placeholder="Write your post here"></textarea>
+      <div class="notepad">
+        <textarea id="post" autocapitalize="sentences" aria-label="Your post for HOLI" placeholder="Write your post here"></textarea>
+        <img class="sticker" src="img/do-less.webp" alt="">
+      </div>
       <p class="count" id="count"></p>
       <span class="eyebrow">Word bank</span>
       <div class="bank" id="bank"></div>
@@ -538,7 +544,7 @@ function drawBank(){
 function drawT6(){
   drawT6plan();
   const ta = $("post"); if(ta.value !== S.post) ta.value = S.post;
-  drawBank();
+  grow(); drawBank();
 }
 
 /* ---------- What Stacy sees in Teacher view ---------- */
@@ -576,10 +582,11 @@ function summary(){
 
 function drawAll(){ drawT1(); drawT2(); drawT3(); drawT4(); drawT5(); drawT6(); const box = $("sendBox"); box.innerHTML = ""; box.appendChild(HW.sendBlock({ lang: "en" })); HW.save(); }
 
-$("post").addEventListener("input", () => { S.post = $("post").value; drawBank(); HW.save(); });
+function grow(){ const t = $("post"); t.style.height = "auto"; t.style.height = Math.max(240, t.scrollHeight + 2) + "px"; }
+$("post").addEventListener("input", () => { S.post = $("post").value; grow(); drawBank(); HW.save(); });
 $("addStarters").addEventListener("click", () => {
   const f = $("post"), st = "This year at HOLI, our New Year theme is …\nInstead of …, try …\nGive yourself …";
-  f.value = f.value.trim() ? f.value.trimEnd() + "\n" + st : st; S.post = f.value; drawBank(); HW.save(); f.focus();
+  f.value = f.value.trim() ? f.value.trimEnd() + "\n" + st : st; S.post = f.value; grow(); drawBank(); HW.save(); f.focus();
 });
 
 function okArr(a, n){ return Array.isArray(a) && a.length === n; }
