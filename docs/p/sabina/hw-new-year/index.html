@@ -113,6 +113,8 @@ textarea{min-height:72px;resize:vertical}
 .hw-sent{background:#dff0e4;color:#2f7d4a;font-weight:700;border-radius:12px;padding:10px 14px}
 .hwback{display:inline-flex;align-items:center;min-height:36px;font-size:.9rem;color:inherit;opacity:.7;text-decoration:none}
 .prog{font-size:.9rem}
+.mood{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:start}
+.mood img{width:100%;height:auto;border-radius:14px;display:block;background:var(--bg)}
 </style></head><body>
 <div class="wrap">
   <a class="hwback" href="../" data-hw-back>← My English</a>
@@ -190,6 +192,15 @@ textarea{min-height:72px;resize:vertical}
     <div class="card">
       <span class="eyebrow">Your plan</span>
       <div class="plan" id="t6plan"></div>
+    </div>
+    <div class="card">
+      <span class="eyebrow">Mood for your post</span>
+      <div class="mood">
+        <img src="img/pause.webp" alt="Pause: a woman with a cup of tea" loading="lazy">
+        <img src="img/do-less.webp" alt="It's okay to do less this year" loading="lazy">
+        <img src="img/moodboard.webp" alt="Moodboard: tree, yoga, quiet moments" loading="lazy">
+        <img src="img/same-me.webp" alt="New year, same me: a black cat" loading="lazy">
+      </div>
     </div>
     <div class="card">
       <span class="eyebrow">Ideas to think about</span>
