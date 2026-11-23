@@ -1,0 +1,549 @@
+<!doctype html><html lang="en"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>A pause before the new year</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Raleway:wght@600;700&display=swap">
+<style>
+:root{
+  --bg:#F6F1E7; --card:#FCFAF5; --ink:#231815; --muted:#6E5C52; --line:#E3D9C8;
+  --brown:#643A24; --on-brown:#F6F1E7;
+  --butter:#F4DC96; --butter-soft:#FAF0CF;
+  --blue-soft:#E3EEF4; --blue-ink:#2F4C5E;
+  --good:#2E6B45; --good-soft:#E2F0E5; --warn:#8A4B12; --warn-soft:#F6E6D3;
+  --display:"Cormorant Garamond","Iowan Old Style",Georgia,serif;
+  --body:"DM Sans","Helvetica Neue",Arial,sans-serif;
+  --caps:"Raleway","Avenir Next","Helvetica Neue",Arial,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){ :root{
+  --bg:#231815; --card:#2E211C; --ink:#F3ECDF; --muted:#BCA995; --line:#46352C;
+  --brown:#F4DC96; --on-brown:#231815;
+  --butter:#F4DC96; --butter-soft:#3F3422;
+  --blue-soft:#253743; --blue-ink:#C1DBE8;
+  --good:#9FD3AE; --good-soft:#1F3426; --warn:#F0C08E; --warn-soft:#3E2B1B;
+  color-scheme:dark }}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.55;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+.wrap{max-width:560px;margin:0 auto;padding-block:20px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:18px}
+h1,h2{font-family:var(--display);font-weight:600;line-height:1.05;margin:0;text-wrap:balance}
+h1{font-size:2.5rem} h2{font-size:1.8rem}
+p{margin:0}
+.eyebrow{font-family:var(--caps);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.muted{color:var(--muted)}
+.part{display:grid;gap:12px;padding-top:6px}
+.how{background:var(--butter-soft);border-radius:20px;padding:14px 16px;display:grid;gap:6px;font-size:.95rem}
+.how ol{margin:0;padding-left:1.2em;display:grid;gap:3px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px;display:grid;gap:10px;min-width:0}
+.card.ok{border-color:var(--good)}
+.top{display:flex;align-items:flex-start;gap:10px}
+.num{width:28px;height:28px;border-radius:50%;background:var(--brown);color:var(--on-brown);display:grid;place-items:center;font-weight:700;font-size:.85rem;flex:none;margin-top:2px}
+.card.ok .num{background:var(--good);color:var(--card)}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;cursor:pointer;border-radius:999px;padding:10px 16px;font-weight:600;font-size:.92rem;border:1.5px solid var(--brown);background:var(--brown);color:var(--on-brown);min-height:44px}
+button.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+button[disabled]{opacity:.45;cursor:default}
+button:focus-visible,textarea:focus-visible,input:focus-visible{outline:2px solid var(--brown);outline-offset:2px}
+input[type=text],textarea{width:100%;font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;min-height:44px}
+textarea{min-height:72px;resize:vertical}
+.fb{font-size:.93rem;border-radius:12px;padding:8px 12px}
+.fb.good{background:var(--good-soft);color:var(--good)}
+.fb.bad{background:var(--warn-soft);color:var(--warn)}
+.fb.show{background:var(--blue-soft);color:var(--blue-ink)}
+.grid{display:grid;gap:8px}
+.tiles{display:grid;gap:8px}
+.tile{text-align:left;border-radius:14px;background:var(--card);color:var(--ink);border-color:var(--line);font-weight:500;width:100%}
+.tile.sel{border-color:var(--brown);outline:2px solid var(--brown);outline-offset:1px}
+.tile.done{border-color:var(--good);background:var(--good-soft);color:var(--good);opacity:1}
+.tile.shown{border-color:var(--blue-ink);background:var(--blue-soft);color:var(--blue-ink);opacity:1}
+.tile.wrong{border-color:var(--warn);background:var(--warn-soft);color:var(--warn)}
+.pairs{display:grid;gap:8px}
+.pairline{border-radius:14px;padding:8px 12px;font-size:.95rem}
+.pairline.good{background:var(--good-soft);color:var(--good)}
+.pairline.show{background:var(--blue-soft);color:var(--blue-ink)}
+.gap{font-family:ui-monospace,Menlo,monospace;letter-spacing:.12em;background:var(--butter-soft);border-radius:6px;padding:0 5px;white-space:nowrap}
+.sent{font-family:var(--display);font-size:1.3rem;line-height:1.3;font-weight:600}
+.c1{background:var(--blue-soft);color:var(--blue-ink);border-radius:8px;padding:1px 6px}
+.c2{background:var(--butter-soft);border-radius:8px;padding:1px 6px;font-weight:700}
+.labels{display:flex;gap:6px;flex-wrap:wrap;font-size:.82rem;align-items:center}
+.line3{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 12px;font-size:1.02rem;line-height:1.7}
+.q{display:grid;gap:8px}
+.q p.qt{font-weight:600}
+.opts{display:grid;gap:8px}
+.opts button{text-align:left;border-radius:14px;background:var(--card);color:var(--ink);border-color:var(--line);font-weight:500}
+.opts button.right{border-color:var(--good);background:var(--good-soft);color:var(--good);opacity:1}
+.opts button.wrong{border-color:var(--warn);background:var(--warn-soft);color:var(--warn)}
+.rule{background:var(--brown);color:var(--on-brown);border-radius:20px;padding:14px 16px;display:grid;gap:6px}
+.rule .big{font-family:var(--display);font-size:1.35rem;font-weight:600;line-height:1.25}
+.rule .ex{font-size:.95rem;opacity:.92}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border-radius:999px;padding:8px 12px;font-size:.88rem;font-weight:500;background:var(--card);color:var(--ink);border-color:var(--line);min-height:40px;text-align:left}
+.chip[aria-pressed="true"]{background:var(--brown);color:var(--on-brown);border-color:var(--brown)}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.seg button{padding:8px 6px;font-size:.8rem;border-radius:12px;background:var(--card);color:var(--ink);border-color:var(--line);font-weight:600;line-height:1.25}
+.seg button.right{background:var(--good-soft);color:var(--good);border-color:var(--good);opacity:1}
+.seg button.wrong{background:var(--warn-soft);color:var(--warn);border-color:var(--warn)}
+.seg button.shown{background:var(--blue-soft);color:var(--blue-ink);border-color:var(--blue-ink);opacity:1}
+.ph{font-weight:600}
+.plan{display:grid;gap:8px}
+.plan .blk{background:var(--blue-soft);color:var(--blue-ink);border-radius:14px;padding:10px 12px;font-size:.93rem}
+.plan .blk b{display:block;font-family:var(--caps);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:2px}
+.plan ul{margin:0;padding-left:1.1em}
+.stem{font-family:var(--display);font-size:1.25rem;font-weight:600;line-height:1.25}
+.model{font-size:.95rem;border-left:3px solid var(--butter);padding-left:10px;color:var(--muted)}
+.bank{display:flex;flex-wrap:wrap;gap:6px}
+.bank span{border:1.5px solid var(--line);border-radius:999px;padding:5px 11px;font-size:.86rem;background:var(--card)}
+.bank span.used{border-color:var(--good);background:var(--good-soft);color:var(--good);font-weight:600}
+.bank span.used::before{content:"✓ "}
+.count{font-size:.92rem;font-weight:600}
+.hw-sent{background:#dff0e4;color:#2f7d4a;font-weight:700;border-radius:12px;padding:10px 14px}
+.hwback{display:inline-flex;align-items:center;min-height:36px;font-size:.9rem;color:inherit;opacity:.7;text-decoration:none}
+.prog{font-size:.9rem}
+</style></head><body>
+<div class="wrap">
+  <a class="hwback" href="../" data-hw-back>← My English</a>
+  <header style="display:grid;gap:8px">
+    <span class="eyebrow">Homework · from our lesson on 21 November</span>
+    <h1>A pause before the new year</h1>
+    <p class="muted">The phrases from the article we read. Step by step, you'll get ready to write a New Year post for HOLI's Instagram. About 40 minutes.</p>
+  </header>
+
+  <section class="part" aria-labelledby="t1">
+    <span class="eyebrow">Part 1 of 6</span>
+    <h2 id="t1">Match the halves</h2>
+    <div class="how"><ol>
+      <li>Tap the beginning of a phrase.</li>
+      <li>Then tap the ending that goes with it.</li>
+    </ol></div>
+    <p class="muted prog" id="t1prog"></p>
+    <div class="pairs" id="t1done"></div>
+    <div class="tiles" id="t1left"></div>
+    <p class="eyebrow" style="margin-top:4px">Endings</p>
+    <div class="tiles" id="t1right"></div>
+  </section>
+
+  <section class="part" aria-labelledby="t2">
+    <span class="eyebrow">Part 2 of 6</span>
+    <h2 id="t2">Key words</h2>
+    <div class="how"><ol>
+      <li>You can see the first and the last letter. Write the whole word.</li>
+      <li>Tap <b>Check</b>. You have two tries.</li>
+    </ol></div>
+    <div class="grid" id="t2list" style="gap:12px"></div>
+  </section>
+
+  <section class="part" aria-labelledby="t3">
+    <span class="eyebrow">Part 3 of 6</span>
+    <h2 id="t3">Instead of… → try…</h2>
+    <p class="muted">These sentences are from the article and our lesson. Look at the coloured words, then answer the questions.</p>
+    <div class="labels"><span class="c1">after <i>instead of</i></span><span class="c2">the first word after the comma</span></div>
+    <div class="grid" id="t3lines"></div>
+    <div class="grid" id="t3qs" style="gap:16px"></div>
+    <div id="t3rule"></div>
+    <div class="grid" id="t3ing" style="gap:12px"></div>
+  </section>
+
+  <section class="part" aria-labelledby="t4">
+    <span class="eyebrow">Part 4 of 6</span>
+    <h2 id="t4">Build your sentences</h2>
+    <div class="how"><ol>
+      <li>Choose a <b>situation</b>: what people usually do.</li>
+      <li>Choose an <b>idea</b> from the article: what HOLI suggests.</li>
+      <li>Write the whole sentence with <b>Instead of…</b> and tap <b>Check</b>.</li>
+    </ol></div>
+    <div class="grid" id="t4list" style="gap:12px"></div>
+  </section>
+
+  <section class="part" aria-labelledby="t5">
+    <span class="eyebrow">Part 5 of 6</span>
+    <h2 id="t5">Sort the ideas</h2>
+    <div class="how"><ol>
+      <li>Where does each idea go? Tap one group.</li>
+      <li>These three groups will be the plan for your post.</li>
+    </ol></div>
+    <div class="card" id="t5list"></div>
+  </section>
+
+  <section class="part" aria-labelledby="t6">
+    <span class="eyebrow">Part 6 of 6</span>
+    <h2 id="t6">Your post for HOLI</h2>
+    <div class="how"><ol>
+      <li>Write a New Year post for HOLI's Instagram: <b>what is this year's theme, and what can people do instead of the usual New Year rush?</b></li>
+      <li>80–120 words. Use your plan, the starters and as many phrases as you can. The phrases you use turn green.</li>
+    </ol></div>
+    <div class="card">
+      <span class="eyebrow">Your plan</span>
+      <div class="plan" id="t6plan"></div>
+    </div>
+    <div class="card">
+      <span class="eyebrow">Ideas to think about</span>
+      <ul style="margin:0;padding-left:1.1em;display:grid;gap:3px;font-size:.95rem">
+        <li>What does a pause look like at HOLI?</li>
+        <li>What is one small thing people can try in January?</li>
+        <li>How can people mark the occasion without a big party?</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="eyebrow">Starters</span>
+      <p class="stem">This year at HOLI, our New Year theme is…</p>
+      <p class="model">e.g. This year at HOLI, our New Year theme is a pause before the new year.</p>
+      <p class="stem">Instead of + -ing / noun, try…</p>
+      <p class="model">e.g. Instead of a big party, try a quiet evening at home.</p>
+      <p class="stem">Give yourself…</p>
+      <p class="model">e.g. Give yourself something to look forward to.</p>
+      <div class="row"><button type="button" class="ghost" id="addStarters">Put the starters in my text</button></div>
+      <textarea id="post" style="min-height:220px" autocapitalize="sentences" aria-label="Your post for HOLI" placeholder="Write your post here"></textarea>
+      <p class="count" id="count"></p>
+      <span class="eyebrow">Word bank</span>
+      <div class="bank" id="bank"></div>
+    </div>
+  </section>
+
+  <section class="card" style="padding:18px">
+    <span class="eyebrow">Last step</span>
+    <h2>Send it to me</h2>
+    <p class="muted" style="font-size:.95rem">When you're happy with your post, tap the button. I'll see all your answers.</p>
+    <div id="sendBox"></div>
+  </section>
+</div>
+<script src="../../../kit/hw.js"></script>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const norm = s => String(s || "").toLowerCase().replace(/[’‘`]/g, "'").replace(/\s+/g, " ").trim();
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+
+/* ---------- Content ---------- */
+const PAIRS = [
+  ["Take a pause throughout January", "and think about your priorities."],
+  ["Mark the occasion", "with a home-cooked meal and a festive drink."],
+  ["Mull over", "what you want to make time for."],
+  ["Give something a try", "and see how you like it."],
+  ["Find a minute or two", "for a little stillness."],
+  ["Sit down somewhere quiet", "and take a moment to listen."],
+  ["Meet friends at a coffee shop", "or go on a hike with a friend."]
+];
+const RORD = [3, 6, 1, 4, 0, 5, 2];
+
+const KEYW = [
+  { pre: "Before you make big plans, ", w: "mull", post: " over what you want to make time for." },
+  { pre: "Find a minute or two for a little ", w: "stillness", post: "." },
+  { pre: "You don't need a big party. A home-cooked meal is enough to mark the ", w: "occasion", post: "." },
+  { pre: "Take a pause and think about your ", w: "priorities", post: "." },
+  { pre: "At HOLI, we want to slow down ", w: "throughout", post: " January." }
+];
+const gapOf = w => w[0] + " " + Array(w.length - 2).fill("_").join(" ") + " " + w[w.length - 1];
+
+const LINES = [
+  ["rushing", " from the busy holidays into January, ", "take", " a pause."],
+  ["a big celebration", ", ", "mark", " the occasion with a home-cooked meal."],
+  ["setting", " new habits, ", "give", " something a try and see how you like it."],
+  ["hosting", " dinner parties, ", "meet", " friends at a coffee shop."]
+];
+const QS = [
+  { q: "Look at the blue words. What comes after instead of?",
+    o: ["a verb + -ing (rushing) or a noun (a big celebration)", "to + verb (to rush)", "a verb without -ing (rush)"], a: 0 },
+  { q: "Look at the yellow words. How does the second part start?",
+    o: ["with you should (you should take…)", "with a verb, like advice: take, mark, give, meet", "with to (to take…)"], a: 1 },
+  { q: "Which sentence is correct?",
+    o: ["Instead of host a big party, meet friends at a coffee shop.", "Instead of to host a big party, meet friends at a coffee shop.", "Instead of hosting a big party, meet friends at a coffee shop."], a: 2 }
+];
+const ING = [
+  { v: "start", a: "starting", rest: "a new resolution on January 1st, mull over what you want to make time for." },
+  { v: "rush", a: "rushing", rest: "into January, take a pause." },
+  { v: "plan", a: "planning", rest: "a big party, mark the occasion with a home-cooked meal." },
+  { v: "set", a: "setting", rest: "big goals, find a minute or two for a little stillness." }
+];
+const SIT = [
+  { v: "rush", ing: "rushing", rest: "from the busy holidays into January" },
+  { v: "host", ing: "hosting", rest: "big dinner parties" },
+  { v: "set", ing: "setting", rest: "lots of new habits" },
+  { v: "start", ing: "starting", rest: "a new resolution on January 1st" },
+  { v: "plan", ing: "planning", rest: "a big celebration" }
+];
+const ALT = PAIRS.map(p => p[0] + " " + p[1].replace(/\.$/, ""));
+
+const GROUPS = ["Slow down", "Think and try something new", "Celebrate and connect"];
+const SORT = [
+  { t: "find a minute or two for a little stillness", a: [0] },
+  { t: "mark the occasion with a home-cooked meal and a festive drink", a: [2] },
+  { t: "mull over what you want to make time for", a: [1] },
+  { t: "sit down somewhere quiet and take a moment to listen", a: [0] },
+  { t: "meet friends at a coffee shop", a: [2] },
+  { t: "give something a try and see how you like it", a: [1] },
+  { t: "give your mind a much-needed break", a: [0] },
+  { t: "take a pause throughout January and think about your priorities", a: [1, 0] },
+  { t: "go on a hike with a friend", a: [2] }
+];
+
+const BANK = [
+  { t: "take a pause throughout January", r: /take a pause|throughout january/ },
+  { t: "think about your priorities", r: /priorit/ },
+  { t: "mull over what you want to make time for", r: /\bmull(s|ed|ing)?\b/ },
+  { t: "give something a try and see how you like it", r: /give (something|it|\w+) a try|see how you like/ },
+  { t: "find a minute or two for a little stillness", r: /stillness|a minute or two/ },
+  { t: "sit down somewhere quiet and take a moment to listen", r: /somewhere quiet|take a moment/ },
+  { t: "give your mind a much-needed break", r: /mind a (much[- ]needed )?break/ },
+  { t: "mark the occasion with a home-cooked meal and a festive drink", r: /mark(s|ed|ing)? the occasion|home[- ]cooked/ },
+  { t: "meet friends at a coffee shop", r: /coffee shop/ },
+  { t: "go on a hike with a friend", r: /\bhike/ },
+  { t: "something to look forward to", r: /look(s|ing)? forward to/ },
+  { t: "gets your creative juices flowing", r: /creative juices/ },
+  { t: "look after your body, mind and soul", r: /mind,? and soul/ }
+];
+
+/* ---------- State ---------- */
+let S = {
+  m: PAIRS.map(() => ({ tries: [], ok: false })),
+  k: KEYW.map(() => ({ val: "", tries: [], ok: false })),
+  q: QS.map(() => ({ tries: [], ok: false })),
+  ing: ING.map(() => ({ val: "", tries: [], ok: false })),
+  b: [0, 1, 2].map(() => ({ sit: -1, alt: -1, val: "", tries: [], ok: false })),
+  s: SORT.map(() => ({ tries: [], ok: false })),
+  post: ""
+};
+let selLeft = -1;
+const fin = st => st.ok || st.tries.length >= 2;
+
+function el(tag, cls, html){ const e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e; }
+function btn(cls, text, fn){ const b = el("button", cls); b.type = "button"; b.textContent = text; b.onclick = fn; return b; }
+
+/* ---------- Part 1 · Match ---------- */
+function drawT1(){
+  const L = $("t1left"), R = $("t1right"), D = $("t1done"); L.innerHTML = ""; R.innerHTML = ""; D.innerHTML = "";
+  const n = S.m.filter(fin).length;
+  $("t1prog").textContent = n + " of " + PAIRS.length + " done";
+  PAIRS.forEach((p, i) => { const st = S.m[i];
+    if(fin(st)){ D.append(el("div", "pairline " + (st.ok ? "good" : "show"), (st.ok ? "✓ " : "→ ") + esc(p[0] + " " + p[1]))); return; }
+    const b = btn("tile" + (selLeft === i ? " sel" : "") + (st.tries.length ? " wrong" : ""), p[0] + " …", () => { selLeft = selLeft === i ? -1 : i; drawT1(); });
+    L.append(b);
+  });
+  RORD.forEach(j => { if(fin(S.m[j])) return;
+    R.append(btn("tile", "… " + PAIRS[j][1], () => {
+      if(selLeft < 0){ $("t1prog").textContent = "First tap a beginning above."; return; }
+      const st = S.m[selLeft];
+      if(j === selLeft){ st.ok = true; } else { st.tries.push(PAIRS[j][1]); }
+      selLeft = -1; drawT1(); HW.save();
+    }));
+  });
+  if(n === PAIRS.length) L.append(el("p", "fb good", "All matched! Read the phrases above one more time."));
+}
+
+/* ---------- Part 2 · Key words ---------- */
+function drawT2(){
+  const box = $("t2list"); box.innerHTML = "";
+  KEYW.forEach((it, i) => { const st = S.k[i];
+    const c = el("div", "card" + (st.ok ? " ok" : ""));
+    const top = el("div", "top"); top.append(el("span", "num", String(i + 1)));
+    top.append(el("p", "", esc(it.pre) + '<span class="gap">' + (fin(st) ? esc(it.w) : esc(gapOf(it.w))) + "</span>" + esc(it.post)));
+    c.append(top);
+    if(!fin(st)){
+      const inp = el("input"); inp.type = "text"; inp.value = st.val; inp.autocapitalize = "off"; inp.autocomplete = "off"; inp.spellcheck = false;
+      inp.setAttribute("aria-label", "Word " + (i + 1));
+      inp.oninput = () => { st.val = inp.value; HW.save(); };
+      const go = () => { const v = norm(st.val); if(!v) return; st.tries.push(st.val.trim()); st.ok = v === it.w; drawT2(); HW.save(); };
+      inp.onkeydown = e => { if(e.key === "Enter") go(); };
+      c.append(inp, el("div", "row")); c.lastChild.append(btn("", "Check", go));
+      if(st.tries.length) c.append(el("p", "fb bad", "Not quite. Check the spelling and try again."));
+    } else {
+      c.append(el("p", "fb " + (st.ok ? "good" : "show"), st.ok ? "✓ Yes!" : "The word is <b>" + esc(it.w) + "</b>."));
+    }
+    box.append(c);
+  });
+}
+
+/* ---------- Part 3 · Instead of ---------- */
+function drawT3(){
+  const Lb = $("t3lines"); Lb.innerHTML = "";
+  LINES.forEach(l => Lb.append(el("div", "line3", 'Instead of <span class="c1">' + esc(l[0]) + "</span>" + esc(l[1]) + '<span class="c2">' + esc(l[2]) + "</span>" + esc(l[3]))));
+  const Qb = $("t3qs"); Qb.innerHTML = "";
+  QS.forEach((q, qi) => { const st = S.q[qi], done = fin(st);
+    const d = el("div", "q"); d.append(el("p", "qt", (qi + 1) + ". " + esc(q.q)));
+    const o = el("div", "opts");
+    q.o.forEach((t, oi) => {
+      const tried = st.tries.includes(oi), cls = (done && oi === q.a) ? "right" : tried ? "wrong" : "";
+      const b = btn(cls, t, () => { st.tries.push(oi); if(oi === q.a) st.ok = true; drawT3(); HW.save(); });
+      if(done || tried) b.disabled = true;
+      o.append(b);
+    });
+    d.append(o);
+    if(done) d.append(el("p", "fb " + (st.ok ? "good" : "show"), st.ok ? "✓ Right!" : "The answer is in green."));
+    else if(st.tries.length) d.append(el("p", "fb bad", "Not this one. Look at the coloured words again."));
+    Qb.append(d);
+  });
+  const R = $("t3rule"); R.innerHTML = "";
+  if(S.q.every(fin)){
+    R.append(el("div", "rule",
+      '<span class="eyebrow" style="color:inherit;opacity:.8">The pattern</span>' +
+      '<p class="big">Instead of + verb-ing / noun, + try / take / give yourself…</p>' +
+      '<p class="ex">Instead of <b>rushing</b> into January, <b>take</b> a pause.<br>Instead of <b>a big party</b>, <b>try</b> a quiet evening at home.</p>'));
+    const I = $("t3ing"); I.innerHTML = "";
+    I.append(el("p", "muted", "Now write the -ing form."));
+    ING.forEach((it, i) => { const st = S.ing[i];
+      const c = el("div", "card" + (st.ok ? " ok" : ""));
+      const top = el("div", "top"); top.append(el("span", "num", String(i + 1)));
+      top.append(el("p", "", "Instead of <span class=\"gap\">" + (fin(st) ? esc(it.a) : "______ (" + esc(it.v) + ")") + "</span> " + esc(it.rest)));
+      c.append(top);
+      if(!fin(st)){
+        const inp = el("input"); inp.type = "text"; inp.value = st.val; inp.autocapitalize = "off"; inp.autocomplete = "off"; inp.spellcheck = false;
+        inp.setAttribute("aria-label", "-ing form of " + it.v);
+        inp.oninput = () => { st.val = inp.value; HW.save(); };
+        const go = () => { const v = norm(st.val); if(!v) return; st.tries.push(st.val.trim()); st.ok = v === it.a; drawT3(); HW.save(); };
+        inp.onkeydown = e => { if(e.key === "Enter") go(); };
+        c.append(inp, el("div", "row")); c.lastChild.append(btn("", "Check", go));
+        if(st.tries.length) c.append(el("p", "fb bad", (it.v === "plan" || it.v === "set") ? "Not quite. Tip: short verbs like this double the last letter before -ing." : "Not quite. Try again."));
+      } else {
+        c.append(el("p", "fb " + (st.ok ? "good" : "show"), st.ok ? "✓ Yes!" : "It's <b>" + esc(it.a) + "</b>" + ((it.v === "plan" || it.v === "set") ? " (double the last letter)." : ".")));
+      }
+      I.append(c);
+    });
+  } else { $("t3ing").innerHTML = ""; }
+}
+
+/* ---------- Part 4 · Build sentences ---------- */
+function modelOf(st){ const s = SIT[st.sit], a = ALT[st.alt]; return "Instead of " + s.ing + " " + s.rest + ", " + a.charAt(0).toLowerCase() + a.slice(1) + "."; }
+function drawT4(){
+  const box = $("t4list"); box.innerHTML = "";
+  S.b.forEach((st, i) => {
+    const c = el("div", "card" + (st.ok ? " ok" : ""));
+    const top = el("div", "top"); top.append(el("span", "num", String(i + 1)), el("p", "", "<b>Sentence " + (i + 1) + "</b>")); c.append(top);
+    const locked = fin(st);
+    c.append(el("span", "eyebrow", "Situation"));
+    const cs = el("div", "chips");
+    SIT.forEach((s, si) => { const b = btn("chip", s.v + " " + s.rest, () => { st.sit = si; drawT4(); HW.save(); }); b.setAttribute("aria-pressed", String(st.sit === si)); if(locked) b.disabled = true; cs.append(b); });
+    c.append(cs);
+    c.append(el("span", "eyebrow", "Idea"));
+    const ca = el("div", "chips");
+    ALT.forEach((a, ai) => { const b = btn("chip", a, () => { st.alt = ai; drawT4(); HW.save(); }); b.setAttribute("aria-pressed", String(st.alt === ai)); if(locked) b.disabled = true; ca.append(b); });
+    c.append(ca);
+    if(st.sit >= 0 && st.alt >= 0){
+      if(!locked){
+        const ta = el("textarea"); ta.value = st.val; ta.placeholder = "Instead of …"; ta.setAttribute("aria-label", "Sentence " + (i + 1)); ta.autocapitalize = "sentences";
+        ta.oninput = () => { st.val = ta.value; HW.save(); };
+        c.append(ta);
+        const r = el("div", "row");
+        r.append(btn("ghost", "Start with “Instead of”", () => { if(!norm(st.val).startsWith("instead of")) st.val = "Instead of " + st.val.trimStart(); drawT4(); HW.save(); }));
+        r.append(btn("", "Check", () => {
+          const v = norm(st.val); if(v.split(" ").length < 5) return;
+          st.tries.push(st.val.trim()); st.ok = v.includes("instead of " + SIT[st.sit].ing); drawT4(); HW.save();
+        }));
+        c.append(r);
+        if(st.tries.length) c.append(el("p", "fb bad", "Look at the word after <b>instead of</b>. " + esc(SIT[st.sit].v) + " → ? Try again."));
+      } else {
+        c.append(el("p", "", "<b>You:</b> " + esc(st.tries[st.tries.length - 1])));
+        c.append(el("p", "fb " + (st.ok ? "good" : "show"), st.ok ? "✓ Great: instead of + -ing." : "Example: " + esc(modelOf(st))));
+      }
+    }
+    box.append(c);
+  });
+}
+
+/* ---------- Part 5 · Sort ---------- */
+function drawT5(){
+  const box = $("t5list"); box.innerHTML = "";
+  SORT.forEach((it, i) => { const st = S.s[i], done = fin(st);
+    const d = el("div", "grid"); d.style.cssText = "padding:8px 0;border-bottom:1px solid var(--line)";
+    d.append(el("p", "ph", esc(it.t)));
+    const sg = el("div", "seg");
+    GROUPS.forEach((g, gi) => {
+      const tried = st.tries.includes(gi), chosen = st.ok && st.tries[st.tries.length - 1] === gi;
+      let cls = ""; if(chosen) cls = "right"; else if(done && !st.ok && gi === it.a[0]) cls = "shown"; else if(tried) cls = "wrong";
+      const b = btn(cls, g, () => { st.tries.push(gi); if(it.a.includes(gi)) st.ok = true; drawT5(); drawT6plan(); HW.save(); });
+      if(done || tried) b.disabled = true;
+      sg.append(b);
+    });
+    d.append(sg);
+    if(!done && st.tries.length) d.append(el("p", "fb bad", "Hmm, not really. Try another group."));
+    box.append(d);
+  });
+  if(box.lastChild) box.lastChild.style.borderBottom = "0";
+}
+function groupOf(i){ const st = S.s[i]; if(st.ok) return st.tries[st.tries.length - 1]; if(fin(st)) return SORT[i].a[0]; return -1; }
+
+/* ---------- Part 6 · Post ---------- */
+function drawT6plan(){
+  const P = $("t6plan"); P.innerHTML = "";
+  const b0 = el("div", "blk"); b0.innerHTML = "<b>1 · Your theme</b>This year at HOLI, our New Year theme is…"; P.append(b0);
+  GROUPS.forEach((g, gi) => {
+    const items = SORT.map((it, i) => groupOf(i) === gi ? it.t : null).filter(Boolean);
+    const b = el("div", "blk"); b.innerHTML = "<b>" + (gi + 2) + " · " + esc(g) + "</b>" + (items.length ? "<ul>" + items.map(t => "<li>" + esc(t) + "</li>").join("") + "</ul>" : '<span style="opacity:.75">Sort the ideas in Part 5 first.</span>');
+    P.append(b);
+  });
+  const mine = S.b.map(st => st.tries.length ? (st.ok ? st.tries[st.tries.length - 1] : modelOf(st)) : null).filter(Boolean);
+  if(mine.length){ const b = el("div", "blk"); b.innerHTML = "<b>Your instead of sentences (Part 4)</b><ul>" + mine.map(t => "<li>" + esc(t) + "</li>").join("") + "</ul>"; P.append(b); }
+}
+function usedPhrases(){ const t = norm(S.post); return BANK.map(x => x.r.test(t)); }
+function words(){ const t = String(S.post || "").trim(); return t ? t.split(/\s+/).length : 0; }
+function drawBank(){
+  const u = usedPhrases(), B = $("bank"); B.innerHTML = "";
+  BANK.forEach((x, i) => { const s = el("span", u[i] ? "used" : "", esc(x.t)); B.append(s); });
+  const n = u.filter(Boolean).length, w = words(), io = /instead of/.test(norm(S.post));
+  $("count").textContent = w + " words · " + n + " of " + BANK.length + " phrases" + (io ? " · Instead of ✓" : "");
+}
+function drawT6(){
+  drawT6plan();
+  const ta = $("post"); if(ta.value !== S.post) ta.value = S.post;
+  drawBank();
+}
+
+/* ---------- What Stacy sees in Teacher view ---------- */
+function tr(st){ return st.tries.length + " " + (st.tries.length === 1 ? "try" : "tries"); }
+function summary(){
+  const L = [];
+  const m1 = S.m.filter(s => s.ok && s.tries.length === 0).length;
+  L.push("Task 1 · Match the halves", "Matched " + m1 + " of " + PAIRS.length + " first time");
+  PAIRS.forEach((p, i) => { const st = S.m[i];
+    L.push((i + 1) + ". " + p[0] + " → " + (st.ok ? "✓" : st.tries.length >= 2 ? "✗ shown" : st.tries.length ? "…" : "—") + (st.tries.length ? " wrong: " + st.tries.join(" / ") : "")); });
+  const k1 = S.k.filter(s => s.ok && s.tries.length === 1).length;
+  L.push("", "Task 2 · Key words (first and last letter)", "Got " + k1 + " of " + KEYW.length + " first time");
+  KEYW.forEach((it, i) => { const st = S.k[i];
+    L.push((i + 1) + ". " + it.w + " → " + (st.ok ? "✓" : st.tries.length >= 2 ? "✗" : "—") + " " + (st.tries.length ? st.tries.join(" → ") + " (" + tr(st) + ")" : "not answered")); });
+  const q1 = S.q.filter(s => s.ok && s.tries.length === 1).length;
+  L.push("", "Task 3 · Instead of + -ing / noun (discovery)", "Rule questions: " + q1 + " of " + QS.length + " right first time");
+  QS.forEach((q, i) => { const st = S.q[i];
+    L.push((i + 1) + ". " + q.q + " → " + (st.ok && st.tries.length === 1 ? "✓ right first time" : st.tries.length ? "✗ first answer: " + q.o[st.tries[0]] + " (" + tr(st) + (st.ok ? ", then right" : "") + ")" : "— not answered")); });
+  ING.forEach((it, i) => { const st = S.ing[i];
+    L.push("-ing " + it.v + " → " + (st.ok ? "✓" : st.tries.length >= 2 ? "✗" : "—") + " " + (st.tries.length ? st.tries.join(" → ") + " (" + tr(st) + ")" : "not answered")); });
+  const b1 = S.b.filter(s => s.ok).length;
+  L.push("", "Task 4 · Build your sentences", b1 + " of 3 with instead of + -ing");
+  S.b.forEach((st, i) => {
+    L.push((i + 1) + ". " + (st.tries.length ? (st.ok ? "✓ " : "✗ ") + st.tries.join(" → ") + " (" + tr(st) + ")" : "— not written")); });
+  const s1 = S.s.filter(s => s.ok && s.tries.length === 1).length;
+  L.push("", "Task 5 · Sort the ideas", s1 + " of " + SORT.length + " right first time");
+  SORT.forEach((it, i) => { const st = S.s[i];
+    L.push(it.t + " → " + (st.tries.length ? (st.ok ? "✓ " : "✗ ") + st.tries.map(g => GROUPS[g]).join(" → ") : "—")); });
+  const u = usedPhrases();
+  L.push("", "Task 6 · Post for HOLI", words() + " words · " + u.filter(Boolean).length + " of " + BANK.length + " phrases" + (/instead of/.test(norm(S.post)) ? " · used instead of" : ""));
+  L.push("Phrases used: " + (BANK.filter((x, i) => u[i]).map(x => x.t).join("; ") || "none"));
+  L.push(String(S.post || "").trim() || "—");
+  return L.join("\n");
+}
+
+function drawAll(){ drawT1(); drawT2(); drawT3(); drawT4(); drawT5(); drawT6(); const box = $("sendBox"); box.innerHTML = ""; box.appendChild(HW.sendBlock({ lang: "en" })); HW.save(); }
+
+$("post").addEventListener("input", () => { S.post = $("post").value; drawBank(); HW.save(); });
+$("addStarters").addEventListener("click", () => {
+  const f = $("post"), st = "This year at HOLI, our New Year theme is …\nInstead of …, try …\nGive yourself …";
+  f.value = f.value.trim() ? f.value.trimEnd() + "\n" + st : st; S.post = f.value; drawBank(); HW.save(); f.focus();
+});
+
+function okArr(a, n){ return Array.isArray(a) && a.length === n; }
+HW.start({
+  id: "hw-new-year", title: "A pause before the new year",
+  get: () => S,
+  set: z => {
+    if(!z || typeof z !== "object") return;
+    if(okArr(z.m, PAIRS.length)) S.m = z.m;
+    if(okArr(z.k, KEYW.length)) S.k = z.k;
+    if(okArr(z.q, QS.length)) S.q = z.q;
+    if(okArr(z.ing, ING.length)) S.ing = z.ing;
+    if(okArr(z.b, 3)) S.b = z.b.map(b => ({ sit: b.sit < SIT.length ? b.sit : -1, alt: b.alt < ALT.length ? b.alt : -1, val: String(b.val || ""), tries: Array.isArray(b.tries) ? b.tries : [], ok: !!b.ok }));
+    if(okArr(z.s, SORT.length)) S.s = z.s;
+    S.post = String(z.post || "");
+  },
+  summary,
+  render: drawAll
+});
+</script>
+</body></html>
