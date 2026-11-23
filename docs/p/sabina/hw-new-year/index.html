@@ -113,12 +113,18 @@ textarea{min-height:72px;resize:vertical}
 .hw-sent{background:#dff0e4;color:#2f7d4a;font-weight:700;border-radius:12px;padding:10px 14px}
 .hwback{display:inline-flex;align-items:center;min-height:36px;font-size:.9rem;color:inherit;opacity:.7;text-decoration:none}
 .prog{font-size:.9rem}
-.mood{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:start}
-.mood img{width:100%;height:auto;border-radius:14px;display:block;background:var(--bg)}
+.hero{width:100%;max-height:240px;object-fit:contain;border-radius:20px;display:block}
+.phead{display:flex;align-items:center;gap:12px;justify-content:space-between}
+.phead>div{display:grid;gap:6px;min-width:0}
+.deco{width:110px;max-width:32vw;height:auto;border-radius:14px;flex:none;transform:rotate(2deg);box-shadow:0 3px 10px rgba(0,0,0,.08)}
+.writecard{position:relative;padding-top:18px}
+.sticker{position:absolute;top:-22px;right:-6px;width:104px;max-width:28vw;height:auto;transform:rotate(6deg);pointer-events:none;filter:drop-shadow(0 3px 6px rgba(0,0,0,.12))}
+.writecard .stem:first-of-type{padding-right:88px}
 </style></head><body>
 <div class="wrap">
   <a class="hwback" href="../" data-hw-back>← My English</a>
   <header style="display:grid;gap:8px">
+    <img class="hero" src="img/pause.webp" alt="">
     <span class="eyebrow">Homework · from our lesson on 21 November</span>
     <h1>A pause before the new year</h1>
     <p class="muted">The phrases from the article we read. Step by step, you'll get ready to write a New Year post for HOLI's Instagram. About 40 minutes.</p>
@@ -139,8 +145,10 @@ textarea{min-height:72px;resize:vertical}
   </section>
 
   <section class="part" aria-labelledby="t2">
+    <div class="phead"><div>
     <span class="eyebrow">Part 2 of 6</span>
     <h2 id="t2">Key words</h2>
+    </div><img class="deco" src="img/moodboard.webp" alt="" loading="lazy"></div>
     <div class="how"><ol>
       <li>You can see the first and the last letter. Write the whole word.</li>
       <li>Tap <b>Check</b>. You have two tries.</li>
@@ -160,8 +168,10 @@ textarea{min-height:72px;resize:vertical}
   </section>
 
   <section class="part" aria-labelledby="t4">
+    <div class="phead"><div>
     <span class="eyebrow">Part 4 of 6</span>
     <h2 id="t4">Build your sentences</h2>
+    </div><img class="deco" src="img/same-me.webp" alt="" loading="lazy"></div>
     <div class="how"><ol>
       <li>Choose a <b>situation</b>: what people usually do.</li>
       <li>Choose an <b>idea</b> from the article: what HOLI suggests.</li>
@@ -194,15 +204,6 @@ textarea{min-height:72px;resize:vertical}
       <div class="plan" id="t6plan"></div>
     </div>
     <div class="card">
-      <span class="eyebrow">Mood for your post</span>
-      <div class="mood">
-        <img src="img/pause.webp" alt="Pause: a woman with a cup of tea" loading="lazy">
-        <img src="img/do-less.webp" alt="It's okay to do less this year" loading="lazy">
-        <img src="img/moodboard.webp" alt="Moodboard: tree, yoga, quiet moments" loading="lazy">
-        <img src="img/same-me.webp" alt="New year, same me: a black cat" loading="lazy">
-      </div>
-    </div>
-    <div class="card">
       <span class="eyebrow">Ideas to think about</span>
       <ul style="margin:0;padding-left:1.1em;display:grid;gap:3px;font-size:.95rem">
         <li>What does a pause look like at HOLI?</li>
@@ -210,7 +211,8 @@ textarea{min-height:72px;resize:vertical}
         <li>How can people mark the occasion without a big party?</li>
       </ul>
     </div>
-    <div class="card">
+    <div class="card writecard">
+      <img class="sticker" src="img/do-less.webp" alt="">
       <span class="eyebrow">Starters</span>
       <p class="stem">This year at HOLI, our New Year theme is…</p>
       <p class="model">e.g. This year at HOLI, our New Year theme is a pause before the new year.</p>
