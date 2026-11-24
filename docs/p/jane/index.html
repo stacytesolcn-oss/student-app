@@ -1007,7 +1007,21 @@ const CARDS = {
 "have a lecture":{"def": "have a class where a teacher talks to a big group", "ex": ["I can't meet on Tuesday evening. I [have a lecture] {on} color.", "We [have] a {two-hour} [lecture] every Wednesday.", "Today I [have] a {three-hour} [lecture]."], "q": "What happens on your Tuesday and Wednesday evenings now?"},
 "commercial design":{"def": "designing shops, offices, restaurants and hotels", "ex": ["She {works in} [commercial design]. She designs shops and restaurants.", "I like [commercial design] more than home design.", "I {study} [commercial design]."], "q": "What do you study on your new nine-month course?"},
 "have a lot on your plate":{"def": "have a lot of things to do", "ex": ["She [has a lot on] her [plate] right now.", "I work, I have two kids, and I study. I [have a lot on] my [plate]!", "I [have a lot on] my [plate]."], "q": "Work, the course, the gym, the dogs… How is your life right now?"},
-"exhausted":{"def": "very, very tired", "ex": ["You {look} absolutely [exhausted].", "After a long day at work, I {feel} [exhausted].", "I'm [exhausted] because I have a lot on my plate."], "q": "How do you feel after work and a three-hour lecture?"}
+"exhausted":{"def": "very, very tired", "ex": ["You {look} absolutely [exhausted].", "After a long day at work, I {feel} [exhausted].", "I'm [exhausted] because I have a lot on my plate."], "q": "How do you feel after work and a three-hour lecture?"},
+"decide to":{"def": "choose to do something", "ex": ["We [decided to](past) {stay at home} and watch a film.", "My friend [decided to](past) {change careers}.", "I [decided to](past) {stay home}."], "q": "What big decisions did you make this autumn?"},
+"get":{"def": "find someone to work or help for you", "ex": ["We need to [get] {a babysitter} for Saturday.", "My sister [got](past) {a personal trainer} last year.", "I decided to [get] {an assistant}."], "q": "You have too many blueprints and no time. What do you want to do?"},
+"take on":{"def": "agree to do new work", "ex": ["I can't [take on] {any extra work}.", "I can't [take on] {any new clients} now.", "I [took on](past) {a new project}."], "q": "A client offers you a big new flat project. You are very busy. What do you do?"},
+"say no to":{"def": "answer \"no\" when someone asks you to do or take something", "ex": ["I never [say no to] {dessert}.", "She [said no to](past) {my invitation}.", "I {couldn't} [say no to] {this project}."], "q": "Your friend invites you on a trip, but you have a lot of work. What do you say?"},
+"career growth opportunity":{"def": "a chance to get better at your job and move up", "ex": ["This job is {a great} [career growth opportunity].", "For him, the new job was {a good} [career growth opportunity].", "It's {a good} [career growth opportunity]."], "q": "Why is your new big flat project important for your career?"},
+"a crazy idea":{"def": "a plan that sounds strange or too difficult", "ex": ["{It was} [a crazy idea], but it was fun.", "Everyone said {it was} [a crazy idea].", "{It was} [a crazy idea]."], "q": "A nine-month course and a lot of work at the same time: what did you think about it at first?"},
+"do interior design":{"def": "work as an interior designer", "ex": ["She [does interior design] {for} hotels and restaurants.", "He [does interior design] {for} small offices.", "I only want to [do interior design]."], "q": "What kind of projects do you want after your course?"},
+"work on":{"def": "spend time making something", "ex": ["I [worked on](past) {a new project} last month.", "She [works on] {her designs} at night.", "I [worked on](past) {blueprints} for a design project until 3 a.m. last night."], "q": "What did you do until 3 a.m. on Sunday night?"},
+"be supposed to":{"def": "you planned to do it, but it didn't happen", "ex": ["I [was supposed to](past) {call} my mom, but I forgot.", "We [were supposed to](past) {go} to the cinema, but it was closed.", "I [was supposed to](past) {have lunch} with friends, but I had a lecture that day."], "q": "Think of a plan last week that didn't happen. Last week I … , but … ."},
+"have time for":{"def": "have enough time to do something", "ex": ["Do you [have time for] {a chat}?", "I {don't} [have time for] {breakfast} in the morning.", "I {didn't} [have time for] {lunch} with my friends."], "q": "Last week was very busy. What didn't you do?"},
+"it takes":{"def": "how much time you need to do something", "ex": ["[It takes] {about half an hour} {to} get to the airport.", "[It took](past) me {two hours} {to} clean the flat.", "[It took](past) me {about three hours} {to} create one big blueprint."], "q": "How many hours do you need for one big blueprint?"},
+"recharge your batteries":{"def": "rest so you have energy again", "ex": ["I need a weekend {at home} to [recharge my batteries].", "She went to the sea for a week to [recharge her batteries].", "I [recharged my batteries](past) {on the weekend}: I stayed home and went to a banya (sauna)."], "q": "How do you rest and get energy after a busy week?"},
+"feel rested":{"def": "feel that you are not tired any more", "ex": ["We came back from holiday and [felt rested](past) and relaxed.", "I always [feel rested] {after} a long sleep.", "I [felt rested](past) {because} I slept well."], "q": "You slept ten hours. How are you in the morning?"},
+"go out":{"def": "leave home to have fun: a restaurant, a bar, friends", "ex": ["We [went out](past) {for dinner} on Friday.", "Do you want to [go out] {tonight}?", "I usually [go out] {on the weekend}."], "q": "What do you usually do on Saturday evening?"}
 };
 
 /* part of speech, IPA (American), and what goes before / after: [before, phrase form, after] */
@@ -1044,18 +1058,32 @@ const META = {
 "have a lecture":{"pos": "verb phrase", "ipa": "/ˌhæv ə ˈlek.tʃɚ/", "pat": [["", "have a lecture", "on + topic"], ["have a two-hour / three-hour", "lecture", ""]]},
 "commercial design":{"pos": "noun", "ipa": "/kəˌmɝː.ʃəl dɪˈzaɪn/", "pat": [["study / work in", "commercial design", ""]], "fam": [["commercial design", "n"], ["residential design", "n"]]},
 "have a lot on your plate":{"pos": "idiom · informal", "ipa": "/ˌhæv ə ˈlɑːt̬ ɑːn jʊr ˈpleɪt/", "pat": []},
-"exhausted":{"pos": "adjective", "ipa": "/ɪɡˈzɑː.stɪd/", "pat": [["feel / look / be", "exhausted", ""]]}
+"exhausted":{"pos": "adjective", "ipa": "/ɪɡˈzɑː.stɪd/", "pat": [["feel / look / be", "exhausted", ""]]},
+"decide to":{"pos": "verb", "ipa": "/dɪˈsaɪd tə/", "pat": [["", "decide to", "do something"]]},
+"get":{"pos": "verb", "past": "got", "ipa": "/ɡet/", "pat": [["", "get", "an assistant / a personal trainer / a babysitter"]]},
+"take on":{"pos": "phrasal verb", "past": "took on", "ipa": "/ˌteɪk ˈɑːn/", "pat": [["", "take on", "extra work / a new project / new clients"]]},
+"say no to":{"pos": "verb phrase", "past": "said no to", "ipa": "/ˌseɪ ˈnoʊ tə/", "pat": [["can't / couldn't", "say no to", "an invitation / a project / dessert"]]},
+"career growth opportunity":{"pos": "noun phrase", "ipa": "/kəˈrɪr ˈɡroʊθ ˌɑː.pɚˈtuː.nə.t̬i/", "pat": [["a good / great", "career growth opportunity", ""]]},
+"a crazy idea":{"pos": "noun phrase", "ipa": "/ə ˈkreɪ.zi aɪˈdiː.ə/", "pat": [["It was", "a crazy idea", ""]]},
+"do interior design":{"pos": "verb phrase", "past": "did interior design", "ipa": "/ˌduː ɪnˈtɪr.i.ɚ dɪˌzaɪn/", "pat": [["", "do interior design", "for + people / places"]]},
+"work on":{"pos": "phrasal verb", "ipa": "/ˈwɝːk ɑːn/", "pat": [["", "work on", "a project / blueprints / your designs"]]},
+"be supposed to":{"pos": "verb phrase", "past": "was / were supposed to", "ipa": "/bi səˈpoʊzd tə/", "pat": [["was / were", "supposed to", "do something, but …"]]},
+"have time for":{"pos": "verb phrase", "past": "had time for", "ipa": "/ˌhæv ˈtaɪm fɔːr/", "pat": [["don't / didn't", "have time for", "something"]]},
+"it takes":{"pos": "verb phrase", "past": "it took", "ipa": "/ɪt ˈteɪks/", "pat": [["", "it takes / it took me", "+ time + to do something"]]},
+"recharge your batteries":{"pos": "idiom · informal", "ipa": "/riːˈtʃɑːrdʒ jʊr ˈbæt̬.ɚ.iz/", "pat": [["", "recharge your batteries", "at home / on the weekend"]]},
+"feel rested":{"pos": "verb phrase", "past": "felt rested", "ipa": "/ˌfiːl ˈres.tɪd/", "pat": [["", "feel rested", "after + something / because …"]]},
+"go out":{"pos": "phrasal verb", "past": "went out", "ipa": "/ˌɡoʊ ˈaʊt/", "pat": [["", "go out", "for dinner / tonight / on the weekend"]]}
 };
 
 const PHOTOS = {};
 
 /* Topic decks for extra practice. New cards are introduced in deck order, then any card not in a deck. */
 const TOPICS = [
- {"name": "My day", "sub": "Your routine, from our lessons", "color": "gold", "words": ["get up", "wake up", "go to bed", "stay up late", "fall asleep", "sleep well", "sleep in", "walk the dogs", "behind the wheel", "in front of", "every other", "have a meeting", "pick up the phone", "put my phone on silent"]},
+ {"name": "My day", "sub": "Your routine, from our lessons", "color": "gold", "words": ["get up", "wake up", "go to bed", "stay up late", "fall asleep", "sleep well", "sleep in", "walk the dogs", "behind the wheel", "in front of", "every other", "have a meeting", "pick up the phone", "put my phone on silent", "be supposed to", "have time for", "it takes", "recharge your batteries", "feel rested", "go out"]},
  {"name": "Dogs", "sub": "Busha and Jecky", "color": "teal", "words": ["drop off", "pick up", "take someone to", "cuddle", "spend"]},
  {"name": "Health and the gym", "sub": "Goals, the gym, medicine", "color": "coral", "words": ["go to the gym", "run on the treadmill", "burn calories", "set a goal", "take"]},
  {"name": "Free time", "sub": "TV and weekends", "color": "plum", "words": ["series"]},
- {"name": "Study and my design course", "sub": "Your course and new career", "color": "gold", "words": ["take a course", "change careers", "quit your job", "do an internship", "have a lecture", "commercial design", "have a lot on your plate", "exhausted"]}
+ {"name": "Study and my design course", "sub": "Your course and new career", "color": "gold", "words": ["take a course", "change careers", "quit your job", "do an internship", "have a lecture", "commercial design", "have a lot on your plate", "exhausted", "decide to", "get", "take on", "say no to", "career growth opportunity", "a crazy idea", "do interior design", "work on"]}
 ];
 
 const ALL = Object.keys(CARDS);
@@ -1140,7 +1168,7 @@ const isDue = w => st(w) && st(w).due <= today();
 const grow = i => i < 1 ? 1 : i < 3 ? 3 : i < 7 ? 7 : Math.min(180, Math.round(i*2));
 const doneToday = () => store.log[today()] || 0;
 /* this week's new cards come first in "Cards to practice today" */
-const NEW_FIRST = ["take a course","change careers","quit your job","do an internship","have a lecture","commercial design","have a lot on your plate","exhausted"];
+const NEW_FIRST = ["decide to","get","take on","say no to","career growth opportunity","a crazy idea","do interior design","work on","be supposed to","have time for","it takes","recharge your batteries","feel rested","go out"];
 const DAILY_MIN = 8;
 let early = new Set();
 function todayQueue(){
