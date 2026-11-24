@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Your Denmark life</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Raleway:wght@600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap">
+<style>
+:root{
+  --bg:#F6F1E7; --card:#FCFAF5; --ink:#231815; --muted:#6E5C52; --line:#E3D9C8;
+  --brown:#643A24; --on-brown:#F6F1E7; --butter-soft:#FAF0CF;
+  --blue-soft:#E3EEF4; --blue-ink:#2F4C5E; --red:#4D0E12; --red-soft:#F1DEDA;
+  --ok:#2F6B3E; --ok-soft:#E1EEDD;
+  --display:"Cormorant Garamond","Iowan Old Style",Georgia,serif;
+  --caps:"Raleway","Avenir Next","Helvetica Neue",Arial,sans-serif;
+  --body:"DM Sans","Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box;min-width:0}
+html,body{overflow-x:clip}
+body{margin:0;background:var(--bg);color:var(--ink);font:16.5px/1.55 var(--body);-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+.wrap{max-width:620px;margin:0 auto;padding:14px 16px 72px}
+.back{display:inline-block;font:600 .78rem var(--caps);letter-spacing:.12em;text-transform:uppercase;color:var(--brown);text-decoration:none;padding:8px 0}
+header{margin:6px 0 10px}
+.eyebrow{font:600 .75rem var(--caps);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+h1{font:700 2.3rem/1.02 var(--display);margin:6px 0 8px;letter-spacing:-.01em}
+header p{margin:0;color:var(--muted)}
+section{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 16px;margin:16px 0}
+h2{font:700 1.55rem/1.1 var(--display);margin:2px 0 6px}
+.n{font:700 .72rem var(--caps);letter-spacing:.14em;text-transform:uppercase;color:var(--brown)}
+.how{color:var(--muted);margin:0 0 14px}
+.how b{color:var(--ink)}
+.note{background:var(--butter-soft);border-radius:12px;padding:10px 14px;margin:0;font-size:15px}
+.chips{display:grid;gap:8px}
+.chip{display:block;width:100%;text-align:left;border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:11px 14px;font:inherit;cursor:pointer;min-height:44px;color:var(--ink)}
+.chip b{display:block;font-size:17px}
+.chip small{display:block;color:var(--muted);font-size:14.5px}
+.chip[aria-pressed=true]{border-color:var(--brown);background:var(--butter-soft)}
+.count{font-weight:600;margin:10px 0 0}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:10px}
+.colh{font:600 .7rem var(--caps);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.pb{display:block;width:100%;text-align:left;font:inherit;font-size:15.5px;border:1.5px solid var(--line);background:#fff;color:var(--ink);border-radius:12px;padding:9px 11px;min-height:44px;margin-bottom:8px;cursor:pointer}
+.pb.sel{border-color:var(--blue-ink);background:var(--blue-soft)}
+.pb.right{border-color:var(--ok);background:var(--ok-soft)}
+.pb.shown{border-color:var(--red);background:var(--red-soft)}
+.pb:disabled{cursor:default}
+.tag{display:inline-block;min-width:22px;text-align:center;border-radius:99px;background:var(--brown);color:var(--on-brown);font-size:12.5px;font-weight:700;margin-right:6px;padding:0 4px}
+.gloss{display:block;color:var(--muted);font-size:13.5px}
+.item{border-top:1px solid var(--line);padding:12px 0}
+.item:first-of-type{border-top:0;padding-top:4px}
+.gap{font-size:17px;margin:0 0 8px}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{font:inherit;border:1.5px solid var(--line);background:#fff;color:var(--ink);border-radius:10px;padding:8px 14px;min-height:44px;cursor:pointer}
+.opt.right{border-color:var(--ok);background:var(--ok-soft)}
+.opt.wrong{border-color:var(--red);background:var(--red-soft)}
+.opt:disabled{cursor:default}
+select,input[type=text]{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);min-height:44px}
+select.right,input.right{border-color:var(--ok);background:var(--ok-soft)}
+input:focus,select:focus,button:focus-visible{outline:3px solid #C1DBE8;outline-offset:2px}
+.fb{font-size:14.5px;margin:8px 0 0}
+.fb.ok{color:var(--ok)} .fb.no{color:var(--red)}
+.rowb{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.btn{font:inherit;font-weight:600;border:0;border-radius:999px;padding:10px 18px;min-height:44px;cursor:pointer;background:var(--brown);color:var(--on-brown)}
+.btn.ghost{background:transparent;color:var(--brown);border:1.5px solid var(--brown)}
+.btn.primary{width:100%;font:700 .85rem var(--caps);letter-spacing:.1em;text-transform:uppercase;padding:14px}
+.hw-sent{background:var(--ok-soft);color:var(--ok);font-weight:700;border-radius:12px;padding:12px 14px}
+.rank{list-style:none;padding:0;margin:0}
+.rank li{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px 8px 6px 12px;margin-bottom:8px}
+.rank .k{font-weight:700;color:var(--brown);width:22px;flex:none}
+.rank .t{flex:1}
+.rank em{font-style:normal;color:var(--muted);font-size:12.5px;margin-left:6px}
+.mv{font:inherit;border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;width:44px;height:44px;cursor:pointer;flex:none}
+.mv:disabled{opacity:.3}
+.compare{display:grid;gap:8px;margin:4px 0 6px}
+.compare div{background:var(--blue-soft);border-radius:12px;padding:10px 14px;font-size:17px}
+.compare em{font-style:normal;font-weight:700;color:var(--brown)}
+.q{margin:16px 0 8px;font-weight:600}
+.model{display:block;margin-top:4px;color:var(--ink)}
+.use{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.use span{background:var(--blue-soft);color:var(--blue-ink);border-radius:99px;padding:6px 12px;font-weight:600;font-size:14.5px}
+.stems{list-style:none;padding:0;margin:10px 0}
+.stems li{background:var(--butter-soft);border-radius:10px;padding:10px 14px;margin-bottom:8px}
+.tick{display:flex;align-items:center;gap:10px;font:inherit;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:10px 14px;min-height:44px;width:100%;text-align:left;cursor:pointer;color:var(--ink)}
+.tick[aria-pressed=true]{border-color:var(--ok);background:var(--ok-soft)}
+@media(max-width:400px){.cols{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../" data-hw-back>← My English</a>
+  <header>
+    <span class="eyebrow">Homework · lesson on 23 November</span>
+    <h1>Your Denmark life</h1>
+    <p>About 30 minutes. Do the steps in order. Your answers save as you go.</p>
+  </header>
+  <main id="app"></main>
+</div>
+<script src="../../../kit/hw.js"></script>
+<script>
+(function(){
+const ITEMS=[
+ {id:'bankrupt',p:'go bankrupt',ex:'The company I worked for went bankrupt.',m:'when a company loses all its money and has to close',
+  f:{s:'The company might ___ bankrupt.',o:['go','get','make'],r:['go']},fill:{s:'In my game life, the company I worked for ___ during the crisis.',a:'went bankrupt'}},
+ {id:'lost',p:'lose your job',ex:'I lost my job three times.',m:"stop having work because the company doesn't need you any more",
+  f:{s:'When a company closes, people ___ their jobs.',o:['lose','miss','fail'],r:['lose']},fill:{s:'When the company closed, I ___ again.',a:'lost my job'}},
+ {id:'chance',p:'(not) get a chance to',ex:"I didn't get a chance to build a family.",m:'(not) have the opportunity to do something',
+  f:{s:"I didn't ___ a chance to travel.",o:['get','catch','make'],r:['get']},fill:{s:"I was so busy working that I didn't ___ travel much.",a:'get a chance to'}},
+ {id:'family',p:'build / start a family',ex:"I didn't get a chance to build a family.",m:'get married and have children',
+  f:{s:'They want to ___ a family.',o:['start','do','get'],r:['start']},fill:{s:'Some people are in no rush to ___. They are happy being single.',a:'build a family'}},
+ {id:'hung',p:'hang out with',ex:'I hung out with friends a lot.',m:'spend free time with someone, relaxing together',
+  f:{s:'I ___ out with friends a lot.',o:['hung','took','did'],r:['hung']},fill:{s:'At the weekend, I ___ my neighbours and we cooked together.',a:'hung out with'}},
+ {id:'expect',p:'live up to / meet my expectations',ex:"This life didn't live up to my expectations.",m:'be as good as you hoped',
+  f:{s:"This life didn't ___ up to my expectations.",o:['live','make','take'],r:['live']},fill:{s:"I was born in Denmark, so I hoped for a lot, but this life didn't ___.",a:'live up to my expectations'}},
+ {id:'bigmoney',p:'make big money',ex:"It's easier to make big money in Dubai.",m:'earn a lot of money',
+  f:{s:"It's easier to ___ big money in Dubai.",o:['make','do','take'],r:['make']},fill:{s:'If you want to ___, Dubai is probably easier than Germany.',a:'make big money'}},
+ {id:'paygap',p:'a big pay gap between jobs',ex:"In Dubai, there's a big pay gap between jobs.",m:'a big difference in how much people earn in different jobs',
+  f:{s:"There's a big pay ___ between jobs.",o:['gap','break','distance'],r:['gap']},fill:{s:"In Dubai, a cleaner earns 1,000 euros and a businessman earns a million. There's ___.",a:'a big pay gap between jobs'}},
+ {id:'save',p:'save money',ex:'It was very difficult to save money.',m:'keep money for later instead of spending it',
+  f:{s:"I'm trying to ___ money for a new car.",o:['save','economise','spend'],r:['save']},fill:{s:"Something always happens, so it's hard for me to ___.",a:'save money'}},
+ {id:'moveup',p:'move up in the world',ex:"In this life, I couldn't move up in the world.",m:'become richer and more successful',
+  f:{s:"In this life, I couldn't move ___ in the world.",o:['up','on','over'],r:['up']},fill:{s:'In my real life, I took risks, so I could ___.',a:'move up in the world'}}
+];
+const OLD=[
+ {p:'run out of money',g:'have no money left'},
+ {p:'waste money on',g:"spend money on things you don't need"},
+ {p:'go through a rough patch',g:'have a difficult time'},
+ {p:'down to earth',g:'simple and friendly, not arrogant'},
+ {p:'high maintenance',g:'needs a lot of attention or money'}
+];
+const DISC=[
+ {q:'Which sentence means "again and again"?',o:['A','B'],r:'A',h:'A: running out of money happened many times.'},
+ {q:'Which sentence means "I didn\'t stop, I continued"?',o:['A','B'],r:'B',h:'B: you played handball, and you continued.'},
+ {q:'What comes after keep?',o:['to play','playing','play'],r:'playing',h:'keep + verb-ing: kept running, kept playing.'}
+];
+const KEEP=[
+ {s:'Last month, my clients cancelled at the last minute again and again.',v:'cancel',m:'Last month, my clients kept cancelling at the last minute.'},
+ {s:"My client's son talks about Ferraris all the time.",v:'talk',m:"My client's son keeps talking about Ferraris."},
+ {s:'In the game, I wasted money on cars again and again.',v:'wast',m:'In the game, I kept wasting money on cars.'},
+ {s:"When I moved to France, I didn't stop doing functional training.",v:'do',m:'When I moved to France, I kept doing functional training.'},
+ {s:'In Real Housewives, the women argue again and again.',v:'argu',m:'In Real Housewives, the women keep arguing.'}
+];
+const MAXT=2; /* two tries, then the answer is shown */
+const item=id=>ITEMS.find(i=>i.id===id);
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm=t=>String(t).toLowerCase().replace(/[’']/g,"'").replace(/[^a-z' ]/g,' ').replace(/\s+/g,' ').trim();
+const shuffle=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
+const res=()=>({tries:[],ok:false,shown:false});
+
+/* all answers live here */
+let S={picks:[],mOrder:[],mean:{},form:{},fill:{},fOrder:[],pairs:[],rank:[],disc:DISC.map(res),keep:KEEP.map(()=>({val:'',tries:[],ok:false})),voice:false};
+let meanSel=null,pairSel=null,showGloss=false;
+
+const need=()=>`<p class="note">Choose ${5-S.picks.length} more phrase${5-S.picks.length===1?'':'s'} in step 1 first.</p>`;
+const ready=()=>S.picks.length===5;
+function syncPicks(){
+  S.mOrder=S.mOrder.filter(id=>S.picks.includes(id)); S.picks.forEach(id=>{ if(!S.mOrder.includes(id)) S.mOrder.splice(Math.floor(Math.random()*(S.mOrder.length+1)),0,id); });
+  S.fOrder=S.fOrder.filter(id=>S.picks.includes(id)); S.picks.forEach(id=>{ if(!S.fOrder.includes(id)) S.fOrder.splice(Math.floor(Math.random()*(S.fOrder.length+1)),0,id); });
+  S.pairs=S.pairs.filter(p=>S.picks.includes(p.n));
+  const keys=S.picks.map(id=>'n:'+id).concat(OLD.map((o,k)=>'o:'+k));
+  S.rank=S.ranked ? S.rank.filter(k=>keys.includes(k)).concat(keys.filter(k=>!S.rank.includes(k))) : keys; /* her 5 first, then the old 5, until she moves something */
+}
+const rankText=k=>k[0]==='n'?item(k.slice(2)).p:OLD[+k.slice(2)].p;
+const done=r=>r&&(r.ok||r.shown);
+
+/* ---------- drawing ---------- */
+function stepPick(){
+  return `<section><span class="n">Step 1</span><h2>Choose your 5</h2>
+  <p class="how">These phrases came up in our lesson. Read the examples. Tap the 5 you want to work with.</p>
+  <div class="chips">${ITEMS.map(i=>`<button type="button" class="chip" data-pick="${i.id}" aria-pressed="${S.picks.includes(i.id)}"><b>${esc(i.p)}</b><small>${esc(i.ex)}</small></button>`).join('')}</div>
+  <p class="count">${S.picks.length} of 5 chosen${S.picks.length===5?' ✓':''}</p></section>`;
+}
+function stepMean(){
+  let body=need();
+  if(ready()){
+    const r=S.picks.map(id=>S.mean[id]).filter(done).length, last=S.picks.map(id=>S.mean[id]).find(x=>x&&x.msg);
+    body=`<div class="cols"><div><div class="colh">Phrase</div>${S.picks.map(id=>{const m=S.mean[id];
+      return `<button type="button" class="pb${meanSel===id?' sel':''}${m&&m.ok?' right':''}${m&&m.shown?' shown':''}" data-mp="${id}"${done(m)?' disabled':''}>${esc(item(id).p)}</button>`}).join('')}</div>
+      <div><div class="colh">Meaning</div>${S.mOrder.map(id=>{const m=S.mean[id];
+      return `<button type="button" class="pb${m&&m.ok?' right':''}${m&&m.shown?' shown':''}" data-mm="${id}"${done(m)?' disabled':''}>${esc(item(id).m)}${done(m)?`<span class="gloss">${esc(item(id).p)}</span>`:''}</button>`}).join('')}</div></div>
+      <p class="fb ${r===5?'ok':'no'}" aria-live="polite">${r===5?'All 5 matched ✓':meanSel?'Now tap its meaning.':esc(S.meanMsg||'')}</p>`;
+  }
+  return `<section><span class="n">Step 2</span><h2>What does it mean?</h2><p class="how">Tap a phrase, then tap its meaning.</p>${body}</section>`;
+}
+function optItem(kind,id,frame,opts,right,r){
+  const tries=r?r.tries:[];
+  return `<div class="item"><p class="gap">${esc(frame)}</p><div class="opts">${opts.map(o=>{
+      const cls=r&&r.ok&&right.includes(o)?' right':r&&r.shown&&right.includes(o)?' right':tries.includes(o)&&!right.includes(o)?' wrong':'';
+      return `<button type="button" class="opt${cls}" data-${kind}="${id}" data-v="${esc(o)}"${done(r)?' disabled':''}>${esc(o)}</button>`}).join('')}</div>
+    ${r&&r.ok?`<p class="fb ok">Yes ✓</p>`:r&&r.shown?`<p class="fb no">The answer is <b>${esc(right[0])}</b>.</p>`:tries.length?`<p class="fb no">Not this one. Try again.</p>`:''}</div>`;
+}
+function stepForm(){
+  const body=ready()?S.picks.map(id=>{const f=item(id).f;return optItem('fo',id,f.s,f.o,f.r,S.form[id]);}).join(''):need();
+  return `<section><span class="n">Step 3</span><h2>Which word goes with it?</h2><p class="how">Choose the word that completes the phrase.</p>${body}</section>`;
+}
+function stepFill(){
+  let body=need();
+  if(ready()){
+    const used=S.picks.filter(id=>S.fill[id]&&done(S.fill[id])).map(id=>item(id).fill.a);
+    body=S.picks.map(id=>{const f=item(id).fill, r=S.fill[id]||res();
+      const fin=done(r), last=r.tries[r.tries.length-1]||'';
+      return `<div class="item"><p class="gap">${esc(f.s)}</p>
+        <select data-fl="${id}" aria-label="Choose a phrase"${fin?' disabled class="right"':''}><option value="">Choose…</option>${S.fOrder.map(o=>{const a=item(o).fill.a;
+          return `<option${(fin?a===f.a:a===last)?' selected':''}${!fin&&used.includes(a)?' disabled':''}>${esc(a)}</option>`}).join('')}</select>
+        ${r.ok?'<p class="fb ok">Yes ✓</p>':r.shown?`<p class="fb no">The answer is <b>${esc(f.a)}</b>.</p>`:r.tries.length?'<p class="fb no">Not this one. Try again.</p>':''}</div>`;}).join('');
+  }
+  return `<section><span class="n">Step 4</span><h2>Complete the story</h2><p class="how">Choose the right phrase for each sentence. Use each phrase once.</p>${body}</section>`;
+}
+function stepPairs(){
+  let body=need();
+  if(ready()){
+    const nums={}; S.pairs.forEach((p,k)=>{nums[p.n]=k+1; nums['o'+p.o]=k+1;});
+    body=`<div class="cols"><div><div class="colh">New (yours)</div>${S.picks.map(id=>`<button type="button" class="pb${pairSel===id?' sel':''}" data-pn="${id}">${nums[id]?`<span class="tag">${nums[id]}</span>`:''}${esc(item(id).p)}</button>`).join('')}</div>
+      <div><div class="colh">Old</div>${OLD.map((o,k)=>`<button type="button" class="pb" data-po="${k}">${nums['o'+k]?`<span class="tag">${nums['o'+k]}</span>`:''}${esc(o.p)}${showGloss?`<span class="gloss">${esc(o.g)}</span>`:''}</button>`).join('')}</div></div>
+      <p class="fb" aria-live="polite">${pairSel?'Now tap an old phrase.':S.pairs.length?S.pairs.length+' pair'+(S.pairs.length>1?'s':'')+' ✓':''}</p>
+      <div class="rowb"><button class="btn ghost" type="button" data-gloss>${showGloss?'Hide the meanings':'Remind me what the old ones mean'}</button><button class="btn ghost" type="button" data-clear>Start again</button></div>`;
+  }
+  return `<section><span class="n">Step 5</span><h2>Old friends, new friends</h2>
+  <p class="how">Find pairs that can go together in one story: <b>one thing happens, so the other thing happens</b>.<br>Example: <i>The company went bankrupt</i>, so <i>I went through a rough patch</i>.</p>
+  <p class="note"><b>There are no wrong answers here.</b> Any pair is fine if you can explain it to me in our lesson. Tap a new phrase, then an old one.</p><div style="height:12px"></div>${body}</section>`;
+}
+function stepRank(){
+  const body=ready()?`<ol class="rank">${S.rank.map((k,i)=>`<li><span class="k">${i+1}</span><span class="t">${esc(rankText(k))}<em>${k[0]==='n'?'new':'old'}</em></span><button type="button" class="mv" data-up="${i}" aria-label="Move up"${i===0?' disabled':''}>↑</button><button type="button" class="mv" data-dn="${i}" aria-label="Move down"${i===S.rank.length-1?' disabled':''}>↓</button></li>`).join('')}</ol>`:need();
+  return `<section><span class="n">Step 6</span><h2>How useful are they for you?</h2><p class="how">Put all 10 phrases in order: 1 = the most useful for your real life. Use the arrows.</p>${body}</section>`;
+}
+function stepKeep(){
+  const disc=DISC.map((d,k)=>`<p class="q">${esc(d.q)}</p>`+optItem('di',k,'',d.o,[d.r],S.disc[k]).replace('<p class="gap"></p>','').replace(/The answer is <b>[^<]*<\/b>\./,'The answer is <b>'+esc(d.r)+'</b>. '+esc(d.h))).join('');
+  const keep=KEEP.map((k,n)=>{const r=S.keep[n], fin=r.ok||r.tries.length>=MAXT;
+    return `<div class="item"><p class="gap">${esc(k.s)}</p>
+      <input type="text" autocomplete="off" autocapitalize="sentences" data-kin="${n}" value="${esc(r.val)}" aria-label="Your sentence"${r.ok?' class="right"':''}>
+      ${r.ok?'':`<div class="rowb"><button class="btn" type="button" data-kc="${n}">Check</button></div>`}
+      ${r.ok?`<p class="fb ok">Good ✓ Compare: <span class="model">${esc(k.m)}</span></p>`:fin?`<p class="fb no">Compare with this: <span class="model">${esc(k.m)}</span></p>`:r.tries.length?'<p class="fb no">Use keep / keeps / kept + verb-ing. Try again.</p>':''}</div>`;}).join('');
+  return `<section><span class="n">Step 7</span><h2>Your sentences: keep + -ing</h2>
+  <p class="how">You said these two sentences in our lesson. Look at them carefully.</p>
+  <div class="compare"><div>A. In the game, I <em>kept running</em> out of money.</div><div>B. I <em>kept playing</em> handball when I grew up.</div></div>
+  ${disc}
+  <p class="q" style="margin-top:22px">Now say it another way. Rewrite each sentence with <b>keep</b>, <b>keeps</b> or <b>kept</b> + <b>-ing</b>.</p>${keep}</section>`;
+}
+function stepVoice(){
+  const list=[...new Set(S.picks.map(id=>item(id).p).concat(['keep / kept + -ing']))];
+  return `<section><span class="n">Step 8</span><h2>Tell a life story</h2>
+  <p class="how">Record a voice message for me in Telegram (1–2 minutes). Tell me about your Denmark life again, or about another life you played in the game. <b>Don't read aloud:</b> look at the phrases, then just talk.</p>
+  <p class="q">Try to use:</p><div class="use">${list.map(t=>`<span>${esc(t)}</span>`).join('')}</div>
+  <ul class="stems"><li>This time I was born in…</li><li>I kept…</li><li>In this country, there is / isn't a big pay gap between jobs, so…</li></ul>
+  <button type="button" class="tick" data-voice aria-pressed="${S.voice}">${S.voice?'✓ I sent my voice message':'Tap here when you\'ve sent your voice message'}</button></section>`;
+}
+function render(){
+  const app=document.getElementById('app');
+  const y=window.scrollY, ae=document.activeElement, focusK=ae&&ae.dataset?ae.dataset.kin:null;
+  app.innerHTML=stepPick()+stepMean()+stepForm()+stepFill()+stepPairs()+stepRank()+stepKeep()+stepVoice()+'<section id="send"></section>';
+  document.getElementById('send').append(HW.sendBlock({lang:'en'}));
+  if(focusK!=null){const i=app.querySelector(`[data-kin="${focusK}"]`); if(i){i.focus(); try{i.setSelectionRange(i.value.length,i.value.length);}catch(e){}}}
+  window.scrollTo(0,y);
+  HW.save();
+}
+
+/* ---------- taps ---------- */
+document.getElementById('app').addEventListener('click',e=>{
+  const t=e.target.closest('button'); if(!t||t.disabled) return; const d=t.dataset;
+  if(d.pick){ const id=d.pick; if(S.picks.includes(id)) S.picks=S.picks.filter(x=>x!==id); else if(S.picks.length<5) S.picks.push(id); syncPicks(); meanSel=null; pairSel=null; return render(); }
+  if(d.mp){ meanSel=d.mp; S.meanMsg=''; return render(); }
+  if(d.mm){ if(!meanSel) { S.meanMsg='Tap a phrase on the left first.'; return render(); }
+    const r=S.mean[meanSel]=S.mean[meanSel]||res(); r.tries.push(d.mm);
+    if(d.mm===meanSel){ r.ok=true; S.meanMsg=''; } else if(r.tries.length>=MAXT){ r.shown=true; S.meanMsg=`"${item(meanSel).p}" means: ${item(meanSel).m}.`; } else S.meanMsg='Not quite. Try that one again.';
+    meanSel=null; return render(); }
+  if(d.fo){ const f=item(d.fo).f, r=S.form[d.fo]=S.form[d.fo]||res(); if(r.tries.includes(d.v)) return; r.tries.push(d.v);
+    if(f.r.includes(d.v)) r.ok=true; else if(r.tries.length>=MAXT) r.shown=true; return render(); }
+  if(d.di!==undefined){ const k=+d.di, r=S.disc[k]; if(r.tries.includes(d.v)) return; r.tries.push(d.v);
+    if(d.v===DISC[k].r) r.ok=true; else if(r.tries.length>=MAXT) r.shown=true; return render(); }
+  if(d.pn){ pairSel=d.pn; return render(); }
+  if(d.po!==undefined){ if(!pairSel) return; const o=+d.po; S.pairs=S.pairs.filter(p=>p.n!==pairSel&&p.o!==o); S.pairs.push({n:pairSel,o}); pairSel=null; return render(); }
+  if(d.gloss!==undefined){ showGloss=!showGloss; return render(); }
+  if(d.clear!==undefined){ S.pairs=[]; pairSel=null; return render(); }
+  if(d.up!==undefined||d.dn!==undefined){ const i=+(d.up!==undefined?d.up:d.dn), j=d.up!==undefined?i-1:i+1; if(j<0||j>=S.rank.length) return; [S.rank[i],S.rank[j]]=[S.rank[j],S.rank[i]]; S.ranked=true; return render(); }
+  if(d.kc!==undefined){ const n=+d.kc, r=S.keep[n], v=norm(r.val); if(!v) return;
+    r.tries.push(r.val.trim()); r.ok=/\b(keep|keeps|kept)\s+\w+ing\b/.test(v)&&v.includes(KEEP[n].v); return render(); }
+  if(d.voice!==undefined){ S.voice=!S.voice; return render(); }
+});
+document.getElementById('app').addEventListener('change',e=>{
+  const s=e.target.closest('[data-fl]'); if(!s||!s.value) return; const id=s.dataset.fl, r=S.fill[id]=S.fill[id]||res();
+  r.tries.push(s.value); if(s.value===item(id).fill.a) r.ok=true; else if(r.tries.length>=MAXT) r.shown=true; render();
+});
+document.getElementById('app').addEventListener('input',e=>{
+  const i=e.target.closest('[data-kin]'); if(!i) return; S.keep[+i.dataset.kin].val=i.value; HW.save();
+});
+
+/* ---------- what Stacy reads ---------- */
+const tr=n=>`${n} ${n===1?'try':'tries'}`;
+function line(label,r,show){ if(!r||!r.tries.length) return `${label}: — not done`;
+  if(r.ok) return `✓ ${label}${r.tries.length>1?`: ${r.tries.slice(0,-1).map(show).join(' → ')} → right (${tr(r.tries.length)})`:' (1st try)'}`;
+  return `✗ ${label}: ${r.tries.map(show).join(' → ')}${r.shown?' → answer shown':''}`; }
+function headline(rs){ const n=rs.filter(r=>r&&r.tries.length).length, first=rs.filter(r=>r&&r.ok&&r.tries.length===1).length, shown=rs.filter(r=>r&&r.shown).length;
+  return `${first} of ${rs.length} right first try${shown?` · ${shown} shown after 2 tries`:''}${n<rs.length?` · ${rs.length-n} not done`:''}`; }
+function summary(){
+  const L=[], P=S.picks;
+  L.push('Task 1 · Choose your 5', P.length===5?`Chose: ${P.map(id=>item(id).p).join(', ')}`:`Chose ${P.length} of 5: ${P.map(id=>item(id).p).join(', ')||'—'}`);
+  L.push('','Task 2 · Meaning (match)', headline(P.map(id=>S.mean[id])));
+  P.forEach(id=>L.push(line(item(id).p,S.mean[id],x=>`"${item(x).m}"`)));
+  L.push('','Task 3 · Which word', headline(P.map(id=>S.form[id])));
+  P.forEach(id=>L.push(line(item(id).f.s,S.form[id],x=>x)));
+  L.push('','Task 4 · Complete the story', headline(P.map(id=>S.fill[id])));
+  P.forEach(id=>L.push(line(item(id).fill.s,S.fill[id],x=>`"${x}"`)));
+  L.push('','Task 5 · Old + new pairs (no wrong answers)', S.pairs.length?`Made ${S.pairs.length} pair${S.pairs.length>1?'s':''}`:'No pairs yet');
+  S.pairs.forEach(p=>L.push(`${item(p.n).p} → so → ${OLD[p.o].p}`));
+  L.push('','Task 6 · Most useful for my real life', S.ranked?'Her order (1 = most useful):':'Not ordered yet (still the starting order)');
+  if(S.ranked) S.rank.forEach((k,i)=>L.push(`${i+1}. ${rankText(k)} (${k[0]==='n'?'new':'old'})`));
+  const kd=S.keep.filter(r=>r.tries.length).length, kok=S.keep.filter(r=>r.ok).length;
+  L.push('','Task 7 · keep + -ing', `Discovery: ${headline(S.disc)} · Rewrites: ${kok} of 5 with keep + -ing${kd<5?` · ${5-kd} not done`:''}`);
+  DISC.forEach((d,k)=>L.push(line(d.q,S.disc[k],x=>x)));
+  KEEP.forEach((k,n)=>{const r=S.keep[n]; L.push(r.tries.length?`${r.ok?'✓':'✗'} ${r.tries.map(x=>`"${x}"`).join(' → ')} (${tr(r.tries.length)})`:`${n+1}. — not done`);});
+  L.push('','Task 8 · Voice message in Telegram', S.voice?'✓ She ticked: voice message sent':'Not ticked yet');
+  return L.join('\n');
+}
+
+HW.start({
+  id:'hw6', title:'Your Denmark life',
+  get:()=>S,
+  set:z=>{
+    if(!z||typeof z!=='object') return;
+    if(Array.isArray(z.picks)) S.picks=z.picks.filter(item).slice(0,5);
+    ['mean','form','fill'].forEach(k=>{ if(z[k]&&typeof z[k]==='object') Object.keys(z[k]).forEach(id=>{ if(item(id)) S[k][id]=z[k][id]; }); });
+    if(Array.isArray(z.mOrder)) S.mOrder=z.mOrder.filter(item); if(Array.isArray(z.fOrder)) S.fOrder=z.fOrder.filter(item);
+    if(Array.isArray(z.pairs)) S.pairs=z.pairs.filter(p=>p&&item(p.n)&&OLD[p.o]);
+    if(Array.isArray(z.rank)) S.rank=z.rank.filter(k=>typeof k==='string'); S.ranked=!!z.ranked;
+    if(Array.isArray(z.disc)&&z.disc.length===DISC.length) S.disc=z.disc;
+    if(Array.isArray(z.keep)&&z.keep.length===KEEP.length) S.keep=z.keep;
+    S.voice=!!z.voice; syncPicks();
+  },
+  summary, render
+});
+})();
+</script>
+</body>
+</html>
