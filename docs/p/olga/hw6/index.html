@@ -56,6 +56,7 @@ h2{font:700 1.55rem/1.1 var(--display);margin:2px 0 6px}
 .opt.right{border-color:var(--ok);background:var(--ok-soft)}
 .opt.wrong{border-color:var(--red);background:var(--red-soft)}
 .opt:disabled{cursor:default}
+.opt.pick{border-color:var(--blue-ink);background:var(--blue-soft);font-weight:600}
 select,input[type=text]{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);min-height:44px}
 select.right,input.right{border-color:var(--ok);background:var(--ok-soft)}
 input:focus,select:focus,button:focus-visible{outline:3px solid #C1DBE8;outline-offset:2px}
@@ -135,8 +136,8 @@ const DISC=[
  {q:'What comes after keep?',o:['to play','playing','play'],r:'playing',h:'keep + verb-ing: kept running, kept playing.'}
 ];
 const KEEP=[
- {s:'Last month, my clients cancelled at the last minute again and again.',v:'cancel',m:'Last month, my clients kept cancelling at the last minute.'},
- {s:"My client's son talks about Ferraris all the time.",v:'talk',m:"My client's son keeps talking about Ferraris."},
+ {s:'Last month, my clients cancelled at the last minute again and again.',v:'cancel',m:'Last month, my clients kept cancelling at the last minute.',st:'Last month, my clients kept'},
+ {s:"My client's son talks about Ferraris all the time.",v:'talk',m:"My client's son keeps talking about Ferraris.",st:"My client's son keeps"},
  {s:'In the game, I wasted money on cars again and again.',v:'wast',m:'In the game, I kept wasting money on cars.'},
  {s:"When I moved to France, I didn't stop doing functional training.",v:'do',m:'When I moved to France, I kept doing functional training.'},
  {s:'In Real Housewives, the women argue again and again.',v:'argu',m:'In Real Housewives, the women keep arguing.'}
@@ -207,17 +208,26 @@ function stepFill(){
   }
   return `<section><span class="n">Step 4</span><h2>Complete the story</h2><p class="how">Choose the right phrase for each sentence. Use each phrase once.</p>${body}</section>`;
 }
+const WHY=[['topic','same topic'],['opp','opposites'],['similar','similar meaning'],['leads','one leads to another']];
+const whyText=k=>(WHY.find(w=>w[0]===k)||[,''])[1];
 function stepPairs(){
   let body=need();
   if(ready()){
-    const nums={}; S.pairs.forEach((p,k)=>{nums[p.n]=k+1; nums['o'+p.o]=k+1;});
+    const nums={}; S.pairs.forEach((p,k)=>{nums[p.n]=k+1; (nums['o'+p.o]=nums['o'+p.o]||[]).push(k+1);});
     body=`<div class="cols"><div><div class="colh">New (yours)</div>${S.picks.map(id=>`<button type="button" class="pb${pairSel===id?' sel':''}" data-pn="${id}">${nums[id]?`<span class="tag">${nums[id]}</span>`:''}${esc(item(id).p)}</button>`).join('')}</div>
-      <div><div class="colh">Old</div>${OLD.map((o,k)=>`<button type="button" class="pb" data-po="${k}">${nums['o'+k]?`<span class="tag">${nums['o'+k]}</span>`:''}${esc(o.p)}${showGloss?`<span class="gloss">${esc(o.g)}</span>`:''}</button>`).join('')}</div></div>
-      <p class="fb" aria-live="polite">${pairSel?'Now tap an old phrase.':S.pairs.length?S.pairs.length+' pair'+(S.pairs.length>1?'s':'')+' ✓':''}</p>
-      <div class="rowb"><button class="btn ghost" type="button" data-gloss>${showGloss?'Hide the meanings':'Remind me what the old ones mean'}</button><button class="btn ghost" type="button" data-clear>Start again</button></div>`;
+      <div><div class="colh">Old</div>${OLD.map((o,k)=>`<button type="button" class="pb" data-po="${k}">${(nums['o'+k]||[]).map(n=>`<span class="tag">${n}</span>`).join('')}${esc(o.p)}${showGloss?`<span class="gloss">${esc(o.g)}</span>`:''}</button>`).join('')}</div></div>
+      <p class="fb" aria-live="polite">${pairSel?'Now tap an old phrase.':''}</p>
+      ${S.pairs.map((p,k)=>`<div class="item"><p class="gap"><span class="tag">${k+1}</span><b>${esc(item(p.n).p)}</b> + <b>${esc(OLD[p.o].p)}</b></p>
+        <p class="fb" style="margin:0 0 8px">Why do they go together?</p>
+        <div class="opts">${WHY.map(w=>`<button type="button" class="opt${p.why===w[0]?' pick':''}" data-why="${k}" data-v="${w[0]}">${esc(w[1])}</button>`).join('')}</div></div>`).join('')}
+      <div class="rowb"><button class="btn ghost" type="button" data-gloss>${showGloss?'Hide the meanings':'Remind me what the old ones mean'}</button>${S.pairs.length?'<button class="btn ghost" type="button" data-clear>Start again</button>':''}</div>`;
   }
   return `<section><span class="n">Step 5</span><h2>Old friends, new friends</h2>
-  <p class="how">Find pairs that can go together in one story: <b>one thing happens, so the other thing happens</b>.<br>Example: <i>The company went bankrupt</i>, so <i>I went through a rough patch</i>.</p>
+  <p class="how">Connect each of your new phrases with an old one. Then tap <b>why</b> they go together:</p>
+  <ul class="stems"><li><b>same topic</b>: both are about money, or work, or people</li>
+  <li><b>opposites</b>: like <i>down to earth</i> and <i>high maintenance</i></li>
+  <li><b>similar meaning</b>: they say almost the same thing</li>
+  <li><b>one leads to another</b>: one thing happens, so the other thing happens</li></ul>
   <p class="note"><b>There are no wrong answers here.</b> Any pair is fine if you can explain it to me in our lesson. Tap a new phrase, then an old one.</p><div style="height:12px"></div>${body}</section>`;
 }
 function stepRank(){
@@ -228,14 +238,14 @@ function stepKeep(){
   const disc=DISC.map((d,k)=>`<p class="q">${esc(d.q)}</p>`+optItem('di',k,'',d.o,[d.r],S.disc[k]).replace('<p class="gap"></p>','').replace(/The answer is <b>[^<]*<\/b>\./,'The answer is <b>'+esc(d.r)+'</b>. '+esc(d.h))).join('');
   const keep=KEEP.map((k,n)=>{const r=S.keep[n], fin=r.ok||r.tries.length>=MAXT;
     return `<div class="item"><p class="gap">${esc(k.s)}</p>
-      <input type="text" autocomplete="off" autocapitalize="sentences" data-kin="${n}" value="${esc(r.val)}" aria-label="Your sentence"${r.ok?' class="right"':''}>
+      ${k.st?`<p class="gap" style="margin:0 0 6px"><b>${esc(k.st)}</b> …</p>`:''}<input type="text" autocomplete="off" autocapitalize="${k.st?'off':'sentences'}" data-kin="${n}" value="${esc(r.val)}" placeholder="${k.st?'finish the sentence':''}" aria-label="${k.st?'Finish the sentence':'Your sentence'}"${r.ok?' class="right"':''}>
       ${r.ok?'':`<div class="rowb"><button class="btn" type="button" data-kc="${n}">Check</button></div>`}
       ${r.ok?`<p class="fb ok">Good ✓ Compare: <span class="model">${esc(k.m)}</span></p>`:fin?`<p class="fb no">Compare with this: <span class="model">${esc(k.m)}</span></p>`:r.tries.length?'<p class="fb no">Use keep / keeps / kept + verb-ing. Try again.</p>':''}</div>`;}).join('');
   return `<section><span class="n">Step 7</span><h2>Your sentences: keep + -ing</h2>
   <p class="how">You said these two sentences in our lesson. Look at them carefully.</p>
   <div class="compare"><div>A. In the game, I <em>kept running</em> out of money.</div><div>B. I <em>kept playing</em> handball when I grew up.</div></div>
   ${disc}
-  <p class="q" style="margin-top:22px">Now say it another way. Rewrite each sentence with <b>keep</b>, <b>keeps</b> or <b>kept</b> + <b>-ing</b>.</p>${keep}</section>`;
+  <p class="q" style="margin-top:22px">Now say it another way with <b>keep</b>, <b>keeps</b> or <b>kept</b> + <b>-ing</b>. In 1 and 2, finish the sentence. In 3–5, write the whole sentence.</p>${keep}</section>`;
 }
 function stepVoice(){
   const list=[...new Set(S.picks.map(id=>item(id).p).concat(['keep / kept + -ing']))];
@@ -269,12 +279,14 @@ document.getElementById('app').addEventListener('click',e=>{
   if(d.di!==undefined){ const k=+d.di, r=S.disc[k]; if(r.tries.includes(d.v)) return; r.tries.push(d.v);
     if(d.v===DISC[k].r) r.ok=true; else if(r.tries.length>=MAXT) r.shown=true; return render(); }
   if(d.pn){ pairSel=d.pn; return render(); }
-  if(d.po!==undefined){ if(!pairSel) return; const o=+d.po; S.pairs=S.pairs.filter(p=>p.n!==pairSel&&p.o!==o); S.pairs.push({n:pairSel,o}); pairSel=null; return render(); }
+  if(d.po!==undefined){ if(!pairSel) return; const o=+d.po; S.pairs=S.pairs.filter(p=>p.n!==pairSel); S.pairs.push({n:pairSel,o,why:''}); pairSel=null; return render(); }
+  if(d.why!==undefined){ const p=S.pairs[+d.why]; if(p) p.why=d.v; return render(); }
   if(d.gloss!==undefined){ showGloss=!showGloss; return render(); }
   if(d.clear!==undefined){ S.pairs=[]; pairSel=null; return render(); }
   if(d.up!==undefined||d.dn!==undefined){ const i=+(d.up!==undefined?d.up:d.dn), j=d.up!==undefined?i-1:i+1; if(j<0||j>=S.rank.length) return; [S.rank[i],S.rank[j]]=[S.rank[j],S.rank[i]]; S.ranked=true; return render(); }
   if(d.kc!==undefined){ const n=+d.kc, r=S.keep[n], v=norm(r.val); if(!v) return;
-    r.tries.push(r.val.trim()); r.ok=/\b(keep|keeps|kept)\s+\w+ing\b/.test(v)&&v.includes(KEEP[n].v); return render(); }
+    const full=KEEP[n].st?norm(KEEP[n].st+' '+r.val):v;
+    r.tries.push(KEEP[n].st?KEEP[n].st+' '+r.val.trim():r.val.trim()); r.ok=/\b(keep|keeps|kept)\s+\w+ing\b/.test(full)&&full.includes(KEEP[n].v); return render(); }
   if(d.voice!==undefined){ S.voice=!S.voice; return render(); }
 });
 document.getElementById('app').addEventListener('change',e=>{
@@ -301,8 +313,8 @@ function summary(){
   P.forEach(id=>L.push(line(item(id).f.s,S.form[id],x=>x)));
   L.push('','Task 4 · Complete the story', headline(P.map(id=>S.fill[id])));
   P.forEach(id=>L.push(line(item(id).fill.s,S.fill[id],x=>`"${x}"`)));
-  L.push('','Task 5 · Old + new pairs (no wrong answers)', S.pairs.length?`Made ${S.pairs.length} pair${S.pairs.length>1?'s':''}`:'No pairs yet');
-  S.pairs.forEach(p=>L.push(`${item(p.n).p} → so → ${OLD[p.o].p}`));
+  L.push('','Task 5 · Old + new pairs (no wrong answers)', S.pairs.length?`Made ${S.pairs.length} of 5 pairs, ${S.pairs.filter(p=>p.why).length} with a reason`:'No pairs yet');
+  S.pairs.forEach(p=>L.push(`${item(p.n).p} + ${OLD[p.o].p} → ${p.why?whyText(p.why):'no reason chosen'}`));
   L.push('','Task 6 · Most useful for my real life', S.ranked?'Her order (1 = most useful):':'Not ordered yet (still the starting order)');
   if(S.ranked) S.rank.forEach((k,i)=>L.push(`${i+1}. ${rankText(k)} (${k[0]==='n'?'new':'old'})`));
   const kd=S.keep.filter(r=>r.tries.length).length, kok=S.keep.filter(r=>r.ok).length;
