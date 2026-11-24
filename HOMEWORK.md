@@ -139,3 +139,11 @@ Note: the front "Homework" card on a student page shows only the open homework w
 - Cause of Maria's blank page: inside Telegram on iOS, the global name `head` is taken by the page's <head> element, so a
   homework that defines `function head(...)` crashes on iPhone ("head is not a function"). Renamed to `hwHead` in Maria hw1
   and Michael hw7. **Never name a top-level function `head`** (or other DOM-ish names: `title`, `name`, `top`, `parent`, `status`).
+
+## Olga (moved Nov 24, 2026)
+Slug `olga`, row name "Olga", fullName "Olga France", Paris time, English page (older template + her own payment card).
+Lessons Wed 13:00 / Fri 12:00 France time (one-day entries in `profile.lessons` for moved lessons). 3-lesson packages.
+**She pays at the END of each package:** `profile.payAtEnd: true` (server v30) → next payment = last lesson of the package she's in.
+Her payment card (`docs/p/olga/index.html`, last script) is built from `pack` + `prevPacks`: Last payment → overdue package(s) → current package.
+`prevPacks` holds her Oct 28–Nov 4 package (paid Nov 6), added at the move with the paid date from her old page.
+Server: Edge Function `app` v30 (payAtEnd), repo file in sync.

@@ -347,6 +347,11 @@ function autoNextPayment(P: any): string | null {
   const K = P.pack;
   if (!K?.start) return P.nextPayment || null;
   const size = Number(K.size) || 8;
+  // payAtEnd (Olga, Nov 24): she pays at the END of each package → due on its last lesson
+  if (P.payAtEnd) {
+    if (!K.paid) return lessonDates(P, K.start, size)[size - 1] || K.start;
+    return lessonDates(P, K.start, size * 2)[size * 2 - 1] || null;
+  }
   if (!K.paid) return lessonDates(P, K.start, 1)[0] || K.start;
   return lessonDates(P, K.start, size + 1)[size] || null;
 }
