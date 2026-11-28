@@ -85,6 +85,12 @@ Reminders, the "Next lesson" tile, "My lessons" and Teacher view all follow it; 
 A lesson moved to another DAY: put the old date in `pack.skip` and the new date in `pack.add`, plus a one-day entry
 `{"day":"<new weekday>","time":"..","from":"<date>","until":"<date>"}`. Jane's page (older template) does not read from/until yet.
 
+## One-off message on a set day (server v31)
+For a heads-up the automatic reminders don't cover (e.g. "this week's lesson is on Wednesday"), add to `profile.notices`:
+`[{"date":"YYYY-MM-DD","time":"HH:MM","text":"Hi Sabina! …"}]`, student's time zone. The cron sends it once in the
+15-minute window from `time` (logged in `reminder_log` as kind `notice`). `app_profile_patch` replaces the whole
+array, so read the current `notices` first and keep earlier entries. Show Stacy the exact text before adding one.
+
 ## State on Nov 12 (evening) — read before moving the next student
 
 Students in the app: Jane (not connected yet, older page template), Michael (connected), Sabina (connected, English page),

@@ -601,6 +601,16 @@ async function sendOnce(s: any, m: Msg) {
   return !!r.ok;
 }
 const inWindow = (minutes: number, target: number) => minutes >= target && minutes < target + 15;
+// One-off messages Stacy schedules (e.g. "this week's lesson moves to Wednesday"):
+// profile.notices = [{ date: "YYYY-MM-DD", time: "HH:MM", text }] in the student's time zone. Sent once, then stays as a record.
+function noticesDue(s: any): Msg[] {
+  const t = tzParts(tzOf(s));
+  return ((s.profile || {}).notices || []).filter((n: any) => {
+    if (!n || n.date !== t.date || typeof n.text !== "string" || !n.text.trim()) return false;
+    const [hh, mm] = String(n.time || "10:00").split(":").map(Number);
+    return inWindow(t.minutes, hh * 60 + (mm || 0));
+  }).map((n: any) => ({ kind: "notice", key: `${n.date}:${n.time || "10:00"}`, text: String(n.text).slice(0, 2000) }));
+}
 
 async function cron(req: Request) {
   const c = await cfg();
@@ -614,6 +624,7 @@ async function cron(req: Request) {
     if (inWindow(t.minutes, practiceTime(st).at)) sent += +(await sendOnce(s, await practice(s, st)));
     if (inWindow(t.minutes, 17 * 60)) for (const m of await homeworkDue(s)) sent += +(await sendOnce(s, m));
     if (inWindow(t.minutes, 18 * 60)) sent += +(await sendOnce(s, await lessonEve(s, st)));
+    for (const m of noticesDue(s)) sent += +(await sendOnce(s, m));
     const n = nextLessonToday(s);
     if (n && n.until > 45 && n.until <= 60) sent += +(await sendOnce(s, await lessonSoon(s)));
   }
